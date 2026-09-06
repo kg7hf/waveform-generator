@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/status.hpp"
+#include "common/live_protocol.hpp"
 
 #include <cstdint>
 
@@ -17,6 +18,7 @@ enum class PlayerState : std::uint32_t
     playing = 5U,
     draining = 6U,
     done = 7U,
+    aborted = 8U,
     fault = 0xFFU,
 };
 
@@ -38,6 +40,9 @@ enum class PlayerError : std::uint32_t
     codec_level = 13U,
     codec_start = 14U,
     underrun = 15U,
+    impairment = 16U,
+    native_source = 17U,
+    live_control = 18U,
 };
 
 struct PlayerSnapshot
@@ -64,7 +69,8 @@ struct PlayerSnapshot
     std::uint32_t first_underrun_frame;
     std::uint32_t max_sd_read_cycles;
     // Phase 3 impairment engine (2:/WG/PLAY.SCN): 0 = no scenario (clean pass-through),
-    // 1 = active, 2 = scenario rejected (playback continues clean, see engine_error).
+    // 1 = active, 2 = scenario rejected (playback continues clean), 3 = processing
+    // failed (playback stops); see engine_error.
     std::uint32_t engine_state;
     std::uint32_t engine_error;
     std::uint32_t engine_stages;
@@ -100,6 +106,8 @@ enum class EngineError : std::uint32_t
     missing_reference_rms = 4U,
     configure_failed = 5U,
     scenario_too_large = 6U,
+    clipping_rejected = 7U,
+    processing_failed = 8U,
 };
 
 /*
@@ -114,5 +122,34 @@ enum class EngineError : std::uint32_t
 [[nodiscard]] m110::Status request_player_play() noexcept;
 [[nodiscard]] bool player_allows_media_host() noexcept;
 [[nodiscard]] PlayerSnapshot player_snapshot() noexcept;
+
+struct LiveSnapshot
+{
+    char selected_file[13]{};
+    char run_id[33]{};
+    bool native_source{};
+    bool busy{};
+    std::uint64_t seed{};
+    double reference_rms{}; // Effective post-source-gain RMS used by live controls.
+    std::uint64_t live_frame{};
+    std::uint64_t live_digest{};
+    std::uint64_t live_clipped{};
+    std::uint32_t live_events{};
+    std::uint32_t queue_free{};
+    std::uint32_t capture_free{};
+};
+struct ControlReply
+{
+    std::uint32_t seq{};
+    bool ok{};
+    const char* error{"BAD_STATE"};
+    std::uint64_t apply_frame{};
+    std::uint32_t events{};
+};
+// Single fixed mailbox. The player task owns all source/engine/control mutations.
+[[nodiscard]] bool submit_player_command(const live_protocol::Request& command) noexcept;
+[[nodiscard]] bool take_player_reply(ControlReply& reply) noexcept;
+[[nodiscard]] LiveSnapshot player_live_snapshot() noexcept;
+void notify_player_task() noexcept;
 
 } // namespace waveform_generator

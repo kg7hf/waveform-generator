@@ -88,6 +88,46 @@ def latest_file_api_records(reply: Path) -> tuple[list[Path], list[Path]]:
     return cmake_files, targets
 
 
+def pe_synthetic_map_records(lines: list[str]) -> set[int]:
+    """Identify in-memory GNU PE linker records from their map structure.
+
+    GNU ld's pe-dll.c builds the relocation filler and runtime-pseudo-relocation
+    BFDs in memory. Require the observed PE output name, late LOAD placement,
+    and their specific section contributions, rather than exempting *.o names.
+    """
+    outputs = [(index, match[1]) for index, line in enumerate(lines)
+               if (match := re.fullmatch(r"OUTPUT\(([A-Za-z0-9_]+\.exe) pei-x86-64\)", line))]
+    if len(outputs) != 1:
+        return set()
+    output_index, output = outputs[0]
+    prefix = re.escape(output.replace(".", "_") + "_")
+    sections: dict[str, set[str]] = {}
+    for index, line in enumerate(lines):
+        contribution = re.fullmatch(r" (\.\S+)\s+0x[0-9a-fA-F]+\s+0x[0-9a-fA-F]+\s+(.+)", line)
+        if contribution:
+            section, name = contribution.groups()
+        elif index and (section_match := re.fullmatch(r" (\.\S+)", lines[index - 1])) and (
+                entry := re.fullmatch(r"\s+0x[0-9a-fA-F]+\s+0x[0-9a-fA-F]+\s+(.+)", line)):
+            section, name = section_match[1], entry[1]
+        else:
+            continue
+        sections.setdefault(name, set()).add(section)
+    ordinary_loads = {line[5:].strip() for line in lines[:output_index] if line.startswith("LOAD ")}
+    synthetic = set()
+    for index in range(output_index + 1, len(lines)):
+        if not lines[index].startswith("LOAD "):
+            continue
+        name = lines[index][5:].strip()
+        if name in ordinary_loads:
+            continue
+        contribution = sections.get(name, set())
+        if ((name == "dll stuff" and contribution and contribution <= {".reloc", ".edata"}) or
+                (re.fullmatch(prefix + r"rtr[0-9]{6}\.o", name) and contribution == {".rdata_runtime_pseudo_reloc"}) or
+                (re.fullmatch(prefix + r"ertr[0-9]{6}\.o", name) and contribution == {".rdata"})):
+            synthetic.add(index)
+    return synthetic
+
+
 class Audit:
     def __init__(self, root: Path, toolchain_roots: list[Path] | None = None):
         self.root = root.resolve(strict=True)
@@ -170,6 +210,16 @@ class Audit:
                                  responses=responses | {response})
             elif token.startswith("-Wl,"):
                 self.command(token[4:].split(","), base, responses=responses)
+            elif token in {"-o", "--output", "--out-implib", "--output-def", "-Map", "--Map"}:
+                index += 1
+                if index == len(tokens):
+                    raise ValueError(f"missing argument to {token}")
+                # GNU ld may declare an import-library output for an executable
+                # without exporting symbols, and therefore create no such file.
+                # Its location is still constrained to the generator workspace.
+                self.path(tokens[index], base, "command_output", must_exist=False)
+            elif token.startswith(("--output=", "--out-implib=", "--output-def=", "-Map=", "--Map=")):
+                self.path(token.split("=", 1)[1], base, "command_output", must_exist=False)
             elif token in {"-I", "-isystem", "-iquote", "-idirafter", "-include",
                            "-imacros", "-L", "-T", "--script", "--sysroot", "-isysroot"}:
                 index += 1
@@ -194,6 +244,52 @@ class Audit:
                     ".c", ".cc", ".cpp", ".cxx", ".s", ".h", ".hpp", ".ld", ".a", ".lib", ".o", ".obj"}:
                 self.path(token, base, "command_input", system_allowed=Path(token).suffix.lower() in {".a", ".lib"})
             index += 1
+
+    def target_source(self, target: dict, item: dict, build: Path) -> None:
+        """Recognize CMake's synthetic custom-target/rule source records narrowly."""
+        placeholder = False
+        if target.get("type") == "UTILITY" and item.get("isGenerated") is True and "compileGroupIndex" not in item:
+            graph = target.get("backtraceGraph", {})
+            try:
+                node = graph["nodes"][target["backtrace"]]
+                command = graph["commands"][node["command"]]
+                group = target["sourceGroups"][item["sourceGroupIndex"]]["name"]
+            except (KeyError, IndexError, TypeError):
+                command = group = None
+            target_build = build / target.get("paths", {}).get("build", ".")
+            name = target.get("name", "")
+            raw = Path(item["path"])
+            source = (raw if raw.is_absolute() else self.root / raw).resolve()
+            if name and Path(name).name == name and command == "add_custom_target":
+                phony = target_build / "CMakeFiles" / name
+                placeholder = ((group == "" and source == phony.resolve()) or
+                               (group == "CMake Rules" and source == Path(str(phony) + ".rule").resolve()))
+        self.path(item["path"], self.root,
+                  "cmake_utility_placeholder" if placeholder else "target_source",
+                  must_exist=not placeholder)
+
+    def link_map(self, filename: Path, build: Path) -> None:
+        self.path(filename, build, "link_map")
+        lines = filename.read_text(encoding="utf-8-sig").splitlines()
+        synthetic = pe_synthetic_map_records(lines)
+        declared_inputs = {item["path"] for item in self.inputs.values()
+                           if item["kind"] in {"command_input", "translation_unit", "explicit_build_input"}}
+        synthetic_count = 0
+        for index, line in enumerate(lines):
+            if not line.startswith("LOAD "):
+                continue
+            raw = line[5:].strip()
+            if raw == "linker stubs":
+                continue  # GNU ld's synthetic veneers, not an input file.
+            resolved = (filename.parent / raw).resolve()
+            if index in synthetic and not resolved.exists() and str(resolved) not in declared_inputs:
+                self.path(raw, filename.parent, "linker_synthetic_input", must_exist=False)
+                synthetic_count += 1
+            else:
+                self.path(raw, filename.parent, "linked_input", system_allowed=True)
+                self.coverage["map_inputs"] += 1
+        if synthetic_count:
+            self.notes.append(f"Classified {synthetic_count} in-memory PE linker records in {filename.name}")
 
     def build(self, build_dir: Path, dependency_files: list[Path] | None = None) -> None:
         build = self.path(build_dir, self.root, "build_directory")
@@ -247,7 +343,7 @@ class Audit:
             data = json.loads(filename.read_text(encoding="utf-8-sig"))
             self.coverage["target_records"] += 1
             for item in data.get("sources", []):
-                self.path(item["path"], self.root, "target_source")
+                self.target_source(data, item, build)
             for group in data.get("compileGroups", []):
                 for item in group.get("includes", []):
                     self.path(item["path"], self.root, "target_include", system_allowed=True)
@@ -264,14 +360,7 @@ class Audit:
             self.command(words(filename.read_text(encoding="utf-8-sig")), target_build, compiler=True)
             self.coverage["link_commands"] += 1
         for filename in build.rglob("*.map"):
-            self.path(filename, build, "link_map")
-            for line in filename.read_text(encoding="utf-8-sig").splitlines():
-                if line.startswith("LOAD "):
-                    raw = line[5:].strip()
-                    if raw == "linker stubs":
-                        continue  # GNU ld's synthetic veneers, not an input file.
-                    self.path(raw, filename.parent, "linked_input", system_allowed=True)
-                    self.coverage["map_inputs"] += 1
+            self.link_map(filename, build)
         depfiles = set(build.rglob("*.d")) | set(dependency_files or []) | set(self.required_depfiles)
         for filename in sorted(depfiles):
             filename = self.path(filename, build, "dependency_file")
@@ -417,6 +506,107 @@ class BoundaryTests(unittest.TestCase):
         audit = Audit(self.root)
         audit.command(["@link.rsp"], self.root)
         self.assertTrue(any("linker_script escapes" in item for item in audit.violations))
+
+    def test_declared_linker_outputs_need_not_exist(self):
+        audit = Audit(self.root)
+        audit.command(["-o", "app.exe", "-Wl,--out-implib,libapp.dll.a",
+                       "-Wl,-Map,app.map", "--output-def=app.def", "main.cpp"], self.root)
+        self.assertEqual(audit.violations, [])
+        outputs = [item for item in audit.inputs.values() if item["kind"] == "command_output"]
+        self.assertEqual(len(outputs), 4)
+        self.assertTrue(all(not Path(item["path"]).exists() for item in outputs))
+
+    def test_outputs_do_not_hide_inputs_or_allow_external_destinations(self):
+        outside = self.base / "outside.h"
+        audit = Audit(self.root)
+        audit.command(["--out-implib=missing.dll.a", str(outside), "missing-input.a",
+                       "-Wl,--out-implib," + (self.base / "outside.dll.a").as_posix()], self.root)
+        self.assertTrue(any("command_input escapes generator" in item for item in audit.violations))
+        self.assertTrue(any("command_input is missing" in item and "missing-input.a" in item for item in audit.violations))
+        self.assertTrue(any("command_output escapes generator" in item for item in audit.violations))
+        with self.assertRaises(ValueError):
+            audit.command(["--out-implib"], self.root)
+
+    def utility_target(self):
+        return {"type": "UTILITY", "name": "Continuous", "paths": {"build": "."},
+                "backtrace": 0, "backtraceGraph": {"commands": ["add_custom_target"], "nodes": [{"command": 0}]},
+                "sourceGroups": [{"name": ""}, {"name": "CMake Rules"}]}
+
+    def test_cmake_utility_placeholders_are_not_physical_sources(self):
+        target = self.utility_target()
+        audit = Audit(self.root)
+        for suffix, group in (("", 0), (".rule", 1)):
+            item = {"path": "build/CMakeFiles/Continuous" + suffix,
+                    "isGenerated": True, "sourceGroupIndex": group}
+            audit.target_source(target, item, self.root / "build")
+        self.assertEqual(audit.violations, [])
+        self.assertEqual({item["kind"] for item in audit.inputs.values()}, {"cmake_utility_placeholder"})
+
+    def test_real_generated_sources_still_require_files(self):
+        target = self.utility_target()
+        for changes in ({"path": "build/generated.cpp"}, {"isGenerated": False}, {"compileGroupIndex": 0}):
+            with self.subTest(changes=changes):
+                item = {"path": "build/CMakeFiles/Continuous", "isGenerated": True, "sourceGroupIndex": 0, **changes}
+                audit = Audit(self.root)
+                audit.target_source(target, item, self.root / "build")
+                self.assertTrue(any("target_source is missing" in value for value in audit.violations))
+        target["type"] = "EXECUTABLE"
+        audit = Audit(self.root)
+        audit.target_source(target, {"path": "build/CMakeFiles/Continuous", "isGenerated": True,
+                                     "sourceGroupIndex": 0}, self.root / "build")
+        self.assertTrue(any("target_source is missing" in value for value in audit.violations))
+
+    def test_generated_sources_and_placeholders_cannot_escape(self):
+        target = self.utility_target()
+        audit = Audit(self.root)
+        audit.target_source(target, {"path": str(self.base / "outside.h"), "isGenerated": True,
+                                     "sourceGroupIndex": 0}, self.root / "build")
+        target["paths"]["build"] = str(self.base)
+        audit.target_source(target, {"path": str(self.base / "CMakeFiles/Continuous"),
+                                     "isGenerated": True, "sourceGroupIndex": 0}, self.root / "build")
+        self.assertTrue(any("target_source escapes generator" in value for value in audit.violations))
+        self.assertTrue(any("cmake_utility_placeholder escapes generator" in value for value in audit.violations))
+
+    def pe_map(self):
+        return [" .rdata_runtime_pseudo_reloc",
+                "                0x0000000140001000       0x18 app_exe_rtr000000.o",
+                " .rdata         0x0000000140002000        0x8 app_exe_ertr000001.o",
+                " .reloc         0x0000000140003000       0xf0 dll stuff",
+                "OUTPUT(app.exe pei-x86-64)", "LOAD app_exe_rtr000000.o",
+                "LOAD app_exe_ertr000001.o", "LOAD dll stuff"]
+
+    def test_pe_map_requires_matching_output_placement_and_sections(self):
+        lines = self.pe_map()
+        self.assertEqual(pe_synthetic_map_records(lines), {5, 6, 7})
+        self.assertEqual(pe_synthetic_map_records([line.replace("pei-x86-64", "elf64-x86-64") for line in lines]), set())
+        self.assertEqual(pe_synthetic_map_records([line.replace("OUTPUT(app.exe", "OUTPUT(other.exe") for line in lines]), {7})
+        self.assertEqual(pe_synthetic_map_records([line.replace(".rdata_runtime_pseudo_reloc", ".text") for line in lines]), {6, 7})
+        self.assertEqual(pe_synthetic_map_records(["LOAD app_exe_rtr000000.o", *lines]), {7, 8})
+        external = str(self.base / "app_exe_rtr000000.o")
+        self.assertEqual(pe_synthetic_map_records([line.replace("app_exe_rtr000000.o", external) for line in lines]), {6, 7})
+
+    def test_pe_map_retains_real_missing_and_external_objects(self):
+        filename = self.root / "app.exe.map"
+        outside = self.base / "outside.o"
+        outside.write_bytes(b"external object")
+        filename.write_text("\n".join([*self.pe_map(), "LOAD missing.o", "LOAD " + outside.as_posix()]), encoding="utf-8")
+        audit = Audit(self.root)
+        audit.link_map(filename, self.root)
+        self.assertEqual(audit.coverage["map_inputs"], 2)
+        self.assertTrue(any("linked_input is missing" in value and "missing.o" in value for value in audit.violations))
+        self.assertTrue(any("linked_input escapes generator" in value for value in audit.violations))
+        self.assertEqual(sum(item["kind"] == "linker_synthetic_input" for item in audit.inputs.values()), 3)
+
+    def test_pe_names_do_not_exempt_declared_or_existing_objects(self):
+        filename = self.root / "app.exe.map"
+        filename.write_text("\n".join(self.pe_map()), encoding="utf-8")
+        audit = Audit(self.root)
+        audit.command(["app_exe_rtr000000.o"], self.root)
+        (self.root / "app_exe_ertr000001.o").write_bytes(b"real object")
+        audit.link_map(filename, self.root)
+        self.assertEqual(audit.coverage["map_inputs"], 2)
+        self.assertTrue(any("linked_input is missing" in value and "app_exe_rtr000000.o" in value for value in audit.violations))
+        self.assertEqual(sum(item["kind"] == "linker_synthetic_input" for item in audit.inputs.values()), 1)
 
     def test_empty_build_cannot_pass(self):
         audit = Audit(self.root)

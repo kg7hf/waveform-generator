@@ -110,6 +110,11 @@ void m110_tinyusb_cdc_flush(void)
     (void)tud_cdc_write_flush();
 }
 
+bool m110_tinyusb_cdc_connected(void)
+{
+    return tud_cdc_connected();
+}
+
 void USB_OTG1_IRQHandler(void)
 {
     tusb_int_handler(usb_root_port, true);

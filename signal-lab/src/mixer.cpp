@@ -58,6 +58,7 @@ void Engine::configure_passthrough() noexcept
     scaled_reference_ = 0.0;
     cursor_ = 0U;
     saturate_ = true;
+    process_error_ = ProcessError::none;
     stats_ = EngineStats{};
     output_digest_.reset();
     source_digest_.reset();
@@ -67,6 +68,7 @@ void Engine::configure_passthrough() noexcept
 bool Engine::configure(const Scenario& scenario, double reference_rms, std::uint64_t total_frames, const char** error) noexcept
 {
     configured_ = false;
+    process_error_ = ProcessError::none;
     scenario_ = &scenario;
     stage_count_ = 0U;
     for (auto& stage : stages_)
@@ -129,11 +131,18 @@ bool Engine::configure(const Scenario& scenario, double reference_rms, std::uint
 
 std::size_t Engine::process(const std::int16_t* input, std::size_t frames, std::int16_t* output, std::size_t output_capacity) noexcept
 {
-    if (!configured_ || frames > engine_block_frames || output_capacity < frames)
+    if (process_error_ != ProcessError::none)
     {
         return 0U;
     }
+    if (!configured_ || input == nullptr || output == nullptr || frames > engine_block_frames || output_capacity < frames + engine_slack_frames)
+    {
+        process_error_ = ProcessError::invalid_buffer;
+        return 0U;
+    }
     source_digest_.update(input, frames);
+    stats_.frames_in += frames;
+    stats_.source_digest = source_digest_.value();
     for (std::size_t index = 0U; index < frames; ++index)
     {
         work_[index] = static_cast<float>(static_cast<double>(input[index]) * input_scale_);
@@ -144,16 +153,12 @@ std::size_t Engine::process(const std::int16_t* input, std::size_t frames, std::
     {
         count = stages_[index]->process(work_, count, cursor_, capacity);
     }
+    float block_peak = 0.0f;
+    double block_energy = 0.0;
     for (std::size_t index = 0U; index < count; ++index)
     {
         const float sample = work_[index];
         const double scaled = static_cast<double>(sample) * 32768.0;
-        const float magnitude = sample < 0.0f ? -sample : sample;
-        if (magnitude > stats_.peak)
-        {
-            stats_.peak = magnitude;
-        }
-        stats_.output_energy += static_cast<double>(sample) * static_cast<double>(sample);
         double rounded = det::round_half_even(scaled);
         if (scaled < -32768.0 || scaled > 32767.0)
         {
@@ -161,6 +166,10 @@ std::size_t Engine::process(const std::int16_t* input, std::size_t frames, std::
             if (stats_.first_clipped_frame == 0xFFFFFFFFFFFFFFFFULL)
             {
                 stats_.first_clipped_frame = stats_.frames_out + index;
+            }
+            if (!saturate_)
+            {
+                process_error_ = ProcessError::clipping;
             }
         }
         if (rounded < -32768.0)
@@ -172,12 +181,14 @@ std::size_t Engine::process(const std::int16_t* input, std::size_t frames, std::
             rounded = 32767.0;
         }
         output[index] = static_cast<std::int16_t>(rounded);
+        const double emitted = static_cast<double>(output[index]) / 32768.0;
+        const float magnitude = static_cast<float>(emitted < 0.0 ? -emitted : emitted);
+        if (magnitude > block_peak)
+        {
+            block_peak = magnitude;
+        }
+        block_energy += emitted * emitted;
     }
-    output_digest_.update(output, count);
-    stats_.frames_in += frames;
-    stats_.frames_out += count;
-    stats_.output_digest = output_digest_.value();
-    stats_.source_digest = source_digest_.value();
     stats_.events_scheduled = 0U;
     stats_.events_applied = 0U;
     stats_.events_dropped = 0U;
@@ -189,6 +200,18 @@ std::size_t Engine::process(const std::int16_t* input, std::size_t frames, std::
         stats_.events_dropped += stage.events_dropped;
     }
     cursor_ += frames;
+    if (process_error_ != ProcessError::none)
+    {
+        return 0U;
+    }
+    if (block_peak > stats_.peak)
+    {
+        stats_.peak = block_peak;
+    }
+    stats_.output_energy += block_energy;
+    output_digest_.update(output, count);
+    stats_.frames_out += count;
+    stats_.output_digest = output_digest_.value();
     return count;
 }
 

@@ -255,6 +255,24 @@ bool parse_fade(const Document& document, const Value& object, FadeParams& param
 
 bool parse_slip(const Document& document, const Value& object, SampleSlipParams& params, const char** error) noexcept
 {
+    const auto read_length = [&](const Value& value, std::uint32_t& out) noexcept {
+        double length = 0.0;
+        if (!read_number(document, value, "length_samples", length, true, error))
+        {
+            return false;
+        }
+        // Test the floating-point range before converting, including non-finite values.
+        if (!(length >= 1.0 && length <= static_cast<double>(max_slip_length)))
+        {
+            return set_error(error, "sample_slip length_samples must be an integer in 1..1024");
+        }
+        out = static_cast<std::uint32_t>(length);
+        if (static_cast<double>(out) != length)
+        {
+            return set_error(error, "sample_slip length_samples must be an integer in 1..1024");
+        }
+        return true;
+    };
     const Value* events = document.find(object, "events");
     if (events != nullptr)
     {
@@ -270,8 +288,7 @@ bool parse_slip(const Document& document, const Value& object, SampleSlipParams&
                 return set_error(error, "sample_slip.events entries must be objects");
             }
             SlipEvent& event = params.events[index];
-            double length = 0.0;
-            if (!read_number(document, *item, "at_seconds", event.at_seconds, true, error) || !read_number(document, *item, "length_samples", length, true, error))
+            if (!read_number(document, *item, "at_seconds", event.at_seconds, true, error) || !read_length(*item, event.length_samples))
             {
                 return false;
             }
@@ -281,7 +298,6 @@ bool parse_slip(const Document& document, const Value& object, SampleSlipParams&
                 return set_error(error, "sample_slip kind must be delete or duplicate");
             }
             event.duplicate = kind->equals("duplicate");
-            event.length_samples = static_cast<std::uint32_t>(length);
         }
         params.event_count = events->child_count;
     }
@@ -292,8 +308,8 @@ bool parse_slip(const Document& document, const Value& object, SampleSlipParams&
         {
             return set_error(error, "sample_slip kind must be delete or duplicate");
         }
-        double length = 0.0;
-        if (!read_number(document, object, "length_samples", length, true, error))
+        std::uint32_t length = 0U;
+        if (!read_length(object, length))
         {
             return false;
         }
@@ -337,14 +353,7 @@ bool parse_slip(const Document& document, const Value& object, SampleSlipParams&
         {
             params.events[index].at_seconds = first + static_cast<double>(index) * step;
             params.events[index].duplicate = kind->equals("duplicate");
-            params.events[index].length_samples = static_cast<std::uint32_t>(length);
-        }
-    }
-    for (std::uint32_t index = 0U; index < params.event_count; ++index)
-    {
-        if (params.events[index].length_samples == 0U || params.events[index].length_samples > sample_rate_hz)
-        {
-            return set_error(error, "sample_slip length_samples must be in 1..48000");
+            params.events[index].length_samples = length;
         }
     }
     return true;

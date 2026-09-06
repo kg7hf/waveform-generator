@@ -12,7 +12,7 @@ Blackman-windowed-sinc FIR, and randomness is NumPy PCG64 seeded by
 SeedSequence([seed, family, index]).
 """
 
-VERSION = "signal-lab-py/0.1.0"
+VERSION = "signal-lab-py/0.1.1"
 SCENARIO_SCHEMA = "signal-lab.scenario/1"
 SIDECAR_SCHEMA = "signal-lab.sidecar/1"
 FS = 48000

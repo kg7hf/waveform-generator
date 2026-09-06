@@ -74,57 +74,75 @@ public:
     [[nodiscard]] std::size_t process(float* block, std::size_t frames, std::uint64_t first_input_frame, std::size_t) noexcept override
     {
         const std::uint64_t block_end = first_input_frame + frames;
-        // Admit events that begin before this block ends.
-        while (!exhausted_ && pending_ < block_end)
+        std::uint64_t cursor = first_input_frame;
+        while (cursor < block_end)
         {
-            if (active_count_ < max_active_fades)
+            // Retire at event boundaries, not once per input block. The bounded
+            // slots represent simultaneous fades, including at a shared end/start.
+            std::uint32_t kept = 0U;
+            for (std::uint32_t slot = 0U; slot < active_count_; ++slot)
             {
-                active_[active_count_++] = pending_;
-                stats_.events_applied++;
+                if (active_[slot] + length_ > cursor)
+                {
+                    active_[kept++] = active_[slot];
+                }
             }
-            else
+            active_count_ = kept;
+            while (!exhausted_ && pending_ <= cursor)
             {
-                stats_.events_dropped++;
+                if (active_count_ < max_active_fades)
+                {
+                    active_[active_count_++] = pending_;
+                    stats_.events_applied++;
+                }
+                else
+                {
+                    stats_.events_dropped++;
+                }
+                advance_pending();
             }
-            advance_pending();
+            std::uint64_t segment_end = block_end;
+            if (!exhausted_ && pending_ < segment_end)
+            {
+                segment_end = pending_;
+            }
+            for (std::uint32_t slot = 0U; slot < active_count_; ++slot)
+            {
+                const std::uint64_t end = active_[slot] + length_;
+                if (end < segment_end)
+                {
+                    segment_end = end;
+                }
+            }
+            // Keep the same chronological multiplication order for overlapping fades.
+            for (std::uint32_t slot = 0U; slot < active_count_; ++slot)
+            {
+                const std::uint64_t start = active_[slot];
+                for (std::uint64_t absolute = cursor; absolute < segment_end; ++absolute)
+                {
+                    const std::uint64_t u = absolute - start;
+                    double depth = 1.0;
+                    if (u < attack_)
+                    {
+                        depth = 0.5 * (1.0 - det::cos(det::pi * static_cast<double>(u) / static_cast<double>(attack_)));
+                    }
+                    else if (u >= attack_ + hold_)
+                    {
+                        const double phase = static_cast<double>(u - attack_ - hold_) / static_cast<double>(recovery_);
+                        depth = 0.5 * (1.0 + det::cos(det::pi * phase));
+                    }
+                    const double gain = det::exp(depth_scale_ * depth);
+                    float& sample = block[absolute - first_input_frame];
+                    sample = static_cast<float>(static_cast<double>(sample) * gain);
+                    stats_.component_frames++;
+                    if (gain < minimum_gain_)
+                    {
+                        minimum_gain_ = gain;
+                    }
+                }
+            }
+            cursor = segment_end;
         }
-        // Apply every active event and retire the finished ones.
-        std::uint32_t kept = 0U;
-        for (std::uint32_t slot = 0U; slot < active_count_; ++slot)
-        {
-            const std::uint64_t start = active_[slot];
-            const std::uint64_t end = start + length_;
-            if (end <= first_input_frame)
-            {
-                continue; // finished before this block
-            }
-            const std::uint64_t from = start > first_input_frame ? start : first_input_frame;
-            const std::uint64_t to = end < block_end ? end : block_end;
-            for (std::uint64_t absolute = from; absolute < to; ++absolute)
-            {
-                const std::uint64_t u = absolute - start;
-                double depth = 1.0;
-                if (u < attack_)
-                {
-                    depth = 0.5 * (1.0 - det::cos(det::pi * static_cast<double>(u) / static_cast<double>(attack_)));
-                }
-                else if (u >= attack_ + hold_)
-                {
-                    const double phase = static_cast<double>(u - attack_ - hold_) / static_cast<double>(recovery_);
-                    depth = 0.5 * (1.0 + det::cos(det::pi * phase));
-                }
-                const double gain = det::exp(depth_scale_ * depth);
-                float& sample = block[absolute - first_input_frame];
-                sample = static_cast<float>(static_cast<double>(sample) * gain);
-                stats_.component_frames++;
-                if (gain < minimum_gain_)
-                {
-                    minimum_gain_ = gain;
-                }
-            }
-            active_[kept++] = start;
-        }
-        active_count_ = kept;
         return frames;
     }
 

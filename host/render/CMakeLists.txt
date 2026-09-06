@@ -1,4 +1,4 @@
-add_executable(signal_lab_render signal_lab_render.cpp)
+add_executable(signal_lab_render signal_lab_render.cpp live_replay.cpp "${WFG_ROOT}/common/live_protocol.cpp")
 target_include_directories(signal_lab_render PRIVATE "${WFG_ROOT}")
 target_link_libraries(signal_lab_render PRIVATE wfg_signal_lab)
 target_compile_features(signal_lab_render PRIVATE cxx_std_23)

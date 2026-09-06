@@ -170,6 +170,7 @@ def all_wavs(spec, root, jobs_list, only_modes=None):
 
 def stage_score(wavs, decoder, engines, jobs, overwrite):
     identity = {"path": str(decoder), "sha256": sha256_file(decoder)}
+    wav_hashes = {wav: sha256_file(wav) for wav in wavs}
     scores = {engine: [] for engine in engines}
     work = []
     for engine in engines:
@@ -178,7 +179,7 @@ def stage_score(wavs, decoder, engines, jobs, overwrite):
             if score_path.exists() and not overwrite:
                 with open(score_path, "r", encoding="utf-8") as handle:
                     existing = json.load(handle)
-                if existing.get("wav_sha256") == json.load(open(wav.with_suffix(".json"), "r", encoding="utf-8")).get("output", {}).get("sha256", existing.get("wav_sha256")) \
+                if existing.get("wav_sha256") == wav_hashes[wav] \
                         and existing.get("decoder", {}).get("identity", {}).get("sha256") == identity["sha256"]:
                     scores[engine].append(existing)
                     continue
@@ -258,11 +259,18 @@ def stage_summary(spec, root, jobs_list, scores, engines):
 
 def stage_verify(jobs_list, workers):
     """Regenerate every impaired scenario into a temporary file and compare the PCM hash with the sidecar."""
-    mismatches = []
+    if not jobs_list:
+        raise RenderError("verification plan contains no scenarios")
+    failures = []
+    mismatches = 0
+    missing = 0
     checked = 0
     for scenario, output in jobs_list:
         sidecar_path = output.with_suffix(".json")
         if not sidecar_path.exists():
+            failures.append(scenario["test_id"])
+            missing += 1
+            print("MISSING SIDECAR %s: %s" % (scenario["test_id"], sidecar_path))
             continue
         with open(sidecar_path, "r", encoding="utf-8") as handle:
             recorded = json.load(handle)
@@ -270,10 +278,11 @@ def stage_verify(jobs_list, workers):
             fresh = render(scenario, Path(temp) / output.name, base_dir=output.parent, overwrite=True, created_utc=recorded["created_utc"])
         checked += 1
         if fresh["output"]["pcm"]["sha256"] != recorded["output"]["pcm"]["sha256"]:
-            mismatches.append(scenario["test_id"])
+            failures.append(scenario["test_id"])
+            mismatches += 1
             print("MISMATCH " + scenario["test_id"])
-    print("verify: %d scenarios re-rendered, %d mismatches" % (checked, len(mismatches)))
-    return mismatches
+    print("verify: %d of %d scenarios re-rendered, %d mismatches, %d missing sidecars" % (checked, len(jobs_list), mismatches, missing))
+    return failures
 
 
 def main(argv=None):

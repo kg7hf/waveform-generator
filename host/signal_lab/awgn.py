@@ -67,7 +67,7 @@ class Awgn(Impairment):
         duration = self.params.get("duration_seconds")
         self.end = total_frames if duration is None else min(total_frames, self.start + seconds_to_frames(duration, "awgn.duration_seconds", True))
         self.scale = self.reference_rms * 10.0 ** (-self.snr_db / 20.0)
-        self.noise = BandNoise(generator(seed, FAMILY_BACKGROUND_NOISE, 0), stationary=True)
+        self.noise = BandNoise(generator(seed, FAMILY_BACKGROUND_NOISE, self.instance_index), stationary=True)
 
     def process(self, block, first_frame):
         count = len(block)
@@ -82,4 +82,5 @@ class Awgn(Impairment):
         return {"type": self.type_name, "snr_db": self.snr_db, "start_frame": self.start, "end_frame": self.end,
                 "noise_target_rms_dbfs": 20 * math.log10(self.scale) if self.scale > 0 else None,
                 "band_hz": list(BAND_HZ), "fir_taps": FIR_TAPS, "rng_family": FAMILY_BACKGROUND_NOISE,
+                "rng_index": self.instance_index,
                 "convention": "snr_db = 20 log10(reference RMS / stationary band-limited noise target RMS); noise power counted in the 300-3300 Hz band"}

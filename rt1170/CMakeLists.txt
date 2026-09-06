@@ -128,11 +128,19 @@ elseif(WFG_FIRMWARE_IMAGE STREQUAL "player")
     # Phase 3: the portable impairment engine runs in the player task between the
     # SD read and the ring push. Same sources and float rules as the host renderer.
     include("${WFG_ROOT}/signal-lab/sources.cmake")
+    include("${WFG_ROOT}/native-m110/sources.cmake")
     set_source_files_properties(${WFG_SIGNAL_LAB_SOURCES} PROPERTIES
         COMPILE_OPTIONS "${WFG_SIGNAL_LAB_COMPILE_OPTIONS}")
-    target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE "${WFG_SIGNAL_LAB_INCLUDE}")
+    target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE "${WFG_SIGNAL_LAB_INCLUDE}" "${WFG_NATIVE_M110_INCLUDE}")
+    set_source_files_properties(${WFG_NATIVE_M110_SOURCES} player.cpp tx_artifact.cpp "${WFG_ROOT}/common/live_protocol.cpp" PROPERTIES
+        COMPILE_OPTIONS "-ffp-contract=off;-fno-fast-math")
     target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
         player.cpp
+        tx_usb.cpp
+        "${WFG_ROOT}/common/tx_protocol.cpp"
+        "${WFG_ROOT}/common/dd008/cdc_mux_protocol.cpp"
+        "${WFG_ROOT}/common/dd008/cdc_mux_session.cpp"
+        "${WFG_ROOT}/common/live_protocol.cpp"
         ${WFG_SIGNAL_LAB_SOURCES}
         platform/waveform_sd.c
         platform/waveform_msc.c
@@ -148,6 +156,11 @@ elseif(WFG_FIRMWARE_IMAGE STREQUAL "player")
         "${WFG_FATFS_ROOT}/source/fsl_sd_disk/fsl_sd_disk.c"
         "${WFG_TINYUSB_ROOT}/src/class/msc/msc_device.c"
     )
+    if(WFG_MSC_READ_ONLY)
+        target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE tx_artifact_readonly.cpp)
+    else()
+        target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE tx_artifact.cpp encoder_catalog.cpp ${WFG_NATIVE_M110_SOURCES})
+    endif()
     target_compile_definitions(${MCUX_SDK_PROJECT_NAME} PRIVATE
         WFG_PLAYER_IMAGE=1
         WFG_SD_USE_BOOTCLOCKRUN_USDHC1=1
@@ -208,6 +221,7 @@ set_target_properties(${MCUX_SDK_PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
 )
 target_compile_definitions(${MCUX_SDK_PROJECT_NAME} PRIVATE "WFG_BUILD_ID=\"${WFG_BUILD_ID}\"")
+target_compile_definitions(${MCUX_SDK_PROJECT_NAME} PRIVATE "WFG_SOURCE_MANIFEST_SHA256=\"${WFG_SOURCE_MANIFEST_SHA256}\"")
 set_source_files_properties(${wfg_local_c_sources} PROPERTIES
     COMPILE_OPTIONS "-Wall;-Wextra;-Wpedantic;-Werror")
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE

@@ -1,18 +1,26 @@
 # M110 RT1170 waveform generator
 
 This directory is the standalone project root for the original
-MIMXRT1170-EVK CM7 waveform-generator fixture. Its firmware will replay frozen
+MIMXRT1170-EVK CM7 waveform-generator fixture. Its firmware replays retained
 48 kHz mono PCM16 WAV files through the EVK WM8960 codec. The PC remains the
 device-under-test host and owns analog capture, M110 receive decoding, BER, and
-the retained run record.
+the retained run record. Live CW, static and fade controls are recorded at exact
+sample positions for replay. An independent encoder utility can create a clean
+WAV on the PC or on the RT1170 SD card from a payload file or USB upload.
+
+Current workflows are documented in [Phase 4 live control](docs/phase4-live-control.md)
+and [Phase 5 artifact generation](docs/phase5-artifact-generator.md). M110B is the
+first encoder adapter behind a generic PCM source and WAV writer; playback and
+the impairment engine do not depend on a modem encoder.
+See the [Phases 4–5 validation report](docs/phase4-5-implementation-report.md)
+for the 20-test-suite result, firmware memory use and remaining hardware checks.
 
 Phase 1.0 freezes the local file, protocol, counter, capture, decoder, evidence,
 and qualification contracts. Phase 1.1 establishes independent host checks and
-RT1170 scaffold/tone cross-builds. The revised P1.2 is the smallest working
-host-to-microSD-to-codec slice: expose the card through USB mass storage, use
-CDC to hand ownership to firmware, play one fixed validated WAV once, then stop.
-Long-duration buffering, WFG/1 control, capture orchestration, qualification
-packaging, and the one-hour run follow after that vertical slice works. A build,
+RT1170 scaffold/tone cross-builds. The historical P1.2 checkpoint established
+host-to-microSD-to-codec playback. Phases 1–3 added deterministic scenarios and
+the portable impairment engine; Phases 4–5 add live control and artifact creation.
+Full WFG/1 qualification, packaging and the one-hour gate remain separate. A build,
 resident tone, or short card playback is engineering evidence only; it does not
 prove audio integrity, interoperability, or formal M110 conformance.
 
@@ -77,14 +85,15 @@ cmake --build --preset rt1170-player-readonly-release --parallel
 The `rt1170-*` scaffold compiles the original-EVK board, FreeRTOS, WM8960, and
 TinyUSB mechanisms but leaves playback unavailable. The `rt1170-tone-*` image is
 an optional resident-code tone checkpoint. The `rt1170-player-*` image is the
-P1.2 composite CDC-plus-MSC microSD player. Its temporary CDC media commands hand
-the card between the PC and firmware, and it reads `2:/WG/PLAY.WAV` once before
-stopping. The normal player uses USB PID `0x4012` and permits host staging. The
+composite CDC-plus-MSC microSD player. CDC commands hand the card between the PC
+and firmware, select a WAV and play it. The normal player uses USB PID `0x4012`
+and permits host staging and local artifact creation. The
 `rt1170-player-readonly-*` inspection image uses PID `0x4013`, reports the LUN
 write-protected, and rejects every WRITE10 before an SD write function can run.
-It is suitable for inspecting an existing card without changing it. Both player
-variants read FAT12/16/32 and exFAT through a read-only FatFs configuration. They
-do not implement the full WFG/1 control state machine yet.
+It is suitable for inspecting an existing card without changing it, uses a
+read-only FatFs build, and excludes the local artifact writer. The normal player
+uses writable FatFs for artifact creation. Both support FAT12/16/32 and exFAT.
+The engineering WFG-LIVE/1 protocol is separate from full WFG/1 qualification.
 
 ## Windows waveform capture
 
@@ -179,7 +188,7 @@ full on-board sidecar/hash validation begins with WFG/1 ARM in P1.4. Never allow
 Windows mass storage and firmware FatFs to own the card at the same time.
 If `STATUS` shows the media as uninitialized or faulted after a card is inserted
 or replaced, `Host` may be sent again while playback and FatFs are idle. The
-firmware keeps the four-command P1.2 protocol: `OK MEDIA HOST` means the LUN is
+firmware retains compatibility with the four-command P1.2 protocol: `OK MEDIA HOST` means the LUN is
 already host-ready, while `OK MEDIA HOST INIT` means one initialization attempt
 has started or is already in progress; a later `Status` reports the result.
 
@@ -219,6 +228,13 @@ python host/m110_score.py --decoder $dec --engine siso <wav>...              # s
 python -m unittest tests.test_signal_lab -v
 ```
 
+The default tests stay inside this repository. Historical comparisons against
+the parent checkout are optional and require `WFG_PARENT_REFERENCE_TESTS=1`.
+The first Python AWGN stage retains the legacy noise stream; additional AWGN
+stages use distinct instance streams. Output peak/RMS describe the emitted
+PCM16 samples, including saturation. Corpus score reuse checks the current WAV
+hash, and verification fails if any planned sidecar is missing.
+
 From Git Bash the WinLibs `mingw64/bin` directory must precede Git's own on
 `PATH` before the M110 executables are run (see the parent repository's
 `docs/process/M110-improvement-handoff.md`).
@@ -247,8 +263,9 @@ compiles the same sources (`signal-lab/sources.cmake`).
 build\host-release\host\render\signal_lab_render.exe --scenario case.json --source clean.wav --output impaired.wav --sidecar impaired.json --target-scenario PLAY.SCN
 ```
 
-`--target-scenario` writes the scenario with the measured `reference_rms`
-injected; copy it to `G:\WG\PLAY.SCN` next to `PLAY.WAV`. The player image
+`--target-scenario` writes the scenario with the effective `reference_rms`
+inserted or replaced (including a `--reference-rms` override); copy it to
+`G:\WG\PLAY.SCN` next to `PLAY.WAV`. The player image
 loads it when `PLAY` starts and impairs every 4 KiB SD chunk in the player
 task. The chain is producer-paced: SD read and engine feed a 65 536-frame
 (1.37 s) output FIFO in OCRAM2 (generator-local linker script
@@ -267,6 +284,24 @@ the player is the clean pass-through it was before. `host/capture-session.ps1` r
 as a controlled session (READY, stop file, STOP, FINAL) for analog end-to-end
 checks. Results, digests and the exact procedure are in
 [docs/phase2-3-portable-engine-report.md](docs/phase2-3-portable-engine-report.md).
+
+The portable engine accepts slip run lengths from 1 to 1024 samples. Its fixed
+2304-frame output buffer also limits duplicate expansion to 256 samples in any
+2048-source-frame window. Schedules exceeding that budget or requesting more
+delivered history than exists are rejected during configuration, independently
+of the caller's block size; they do not silently discard source samples.
+
+`clip_policy: reject` latches a processing error on the first clipping block.
+The host exits unsuccessfully before writing its output artifacts. The RT1170
+stops playback without enqueueing that block and reports `engine_state=3`,
+`engine_error=7`, and player error 16. Other processing failures use
+`engine_error=8`. Configuration rejection remains `engine_state=2` with clean
+playback. Earlier valid audio may already have played before a runtime error;
+the player does not scan the entire source in advance. The source/sink helper
+also returns failure when engine processing fails.
+
+The PR 1 findings, Copilot assessments, and fix validation are recorded in
+[docs/reviews/review-pr-1.md](docs/reviews/review-pr-1.md).
 
 ## Project records
 

@@ -23,6 +23,8 @@ inline constexpr std::uint32_t sample_rate_hz = 48000U;
 inline constexpr std::uint32_t max_stages = 8U;
 inline constexpr std::uint32_t max_events = 32U;
 inline constexpr std::uint32_t max_test_id = 96U;
+// Maximum deleted or duplicated run retained by the portable streaming engine.
+inline constexpr std::uint32_t max_slip_length = 1024U;
 
 enum class StageType : std::uint8_t
 {

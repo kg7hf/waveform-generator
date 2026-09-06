@@ -22,3 +22,11 @@ add_custom_command(TARGET wfg_signal_lab_tests POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E touch
             "${CMAKE_CURRENT_BINARY_DIR}/libwfg_signal_lab_tests.dll.a")
 add_test(NAME wfg-signal-lab-cpp COMMAND wfg_signal_lab_tests)
+
+add_executable(wfg_live_control_tests tests/live_control_tests.cpp)
+target_link_libraries(wfg_live_control_tests PRIVATE wfg_signal_lab)
+target_compile_features(wfg_live_control_tests PRIVATE cxx_std_23)
+if(NOT MSVC)
+    target_compile_options(wfg_live_control_tests PRIVATE -Wall -Wextra -Wpedantic -Werror ${WFG_SIGNAL_LAB_COMPILE_OPTIONS})
+endif()
+add_test(NAME wfg-live-control-cpp COMMAND wfg_live_control_tests)

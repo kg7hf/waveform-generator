@@ -172,11 +172,26 @@ def flatten(record, expected_bytes, expected_payload=None):
 def expected_payload_from_sidecar(wav):
     sidecar = Path(wav).with_suffix(".json")
     if not sidecar.exists():
+        sidecar = Path(wav).with_suffix(".JSON")
+    if not sidecar.exists():
         return None, None
     with open(sidecar, "r", encoding="utf-8") as handle:
         data = json.load(handle)
+    # The generic board writer deliberately stores an opaque encoder profile.
+    # Interpret M110 profiles only here, in the M110-specific scoring adapter.
+    for reference in (data, data.get("source_reference") or {}):
+        if reference.get("schema") == "waveform-artifact/1" and reference.get("encoder") == "M110B":
+            profile = re.fullmatch(r"(75|150|300|600|1200|2400|4800):(short|long|zero)", reference.get("profile", ""))
+            if profile:
+                rate, interleave = profile.groups()
+                if (rate == "4800") == (interleave == "zero"):
+                    reference.setdefault("mode", rate + interleave[0].upper())
+                    reference.setdefault("kind", "reference_perfect")
     payload = data.get("payload") or (data.get("source_reference") or {}).get("payload")
-    return (payload or {}).get("path"), data
+    payload_path = (payload or {}).get("path")
+    if payload_path and not Path(payload_path).is_absolute():
+        payload_path = str((sidecar.parent / payload_path).resolve())
+    return payload_path, data
 
 
 def run_decoder(decoder, wav, expect_file, engine="siso", extra_args=(), timeout=3600):
@@ -196,6 +211,7 @@ def score_one(decoder, wav, engine, extra_args, expect_file=None, keep_log=True,
         raise FileNotFoundError("no expected payload for %s (pass --expect-file)" % wav)
     expected_payload = expect.read_bytes()
     expected_bytes = len(expected_payload)
+    wav_sha256 = sha256_file(wav)
     argv, code, elapsed, text = run_decoder(decoder, wav, expect, engine, extra_args)
     record = parse_decoder_output(text)
     flat = flatten(record, expected_bytes, expected_payload)
@@ -206,7 +222,7 @@ def score_one(decoder, wav, engine, extra_args, expect_file=None, keep_log=True,
         "schema": SCORE_SCHEMA,
         "test_id": (sidecar or {}).get("test_id", wav.stem),
         "wav": str(wav),
-        "wav_sha256": (sidecar or {}).get("output", {}).get("sha256") or (sidecar or {}).get("wav", {}).get("sha256") or sha256_file(wav),
+        "wav_sha256": wav_sha256,
         "mode": (sidecar or {}).get("mode") or ((sidecar or {}).get("source_reference") or {}).get("mode") or tags.get("mode"),
         "family": tags.get("family", "reference" if (sidecar or {}).get("kind") == "reference_perfect" else None),
         "severity": tags.get("severity"),

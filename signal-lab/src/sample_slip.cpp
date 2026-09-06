@@ -8,9 +8,6 @@ namespace signal_lab
 namespace
 {
 
-// Longest run the streaming engine can delete or re-emit (the corpus uses <= 48).
-constexpr std::uint32_t max_slip_length = 1024U;
-
 struct PlannedSlip
 {
     std::uint64_t frame{};
@@ -31,11 +28,11 @@ public:
     [[nodiscard]] bool prepare(const StageContext& context, const char** error) noexcept override
     {
         scratch_ = context.scratch;
-        if (scratch_ == nullptr)
+        if (scratch_ == nullptr || params_.event_count > max_events)
         {
             if (error != nullptr)
             {
-                *error = "sample_slip needs the engine scratch buffer";
+                *error = "sample_slip needs scratch storage and at most 32 events";
             }
             return false;
         }
@@ -48,19 +45,11 @@ public:
             {
                 if (error != nullptr)
                 {
-                    *error = "sample_slip length_samples must be in 1..4096 for the streaming engine";
+                    *error = "sample_slip length_samples must be in 1..1024 for the streaming engine";
                 }
                 return false;
             }
             PlannedSlip planned{det::seconds_to_frames(event.at_seconds, sample_rate_hz), event.duplicate, event.length_samples};
-            if (planned.duplicate && planned.frame < planned.length)
-            {
-                if (error != nullptr)
-                {
-                    *error = "sample_slip duplicate needs length_samples frames of history before it";
-                }
-                return false;
-            }
             // Insertion sort by frame (stable).
             std::uint32_t position = count_;
             while (position > 0U && planned_[position - 1U].frame > planned.frame)
@@ -74,6 +63,10 @@ public:
             {
                 max_length_ = planned.length;
             }
+        }
+        if (!validate_schedule(context.total_frames, error))
+        {
+            return false;
         }
         cursor_ = 0U;
         delete_remaining_ = 0U;
@@ -111,7 +104,9 @@ public:
             input = before;
             if (event.duplicate)
             {
-                if (output + event.length > capacity)
+                // Keep every unconsumed source sample even if a caller supplies less
+                // capacity than the engine contract or skips input between calls.
+                if (output + event.length + (frames - input) > capacity || output + history_count_ < event.length)
                 {
                     stats_.events_dropped++;
                 }
@@ -181,6 +176,75 @@ public:
     }
 
 private:
+    bool validate_schedule(std::uint64_t total_frames, const char** error) const noexcept
+    {
+        // Simulate delivered history in input-frame order. Events inside a deleted
+        // run are dropped by process(), so they cannot provide or consume history.
+        bool applied_duplicates[max_events]{};
+        std::uint64_t consumed = 0U;
+        std::uint64_t history = 0U;
+        for (std::uint32_t index = 0U; index < count_; ++index)
+        {
+            const PlannedSlip& event = planned_[index];
+            if (total_frames != 0U && event.frame >= total_frames)
+            {
+                break;
+            }
+            if (event.frame < consumed)
+            {
+                continue;
+            }
+            const std::uint64_t gap = event.frame - consumed;
+            history = gap >= max_slip_length - history ? max_slip_length : history + gap;
+            consumed = event.frame;
+            if (event.duplicate)
+            {
+                if (history < event.length)
+                {
+                    if (error != nullptr)
+                    {
+                        *error = "sample_slip duplicate needs length_samples previously emitted frames";
+                    }
+                    return false;
+                }
+                applied_duplicates[index] = true;
+                history = event.length >= max_slip_length - history ? max_slip_length : history + event.length;
+            }
+            else
+            {
+                consumed = event.length > unbounded_frames - consumed ? unbounded_frames : consumed + event.length;
+            }
+        }
+        // A process() call consumes up to 2048 input frames and must return all
+        // output immediately. Reject excess expansion at configure time, independent
+        // of the caller's block boundaries, rather than discard source samples.
+        // Counting only duplicates is conservative when nearby deletions offset them.
+        for (std::uint32_t first = 0U; first < count_; ++first)
+        {
+            if (!applied_duplicates[first])
+            {
+                continue;
+            }
+            std::size_t expansion = 0U;
+            for (std::uint32_t index = first; index < count_ && planned_[index].frame - planned_[first].frame < engine_block_frames; ++index)
+            {
+                if (applied_duplicates[index])
+                {
+                    expansion += planned_[index].length;
+                }
+            }
+            if (expansion > engine_slack_frames)
+            {
+                if (error != nullptr)
+                {
+                    *error = "sample_slip duplicates exceed 256 output frames in a 2048-input-frame window";
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
     std::size_t copy_input(const float* block, std::size_t from, std::size_t to, std::size_t output, std::size_t capacity) noexcept
     {
         for (std::size_t index = from; index < to && output < capacity; ++index)

@@ -13,14 +13,21 @@
 namespace signal_lab
 {
 
+enum class ProcessError : std::uint8_t
+{
+    none,
+    invalid_buffer,
+    clipping,
+};
+
 struct EngineStats
 {
     std::uint64_t frames_in{};
     std::uint64_t frames_out{};
     std::uint64_t clipped_samples{};
     std::uint64_t first_clipped_frame{0xFFFFFFFFFFFFFFFFULL};
-    float peak{};
-    double output_energy{};
+    float peak{};                 // Absolute peak of emitted, quantized PCM / 32768.
+    double output_energy{};       // Sum of squares of emitted, quantized PCM / 32768.
     std::uint64_t output_digest{};   // FNV-1a 64 over the emitted PCM16 stream
     std::uint64_t source_digest{};   // FNV-1a 64 over the consumed PCM16 stream
     std::uint32_t stage_count{};
@@ -47,7 +54,14 @@ public:
 
     // frames <= engine_block_frames; output capacity >= frames + engine_slack_frames.
     // Returns the number of output frames written (differs from `frames` only with sample slips).
+    // On failure returns zero and latches process_error() until reconfiguration. A
+    // rejected block consumes its input but commits no output samples or output stats.
     [[nodiscard]] std::size_t process(const std::int16_t* input, std::size_t frames, std::int16_t* output, std::size_t output_capacity) noexcept;
+
+    [[nodiscard]] ProcessError process_error() const noexcept
+    {
+        return process_error_;
+    }
 
     [[nodiscard]] const EngineStats& stats() const noexcept
     {
@@ -82,6 +96,7 @@ private:
     std::uint64_t cursor_{};
     bool configured_{};
     bool saturate_{true};
+    ProcessError process_error_{ProcessError::none};
     EngineStats stats_{};
     det::StreamDigest output_digest_{};
     det::StreamDigest source_digest_{};

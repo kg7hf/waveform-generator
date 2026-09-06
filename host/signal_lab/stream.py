@@ -52,6 +52,7 @@ class Impairment:
         self.total_frames = None
         self.seed = None
         self.index = 0
+        self.instance_index = 0
         self.energy = 0.0
         self.peak = 0.0
         self.frames_seen = 0
@@ -93,7 +94,12 @@ class Pipeline:
         self.stages = list(stages)
 
     def prepare(self, reference_rms, total_frames, seed):
+        instances = {}
         for index, stage in enumerate(self.stages):
+            # AWGN keeps its first legacy stream at zero regardless of stage
+            # order, while repeated instances need independent noise streams.
+            stage.instance_index = instances.get(stage.type_name, 0)
+            instances[stage.type_name] = stage.instance_index + 1
             stage.prepare(reference_rms, total_frames, seed, index)
 
     def run(self, samples, block=BLOCK):

@@ -18,6 +18,7 @@ uint32_t m110_tinyusb_cdc_available(void);
 uint32_t m110_tinyusb_cdc_read(void* buffer, uint32_t size);
 uint32_t m110_tinyusb_cdc_write(const void* buffer, uint32_t size);
 void m110_tinyusb_cdc_flush(void);
+bool m110_tinyusb_cdc_connected(void);
 
 // Debugger-visible bring-up progress. Values are stable evidence codes for the
 // board ports and do not participate in protocol behavior.

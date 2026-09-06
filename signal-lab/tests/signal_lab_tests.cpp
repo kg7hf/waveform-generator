@@ -3,6 +3,7 @@
 #include "signal_lab/det_math.hpp"
 #include "signal_lab/json.hpp"
 #include "signal_lab/mixer.hpp"
+#include "signal_lab/sample_stream.hpp"
 #include "signal_lab/scenario.hpp"
 
 #include <cmath>
@@ -297,6 +298,214 @@ void test_slips()
     check(out == reference_out, "slip output independent of block size");
 }
 
+void test_slip_validation_and_capacity()
+{
+    signal_lab::Scenario scenario;
+    const char* error = nullptr;
+    for (const char* length : {"0", "-1", "1.5", "1024.5", "1025", "48000", "4294967297", "1e300", "1e999"})
+    {
+        const std::string compact = std::string("{\"impairments\":[{\"type\":\"sample_slip\",\"kind\":\"delete\",\"at_seconds\":0,\"length_samples\":") + length + "}]}";
+        check(!signal_lab::parse_scenario(compact.c_str(), compact.size(), scenario, &error), "compact slip rejects invalid length before conversion");
+        const std::string explicit_event = std::string("{\"impairments\":[{\"type\":\"sample_slip\",\"events\":[{\"kind\":\"delete\",\"at_seconds\":0,\"length_samples\":") + length + "}]}]}";
+        check(!signal_lab::parse_scenario(explicit_event.c_str(), explicit_event.size(), scenario, &error), "explicit slip rejects invalid length before conversion");
+    }
+
+    std::vector<std::int16_t> source(8192U);
+    for (std::size_t index = 0U; index < source.size(); ++index)
+    {
+        source[index] = static_cast<std::int16_t>(10000U + index);
+    }
+    const auto configure = [&](const std::string& text) {
+        check(signal_lab::parse_scenario(text.c_str(), text.size(), scenario, &error), "slip regression scenario parses");
+        return engine_a.configure(scenario, 0.3, source.size(), &error);
+    };
+    const std::string no_history = R"({"source_gain_db":0,"impairments":[{"type":"sample_slip","events":[{"kind":"delete","at_seconds":0,"length_samples":499},{"kind":"duplicate","at_seconds":0.010416666666666666,"length_samples":400}]}]})";
+    check(!configure(no_history) && std::strstr(error, "previously emitted") != nullptr, "deletion cannot supply duplicate history");
+    const std::string too_large = R"({"source_gain_db":0,"impairments":[{"type":"sample_slip","kind":"duplicate","at_seconds":0.01,"length_samples":400}]})";
+    check(!configure(too_large) && std::strstr(error, "256") != nullptr, "single duplicate exceeding output slack is rejected before rendering");
+    const std::string too_dense = R"({"source_gain_db":0,"impairments":[{"type":"sample_slip","kind":"duplicate","placement":"clustered","first_seconds":0.01,"spacing_seconds":0.001,"count":3,"length_samples":128}]})";
+    check(!configure(too_dense) && std::strstr(error, "256") != nullptr, "clustered duplicate expansion is checked as a whole");
+
+    const std::string maximum_delete = R"({"source_gain_db":0,"impairments":[{"type":"sample_slip","kind":"delete","at_seconds":0.01,"length_samples":1024}]})";
+    const auto deleted = render(engine_a, maximum_delete, source, 2048U, 0.3);
+    check(deleted.size() == source.size() - signal_lab::max_slip_length && deleted[480] == source[1504], "1024-sample deletion remains supported");
+    check(deleted == render(engine_b, maximum_delete, source, 100U, 0.3), "maximum deletion is independent of block size");
+
+    const std::string within_slack = R"({"source_gain_db":0,"impairments":[{"type":"sample_slip","kind":"duplicate","placement":"clustered","first_seconds":0.01,"spacing_seconds":0.001,"count":2,"length_samples":128}]})";
+    const auto expanded = render(engine_a, within_slack, source, 2048U, 0.3);
+    check(expanded.size() == source.size() + signal_lab::engine_slack_frames && expanded.back() == source.back(), "all source frames survive maximum clustered expansion");
+    check(expanded == render(engine_b, within_slack, source, 100U, 0.3), "maximum clustered expansion is independent of block size");
+    const std::string separated = R"({"source_gain_db":0,"impairments":[{"type":"sample_slip","kind":"duplicate","placement":"spaced","first_seconds":0.01,"period_seconds":0.042666666666666665,"count":2,"length_samples":256}]})";
+    const auto separate_output = render(engine_a, separated, source, 2048U, 0.3);
+    check(separate_output.size() == source.size() + 512U && separate_output == render(engine_b, separated, source, 100U, 0.3), "duplicates exactly one maximum block apart are supported");
+
+    const std::string dropped_duplicate = R"({"source_gain_db":0,"impairments":[{"type":"sample_slip","events":[{"kind":"delete","at_seconds":0,"length_samples":1024},{"kind":"duplicate","at_seconds":0.01,"length_samples":400}]}]})";
+    const auto dropped = render(engine_a, dropped_duplicate, source, 2048U, 0.3);
+    check(dropped.size() == source.size() - 1024U && engine_a.stats().events_dropped == 1U, "duplicate inside deleted input does not consume expansion or history");
+    check(dropped == render(engine_b, dropped_duplicate, source, 100U, 0.3), "dropped duplicate is independent of block size");
+
+    // Exercise stage defenses when the caller violates continuity or provides too
+    // little expansion space: source samples must still survive without bad reads.
+    alignas(signal_lab::impairment_alignment) unsigned char storage[8192]{};
+    float scratch[signal_lab::engine_capacity_frames]{};
+    float samples[signal_lab::engine_capacity_frames]{};
+    for (std::size_t index = 0U; index < 480U; ++index)
+    {
+        samples[index] = static_cast<float>(index);
+    }
+    signal_lab::SampleSlipParams params;
+    params.event_count = 1U;
+    params.events[0] = {0.01, true, 128U};
+    signal_lab::Impairment* stage = signal_lab::construct_sample_slip(params, storage, sizeof(storage));
+    check(stage != nullptr && stage->prepare({0.3, 8192U, 0U, 0U, scratch}, &error), "standalone slip stage prepares");
+    check(stage->process(samples, 200U, 480U, signal_lab::engine_capacity_frames) == 200U &&
+              stage->stats().events_dropped == 1U && samples[199] == 199.0f,
+          "missing runtime history drops the duplicate even with sufficient output space");
+    check(stage->prepare({0.3, 8192U, 0U, 0U, scratch}, &error), "standalone slip stage resets history");
+    check(stage->process(samples, 480U, 0U, signal_lab::engine_capacity_frames) == 480U,
+          "standalone slip stage establishes enough duplicate history");
+    check(stage->process(samples, 200U, 480U, 200U) == 200U && stage->stats().events_dropped == 1U && samples[199] == 199.0f,
+          "insufficient expansion space preserves source frames even with valid history");
+}
+
+void test_fade_event_boundaries()
+{
+    const std::vector<std::int16_t> source(8192U, 10000);
+    const std::string spaced = R"({"source_gain_db":0,"impairments":[{"type":"fade","depth_db":20,"duration_ms":1,"shape":"rectangular","period_seconds":0.002,"count":32}]})";
+    const auto output = render(engine_a, spaced, source, 2048U, 0.3);
+    check(engine_a.stats().events_applied == 32U && engine_a.stats().events_dropped == 0U, "nonoverlapping fades do not compete for active slots");
+    for (std::size_t index = 0U; index < source.size(); ++index)
+    {
+        const bool faded = index < 32U * 96U && index % 96U < 48U;
+        check(output[index] == (faded ? 1000 : 10000), "every scheduled rectangular fade has the expected samples");
+    }
+    check(output == render(engine_b, spaced, source, 100U, 0.3), "nonoverlapping fades are independent of block size");
+
+    // Eight fades end exactly when the next eight start; the ninth simultaneous
+    // fade in each group is the only event dropped at either block size.
+    const std::string overlap = R"({"source_gain_db":0,"impairments":[{"type":"fade","depth_db":1,"duration_ms":1,"shape":"rectangular","starts_seconds":[0,0,0,0,0,0,0,0,0,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001]}]})";
+    const auto overlapping = render(engine_a, overlap, source, 2048U, 0.3);
+    check(engine_a.stats().events_applied == 16U && engine_a.stats().events_dropped == 2U, "fade capacity counts true simultaneous events and reuses finished slots");
+    check(overlapping == render(engine_b, overlap, source, 17U, 0.3) && engine_b.stats().events_applied == 16U && engine_b.stats().events_dropped == 2U,
+          "overlap admission and retirement are independent of block size");
+}
+
+void test_processing_failures_and_emitted_levels()
+{
+    signal_lab::Scenario scenario;
+    scenario.source_gain_db = 6.0;
+    scenario.saturate = true;
+    const char* error = nullptr;
+    const std::int16_t input[] = {0, 1, -1, 123, -123, 32767, -32768};
+    std::int16_t output[signal_lab::engine_capacity_frames]{};
+    check(engine_a.configure(scenario, 0.3, 7U, &error), "saturating level scenario configures");
+    check(engine_a.process(input, 7U, output, signal_lab::engine_capacity_frames) == 7U && engine_a.process_error() == signal_lab::ProcessError::none,
+          "saturation still emits every frame");
+    double emitted_energy = 0.0;
+    for (std::size_t index = 0U; index < 7U; ++index)
+    {
+        const double sample = static_cast<double>(output[index]) / 32768.0;
+        emitted_energy += sample * sample;
+    }
+    check(output[5] == 32767 && output[6] == -32768 && engine_a.stats().clipped_samples == 2U, "saturation clamps both PCM rails");
+    check(engine_a.stats().peak == 1.0f && engine_a.stats().output_energy == emitted_energy, "level statistics measure quantized emitted PCM after saturation");
+
+    scenario.saturate = false;
+    const std::int16_t good[] = {1, -1, 123, -123};
+    const std::int16_t bad[] = {32767, 10, -32768, 20};
+    check(engine_a.configure(scenario, 0.3, 8U, &error), "rejecting level scenario configures");
+    check(engine_a.process(good, 4U, output, signal_lab::engine_capacity_frames) == 4U, "unclipped prefix is accepted");
+    const signal_lab::EngineStats prefix = engine_a.stats();
+    check(engine_a.process(bad, 4U, output, signal_lab::engine_capacity_frames) == 0U && engine_a.process_error() == signal_lab::ProcessError::clipping,
+          "clip policy rejects the entire offending block");
+    const signal_lab::EngineStats rejected = engine_a.stats();
+    signal_lab::det::StreamDigest consumed;
+    consumed.update(good, 4U);
+    consumed.update(bad, 4U);
+    check(rejected.frames_in == 8U && rejected.source_digest == consumed.value(), "rejected block is counted as consumed source");
+    check(rejected.frames_out == prefix.frames_out && rejected.output_digest == prefix.output_digest && rejected.peak == prefix.peak &&
+              rejected.output_energy == prefix.output_energy,
+          "rejected block commits no output frames digest or levels");
+    check(rejected.clipped_samples == 2U && rejected.first_clipped_frame == 4U, "clipping diagnostic identifies first rejected output frame");
+    check(engine_a.process(good, 4U, output, signal_lab::engine_capacity_frames) == 0U && engine_a.stats().frames_in == rejected.frames_in,
+          "processing failure remains latched without consuming further input");
+    check(engine_a.configure(scenario, 0.3, 4U, &error) && engine_a.process_error() == signal_lab::ProcessError::none &&
+              engine_a.process(good, 4U, output, signal_lab::engine_capacity_frames) == 4U,
+          "configure clears a previous processing failure");
+    engine_a.configure_passthrough();
+    check(engine_a.process(good, 4U, output, 4U + signal_lab::engine_slack_frames - 1U) == 0U &&
+              engine_a.process_error() == signal_lab::ProcessError::invalid_buffer && engine_a.stats().frames_in == 0U,
+          "insufficient output slack fails before consuming input");
+    engine_a.configure_passthrough();
+    check(engine_a.process_error() == signal_lab::ProcessError::none && engine_a.process(good, 4U, output, signal_lab::engine_capacity_frames) == 4U &&
+              output[0] == good[0] && output[3] == good[3],
+          "passthrough configuration clears failures and preserves samples");
+}
+
+void test_pipeline_error_propagation()
+{
+    class Source final : public signal_lab::SampleSource
+    {
+    public:
+        const std::int16_t* samples{};
+        std::size_t length{};
+        std::size_t cursor{};
+        [[nodiscard]] std::size_t read(std::int16_t* frames, std::size_t capacity) noexcept override
+        {
+            std::size_t count = length - cursor;
+            count = count < 4U ? count : 4U;
+            count = count < capacity ? count : capacity;
+            for (std::size_t index = 0U; index < count; ++index)
+            {
+                frames[index] = samples[cursor++];
+            }
+            return count;
+        }
+        [[nodiscard]] std::uint64_t total_frames() const noexcept override
+        {
+            return length;
+        }
+    } source;
+    class Sink final : public signal_lab::SampleSink
+    {
+    public:
+        std::size_t frames{};
+        std::size_t calls{};
+        [[nodiscard]] bool write(const std::int16_t*, std::size_t count) noexcept override
+        {
+            frames += count;
+            ++calls;
+            return true;
+        }
+    } sink;
+    const std::int16_t samples[] = {1, -1, 123, -123, 32767, 10, -32768, 20};
+    source.samples = samples;
+    source.length = 8U;
+    signal_lab::Scenario scenario;
+    scenario.source_gain_db = 6.0;
+    scenario.saturate = false;
+    const char* error = nullptr;
+    std::int16_t input_block[signal_lab::engine_block_frames]{};
+    std::int16_t output_block[signal_lab::engine_capacity_frames]{};
+    check(engine_a.configure(scenario, 0.3, source.total_frames(), &error), "pipeline rejecting scenario configures");
+    check(!signal_lab::run_pipeline(source, engine_a, sink, input_block, output_block) && sink.frames == 4U && sink.calls == 1U &&
+              engine_a.process_error() == signal_lab::ProcessError::clipping,
+          "pipeline propagates clipping and does not deliver the rejected block");
+
+    source.cursor = 0U;
+    source.length = 4U;
+    sink.frames = sink.calls = 0U;
+    scenario.source_gain_db = 0.0;
+    scenario.stage_count = 1U;
+    scenario.stages[0].type = signal_lab::StageType::sample_slip;
+    scenario.stages[0].slip.event_count = 1U;
+    scenario.stages[0].slip.events[0] = {0.0, false, 4U};
+    check(engine_a.configure(scenario, 0.3, source.total_frames(), &error), "pipeline deletion scenario configures");
+    check(signal_lab::run_pipeline(source, engine_a, sink, input_block, output_block) && sink.frames == 0U && sink.calls == 0U &&
+              engine_a.stats().frames_in == 4U && engine_a.process_error() == signal_lab::ProcessError::none,
+          "pipeline accepts a successful zero-output deletion block");
+}
+
 } // namespace
 
 int main()
@@ -307,6 +516,10 @@ int main()
     test_engine_determinism();
     test_levels();
     test_slips();
+    test_slip_validation_and_capacity();
+    test_fade_event_boundaries();
+    test_processing_failures_and_emitted_levels();
+    test_pipeline_error_propagation();
     if (failures == 0)
     {
         std::printf("signal_lab tests: PASS\n");

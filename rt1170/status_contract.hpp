@@ -5,7 +5,7 @@
 namespace waveform_generator
 {
 
-inline constexpr std::size_t cdc_response_capacity = 2560U;
+inline constexpr std::size_t cdc_response_capacity = 4096U;
 inline constexpr std::size_t max_uint32_decimal_chars = 10U;
 
 constexpr std::size_t literal_length(const char* value) noexcept

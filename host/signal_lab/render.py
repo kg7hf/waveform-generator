@@ -52,13 +52,17 @@ def load_source_sidecar(source_path):
     """A reference WAV carries its own sidecar (<name>.json); pass its identity through."""
     sidecar = Path(source_path).with_suffix(".json")
     if not sidecar.exists():
+        sidecar = Path(source_path).with_suffix(".JSON")
+    if not sidecar.exists():
         return None
     try:
         with open(sidecar, "r", encoding="utf-8") as handle:
             data = json.load(handle)
     except (OSError, ValueError):
         return None
-    keep = {key: data[key] for key in ("schema", "test_id", "mode", "rate_bps", "interleave", "payload", "framing", "wav", "generator") if key in data}
+    keep = {key: data[key] for key in ("schema", "test_id", "mode", "rate_bps", "interleave", "payload", "framing", "wav", "generator", "encoder", "profile", "source_manifest_sha256") if key in data}
+    if keep.get("payload", {}).get("path") and not Path(keep["payload"]["path"]).is_absolute():
+        keep["payload"] = dict(keep["payload"], path=str((sidecar.parent / keep["payload"]["path"]).resolve()))
     keep["sidecar"] = artifact(sidecar)
     return keep
 
@@ -123,8 +127,9 @@ def render(scenario, output_wav, sidecar_path=None, base_dir=None, overwrite=Fal
                     scaled = out * 32768.0
                     first_clip = frames + int(np.flatnonzero((scaled < -32768.0) | (scaled > 32767.0))[0])
                 clipped += block_clipped
-                peak = max(peak, float(np.max(np.abs(out))) if len(out) else 0.0)
-                energy += float(np.dot(out, out))
+                emitted = pcm.astype(np.float64) / 32768.0
+                peak = max(peak, float(np.max(np.abs(emitted))) if len(emitted) else 0.0)
+                energy += float(np.dot(emitted, emitted))
                 frames += len(out)
                 writer.write(pcm)
         os.replace(temp, output_wav)
@@ -162,7 +167,7 @@ def render(scenario, output_wav, sidecar_path=None, base_dir=None, overwrite=Fal
             "order": "source * source_gain -> impairments in list order -> PCM16 round-half-even, saturate",
             "levels": "all impairment levels are relative to the reference-interval RMS of the *scaled* source",
             "reference": "auto = first..last non-zero source sample; otherwise the declared interval",
-            "rng": "NumPy PCG64 SeedSequence([seed, family, stage_index]); see each stage's resolved.rng_family",
+            "rng": "NumPy PCG64 SeedSequence([seed, family, index]); index is the stage index except AWGN, which uses its zero-based AWGN instance index for pcm_stress compatibility",
             "determinism": "same scenario + source + signal_lab package + Python/NumPy -> identical bytes (hash-bound)",
         },
     }

@@ -1,6 +1,8 @@
 #include "player.hpp"
+#include "tx_artifact.hpp"
 
 #include "common/wav.hpp"
+#include "common/live_command.hpp"
 #include "platform/board.hpp"
 #include "platform/waveform_msc.h"
 #include "platform/wm8960_codec.hpp"
@@ -19,6 +21,7 @@ extern "C"
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <cmath>
 
 namespace waveform_generator
 {
@@ -26,8 +29,8 @@ namespace
 {
 
 constexpr char drive_path[] = "2:/";
-constexpr char playback_path[] = "2:/WG/PLAY.WAV";
-constexpr char scenario_path[] = "2:/WG/PLAY.SCN";
+char playback_path[24] = "2:/WG/PLAY.WAV";
+char scenario_path[24] = "2:/WG/PLAY.SCN";
 constexpr std::uint32_t scenario_capacity = 8192U;
 // The impairment engine runs in this task; its deterministic math and the FatFs
 // scenario read need more headroom than the original 1536-word P1.2 stack.
@@ -127,6 +130,36 @@ volatile bool eof_enqueued{};
 volatile bool faulted{};
 volatile bool play_requested{};
 volatile bool file_system_owned{};
+volatile bool run_busy{};
+volatile bool stop_requested{};
+signal_lab::LiveController live_controller{};
+signal_lab::ControlEvent preset_events[signal_lab::live_capture_capacity]{};
+LiveSnapshot live_snapshot{};
+double reference_override{};
+bool live_reference_valid{};
+std::uint64_t live_seed{};
+std::uint32_t run_number{};
+live_protocol::Request command_mailbox{};
+ControlReply reply_mailbox{};
+volatile bool command_pending{};
+volatile bool reply_pending{};
+
+void service_player_command() noexcept;
+
+void publish_live() noexcept
+{
+    taskENTER_CRITICAL();
+    live_snapshot.busy = run_busy;
+    live_snapshot.seed = live_seed;
+    live_snapshot.reference_rms = live_reference_valid ? live_controller.reference_rms() : 0.0;
+    live_snapshot.live_frame = live_controller.frame();
+    live_snapshot.live_digest = live_controller.stats().output_digest;
+    live_snapshot.live_clipped = live_controller.stats().clipped_samples;
+    live_snapshot.live_events = live_controller.stats().controls_applied;
+    live_snapshot.queue_free = static_cast<std::uint32_t>(signal_lab::live_pending_capacity - live_controller.pending_count());
+    live_snapshot.capture_free = static_cast<std::uint32_t>(signal_lab::live_capture_capacity - live_controller.capture_count());
+    taskEXIT_CRITICAL();
+}
 
 std::uint32_t ring_fill() noexcept
 {
@@ -248,7 +281,7 @@ void zero_playback(std::uint32_t* playback, std::size_t first_frame,
 void player_audio_hook(void*, const std::uint32_t*, std::uint32_t* playback,
                        std::size_t frames) noexcept
 {
-    if (faulted)
+    if (faulted || stop_requested)
     {
         zero_playback(playback, 0U, frames);
         taskENTER_CRITICAL();
@@ -357,7 +390,7 @@ bool start_codec() noexcept
     auto& codec = m110::imxrt1170::wm8960_codec();
     m110::imxrt1170::CodecConfig configuration;
     configuration.frames_per_block = codec_frames_per_block;
-    const auto configured = codec.configure(configuration, &player_audio_hook, nullptr);
+    const auto configured = codec.is_configured() ? m110::Status::success() : codec.configure(configuration, &player_audio_hook, nullptr);
     if (!configured.is_ok())
     {
         latch_fault(PlayerError::codec_config);
@@ -549,168 +582,289 @@ void stop_codec_after_fault() noexcept
     }
 }
 
-[[noreturn]] void suspend_player_task() noexcept
+
+bool stopped_state() noexcept
 {
-    for (;;)
+    return !run_busy && !file_system_owned && !play_requested;
+}
+
+void reset_selection(const char* name) noexcept
+{
+    std::memcpy(playback_path, "2:/WG/", 6);
+    std::strcpy(playback_path + 6, name);
+    std::strcpy(scenario_path, playback_path);
+    std::strcpy(std::strrchr(scenario_path, '.'), ".SCN");
+    reference_override = 0.0;
+    live_reference_valid = false;
+    (void)live_controller.reset(live_seed, 1.0);
+    taskENTER_CRITICAL();
+    std::strcpy(live_snapshot.selected_file, name);
+    counters.state = PlayerState::waiting_for_command;
+    taskEXIT_CRITICAL();
+}
+
+void service_player_command() noexcept
+{
+    service_tx_artifact();
+    taskENTER_CRITICAL();
+    if (!command_pending) { taskEXIT_CRITICAL(); return; }
+    const auto command = command_mailbox;
+    command_pending = false;
+    taskEXIT_CRITICAL();
+    ControlReply reply{};
+    reply.seq = command.seq;
+    using live_protocol::Kind;
+    if (live_protocol::is_control(command.kind))
     {
-        vTaskSuspend(nullptr);
+        if ((!run_busy && counters.state != PlayerState::waiting_for_command) ||
+            (run_busy && counters.state != PlayerState::buffering && counters.state != PlayerState::playing) ||
+            (run_busy && (eof_enqueued || stop_requested || !live_reference_valid)))
+            reply.error = "BAD_STATE";
+        else
+        {
+            const auto result = live_protocol::apply_control(command, live_controller, reply.apply_frame, reply.events);
+            reply.ok = result == signal_lab::ControlResult::accepted;
+            reply.error = signal_lab::control_result_name(result);
+        }
     }
+    else if (command.kind == Kind::stop)
+    {
+        if (run_busy) stop_requested = true;
+        else abort_tx_artifact();
+        reply.ok = true;
+    }
+    else if (!stopped_state()) reply.error = "BUSY";
+    else if (command.kind == Kind::load)
+    {
+        reset_selection(command.name);
+        reply.ok = true;
+    }
+    else if (command.kind == Kind::seed || command.kind == Kind::reference)
+    {
+        // Do not silently erase an acknowledged control schedule.
+        if (live_controller.capture_count() != 0) reply.error = "LOAD_REQUIRED";
+        else
+        {
+            if (command.kind == Kind::seed) live_seed = command.integer;
+            else reference_override = command.value;
+            (void)live_controller.reset(live_seed, reference_override > 0 ? reference_override : 1.0);
+            reply.ok = true;
+        }
+    }
+    else if (command.kind == Kind::play)
+    {
+        if (counters.state != PlayerState::waiting_for_command || !WFG_MediaIsLocal() || tx_artifact_busy()) reply.error = "BAD_STATE";
+        else if (command.run_id[0] && std::strcmp(command.run_id, live_snapshot.run_id) == 0) reply.error = "RUN_ID_REUSED";
+        else
+        {
+            taskENTER_CRITICAL();
+            counters = RuntimeCounters{};
+            engine_counters = EngineCounters{};
+            ring_write_total = 0;
+            ring_read_total = 0;
+            eof_enqueued = false;
+            faulted = false;
+            stop_requested = false;
+            run_busy = true;
+            play_requested = true;
+            ++run_number;
+            if (command.run_id[0]) std::strcpy(live_snapshot.run_id, command.run_id);
+            else
+            {
+                std::memset(live_snapshot.run_id, '0', 32);
+                constexpr char hex[] = "0123456789abcdef";
+                for (unsigned i = 0; i < 8; ++i) live_snapshot.run_id[31 - i] = hex[(run_number >> (4 * i)) & 15];
+                live_snapshot.run_id[32] = 0;
+            }
+            counters.state = PlayerState::mounting;
+            taskEXIT_CRITICAL();
+            reply.ok = true;
+        }
+    }
+    else reply.error = "BAD_REQUEST";
+    publish_live();
+    taskENTER_CRITICAL();
+    reply_mailbox = reply;
+    reply_pending = true;
+    taskEXIT_CRITICAL();
+}
+
+// Deterministic fallback level: RMS of the first min(N,48000) clean PCM frames.
+// Scenario reference_rms and explicit REFERENCE override this measurement.
+double measure_reference(const WavPayload& payload) noexcept
+{
+    std::uint32_t remaining = payload.bytes < 96000U ? payload.bytes : 96000U;
+    const std::uint32_t frames = remaining / 2;
+    double energy = 0;
+    while (remaining && !stop_requested && !faulted)
+    {
+        service_player_command();
+        const UINT requested = remaining < read_buffer_bytes ? remaining : read_buffer_bytes;
+        UINT actual{};
+        if (f_read(&playback_file, read_buffer.data(), requested, &actual) != FR_OK || actual != requested)
+        {
+            latch_fault(PlayerError::sd_read);
+            return 0;
+        }
+        const auto* samples = reinterpret_cast<const std::int16_t*>(read_buffer.data());
+        for (UINT i = 0; i < actual / 2; ++i)
+        {
+            const double value = static_cast<double>(samples[i]) / 32768.0;
+            energy += value * value;
+        }
+        remaining -= actual;
+    }
+    if (!seek_to(payload.offset)) latch_fault(PlayerError::seek);
+    return frames ? std::sqrt(energy / frames) : 0;
+}
+
+void run_player() noexcept
+{
+    bool opened = false;
+    bool codec_started = false;
+    const std::size_t presets = live_controller.capture_count();
+    for (std::size_t i = 0; i < presets; ++i) preset_events[i] = live_controller.capture_data()[i];
+    do
+    {
+        set_state(PlayerState::mounting);
+        if (!WFG_MediaIsLocal() || f_mount(&file_system, drive_path, 1U) != FR_OK)
+        {
+            latch_fault(PlayerError::mount);
+            break;
+        }
+        file_system_owned = true;
+        service_player_command();
+        if (stop_requested) break;
+        set_state(PlayerState::opening);
+        if (f_open(&playback_file, playback_path, FA_READ) != FR_OK)
+        {
+            latch_fault(PlayerError::open);
+            break;
+        }
+        opened = true;
+        WavPayload payload{};
+        if (!parse_wav(payload) || !seek_to(payload.offset))
+        {
+            if (!faulted) latch_fault(PlayerError::seek);
+            break;
+        }
+        load_scenario(payload.bytes / 2);
+        const double reference = reference_override > 0 ? reference_override * (engine_active ? signal_lab::det::db_to_amplitude(scenario.source_gain_db) : 1.0)
+                               : engine_active ? engine.scaled_reference_rms() : measure_reference(payload);
+        if (faulted || stop_requested) break;
+        live_reference_valid = std::isfinite(reference) && reference > 0 && reference <= 32768;
+        if (!live_reference_valid && presets) { latch_fault(PlayerError::live_control); break; }
+        if (!live_controller.reset(live_seed, live_reference_valid ? reference : 1.0))
+        {
+            latch_fault(PlayerError::live_control);
+            break;
+        }
+        for (std::size_t i = 0; i < presets; ++i)
+            if (live_controller.enqueue(preset_events[i]) != signal_lab::ControlResult::accepted) latch_fault(PlayerError::live_control);
+        publish_live();
+        set_state(PlayerState::buffering);
+        std::uint32_t bytes_remaining = payload.bytes;
+        while (!faulted && !stop_requested)
+        {
+            service_player_command();
+            if (stop_requested) break;
+            if (bytes_remaining == 0)
+            {
+                __DMB(); eof_enqueued = true; __DMB();
+                if (!codec_started) codec_started = start_codec();
+                break;
+            }
+            const auto fill = ring_fill();
+            if (fill >= ring_high_watermark_frames)
+            {
+                if (!codec_started) codec_started = start_codec();
+                counters.producer_sleeps = counters.producer_sleeps + 1U;
+                const auto surplus = fill - ring_wake_watermark_frames;
+                // A control notification interrupts pacing, without making the producer deadline-bound.
+                (void)ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(surplus / 48U > 0 ? surplus / 48U : 1U));
+                continue;
+            }
+            const auto block_begin = m110::platform_cycle_counter();
+            std::uint32_t bytes_staged{};
+            if (!read_payload_chunk(bytes_remaining, bytes_staged)) break;
+            bytes_remaining -= bytes_staged;
+            const auto frames = static_cast<std::size_t>(bytes_staged / 2);
+            if (engine_active)
+            {
+                const auto begin = m110::platform_cycle_counter();
+                const auto produced = engine.process(reinterpret_cast<const std::int16_t*>(read_buffer.data()), frames, engine_output.data(), engine_output.size());
+                publish_engine_counters(m110::platform_cycle_counter() - begin);
+                if (engine.process_error() != signal_lab::ProcessError::none)
+                {
+                    engine_counters.state = 3;
+                    engine_counters.error = static_cast<std::uint32_t>(engine.process_error() == signal_lab::ProcessError::clipping ? EngineError::clipping_rejected : EngineError::processing_failed);
+                    latch_fault(PlayerError::impairment);
+                    break;
+                }
+                bytes_staged = static_cast<std::uint32_t>(produced * 2);
+            }
+            else std::memcpy(engine_output.data(), read_buffer.data(), bytes_staged);
+            if (!live_controller.process(engine_output.data(), bytes_staged / 2))
+            {
+                latch_fault(PlayerError::live_control);
+                break;
+            }
+            publish_live();
+            const auto* staged_source = reinterpret_cast<const std::uint8_t*>(engine_output.data());
+            std::uint32_t staged_offset{};
+            while (bytes_staged && !faulted && !stop_requested)
+            {
+                const auto pushed = push_samples(staged_source + staged_offset, bytes_staged);
+                if (!pushed) { vTaskDelay(1); continue; }
+                staged_offset += pushed;
+                bytes_staged -= pushed;
+            }
+            const auto cycles = m110::platform_cycle_counter() - block_begin;
+            taskENTER_CRITICAL();
+            counters.producer_active_cycles = counters.producer_active_cycles + cycles;
+            counters.producer_frames = counters.producer_frames + staged_offset / 2;
+            if (cycles > counters.producer_worst_block_cycles) counters.producer_worst_block_cycles = cycles;
+            taskEXIT_CRITICAL();
+        }
+        while (!faulted && !stop_requested &&
+               (counters.state == PlayerState::playing ||
+                (counters.state == PlayerState::draining && counters.eof_silence_frames < eof_drain_frames)))
+        {
+            service_player_command();
+            (void)ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(2));
+        }
+    } while (false);
+    // One owner stops audio and closes FatFs before advertising reusable stopped state.
+    stop_codec_after_fault();
+    if (opened) (void)f_close(&playback_file);
+    (void)f_mount(nullptr, drive_path, 0U);
+    taskENTER_CRITICAL();
+    file_system_owned = false;
+    run_busy = false;
+    if (!faulted)
+    {
+        counters.pcm_drained = stop_requested ? 0U : 1U;
+        counters.state = stop_requested ? PlayerState::aborted : PlayerState::done;
+    }
+    taskEXIT_CRITICAL();
+    publish_live();
 }
 
 void player_task_entry(void*) noexcept
 {
-    set_state(PlayerState::waiting_for_command);
-    (void)ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-    if (!play_requested || !WFG_MediaIsLocal())
+    reset_selection("PLAY.WAV");
+    publish_live();
+    for (;;)
     {
-        latch_fault(PlayerError::mount);
-        suspend_player_task();
-    }
-
-    set_state(PlayerState::mounting);
-    if (f_mount(&file_system, drive_path, 1U) != FR_OK)
-    {
-        latch_fault(PlayerError::mount);
-        suspend_player_task();
-    }
-    file_system_owned = true;
-
-    set_state(PlayerState::opening);
-    if (f_open(&playback_file, playback_path, FA_READ) != FR_OK)
-    {
-        latch_fault(PlayerError::open);
-        (void)f_mount(nullptr, drive_path, 0U);
-        file_system_owned = false;
-        suspend_player_task();
-    }
-
-    WavPayload payload{};
-    if (!parse_wav(payload) || !seek_to(payload.offset))
-    {
-        if (!faulted)
+        service_player_command();
+        if (play_requested)
         {
-            latch_fault(PlayerError::seek);
-        }
-        (void)f_close(&playback_file);
-        (void)f_mount(nullptr, drive_path, 0U);
-        file_system_owned = false;
-        suspend_player_task();
-    }
-
-    load_scenario(payload.bytes / sizeof(std::int16_t));
-
-    set_state(PlayerState::buffering);
-    std::uint32_t bytes_remaining = payload.bytes;
-    bool codec_started{};
-
-    // Producer: SD chunk -> impairment engine -> output FIFO. Runs ahead of real
-    // time until the high watermark, then sleeps until the wake watermark. A block
-    // is never deadline-bound; only the audio hook draining the FIFO is.
-    while (!faulted)
-    {
-        if (bytes_remaining == 0U)
-        {
-            __DMB();
-            eof_enqueued = true;
-            __DMB();
-            if (!codec_started)
-            {
-                codec_started = start_codec();
-            }
-            break;
-        }
-
-        const auto fill = ring_fill();
-        if (fill >= ring_high_watermark_frames)
-        {
-            if (!codec_started)
-            {
-                codec_started = start_codec();
-            }
-            taskENTER_CRITICAL();
-            counters.producer_sleeps = counters.producer_sleeps + 1U;
-            taskEXIT_CRITICAL();
-            // Sleep until the consumer has drained to the wake watermark (48 frames/ms).
-            const auto surplus = fill - ring_wake_watermark_frames;
-            vTaskDelay(pdMS_TO_TICKS(surplus / 48U > 0U ? surplus / 48U : 1U));
+            play_requested = false;
+            run_player();
             continue;
         }
-
-        const auto block_begin = m110::platform_cycle_counter();
-        std::uint32_t bytes_staged{};
-        if (!read_payload_chunk(bytes_remaining, bytes_staged))
-        {
-            break;
-        }
-        bytes_remaining -= bytes_staged;
-        const std::uint8_t* staged_source = read_buffer.data();
-        if (engine_active)
-        {
-            // Impair this chunk in place of the clean bytes. The engine may lengthen or
-            // shorten the chunk (sample slips); the push below handles any size.
-            const auto* clean = reinterpret_cast<const std::int16_t*>(read_buffer.data());
-            const auto frames = static_cast<std::size_t>(bytes_staged / sizeof(std::int16_t));
-            const auto engine_begin = m110::platform_cycle_counter();
-            const std::size_t produced = engine.process(clean, frames, engine_output.data(), engine_output.size());
-            publish_engine_counters(m110::platform_cycle_counter() - engine_begin);
-            staged_source = reinterpret_cast<const std::uint8_t*>(engine_output.data());
-            bytes_staged = static_cast<std::uint32_t>(produced * sizeof(std::int16_t));
-        }
-        // Below the high watermark a whole block always fits (static_assert above),
-        // so this loop only spins on a ring wrap boundary.
-        std::uint32_t staged_offset{};
-        while (bytes_staged != 0U && !faulted)
-        {
-            const auto pushed = push_samples(staged_source + staged_offset, bytes_staged);
-            if (pushed == 0U)
-            {
-                vTaskDelay(1U);
-                continue;
-            }
-            staged_offset += pushed;
-            bytes_staged -= pushed;
-        }
-        const auto block_cycles = m110::platform_cycle_counter() - block_begin;
-        taskENTER_CRITICAL();
-        counters.producer_active_cycles = counters.producer_active_cycles + block_cycles;
-        counters.producer_frames = counters.producer_frames + staged_offset / sizeof(std::int16_t);
-        if (block_cycles > counters.producer_worst_block_cycles)
-        {
-            counters.producer_worst_block_cycles = block_cycles;
-        }
-        taskEXIT_CRITICAL();
+        (void)ulTaskNotifyTake(pdTRUE, tx_artifact_busy() ? pdMS_TO_TICKS(1) : portMAX_DELAY);
     }
-
-    if (faulted)
-    {
-        stop_codec_after_fault();
-    }
-
-    (void)f_close(&playback_file);
-    (void)f_mount(nullptr, drive_path, 0U);
-    file_system_owned = false;
-    while (!faulted && counters.state == PlayerState::playing)
-    {
-        vTaskDelay(pdMS_TO_TICKS(10U));
-    }
-    while (!faulted && counters.state == PlayerState::draining &&
-           counters.eof_silence_frames < eof_drain_frames)
-    {
-        vTaskDelay(1U);
-    }
-    if (faulted)
-    {
-        stop_codec_after_fault();
-    }
-    if (!faulted && counters.state == PlayerState::draining)
-    {
-        (void)m110::imxrt1170::wm8960_codec().stop();
-        taskENTER_CRITICAL();
-        counters.pcm_drained = 1U;
-        taskEXIT_CRITICAL();
-        set_state(PlayerState::done);
-    }
-    suspend_player_task();
 }
 
 } // namespace
@@ -734,23 +888,43 @@ m110::Status start_player_checkpoint() noexcept
 
 m110::Status request_player_play() noexcept
 {
+    live_protocol::Request command{};
+    command.kind = live_protocol::Kind::play;
+    return submit_player_command(command) ? m110::Status::success() : m110::Status{m110::StatusCode::busy, "player command busy"};
+}
+
+bool submit_player_command(const live_protocol::Request& command) noexcept
+{
     taskENTER_CRITICAL();
-    if (!WFG_MediaIsLocal())
-    {
-        taskEXIT_CRITICAL();
-        return {m110::StatusCode::invalid_configuration, "media is not local"};
-    }
-    if (player_task_handle == nullptr ||
-        counters.state != PlayerState::waiting_for_command || play_requested)
-    {
-        taskEXIT_CRITICAL();
-        return {m110::StatusCode::busy, "player is not ready"};
-    }
-    play_requested = true;
-    const auto task = player_task_handle;
+    if (!player_task_handle || command_pending || reply_pending) { taskEXIT_CRITICAL(); return false; }
+    command_mailbox = command;
+    command_pending = true;
     taskEXIT_CRITICAL();
-    xTaskNotifyGive(task);
-    return m110::Status::success();
+    xTaskNotifyGive(player_task_handle);
+    return true;
+}
+
+void notify_player_task() noexcept
+{
+    if (player_task_handle) xTaskNotifyGive(player_task_handle);
+}
+
+bool take_player_reply(ControlReply& reply) noexcept
+{
+    taskENTER_CRITICAL();
+    if (!reply_pending) { taskEXIT_CRITICAL(); return false; }
+    reply = reply_mailbox;
+    reply_pending = false;
+    taskEXIT_CRITICAL();
+    return true;
+}
+
+LiveSnapshot player_live_snapshot() noexcept
+{
+    taskENTER_CRITICAL();
+    const auto result = live_snapshot;
+    taskEXIT_CRITICAL();
+    return result;
 }
 
 bool player_allows_media_host() noexcept
@@ -759,11 +933,12 @@ bool player_allows_media_host() noexcept
     taskENTER_CRITICAL();
     const auto state = counters.state;
     const bool allowed =
-        !file_system_owned &&
+        !file_system_owned && !run_busy && !play_requested && !command_pending && !tx_artifact_busy() &&
         !codec_running &&
         (state == PlayerState::stopped ||
          state == PlayerState::waiting_for_command ||
          state == PlayerState::done ||
+         state == PlayerState::aborted ||
          state == PlayerState::fault);
     taskEXIT_CRITICAL();
     return allowed;

@@ -32,7 +32,7 @@ public:
 };
 
 // Pump the whole source through the engine into the sink using the engine's
-// block size. Returns false if the sink refused data or the engine was not configured.
+// block size. Returns false if the sink refused data or the engine is unconfigured/failed.
 [[nodiscard]] bool run_pipeline(SampleSource& source, Engine& engine, SampleSink& sink, std::int16_t* input_block, std::int16_t* output_block) noexcept;
 
 } // namespace signal_lab

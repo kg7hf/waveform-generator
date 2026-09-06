@@ -1,0 +1,2 @@
+# Physical USB controllers only; codec and fake-transport tests use the stdlib.
+pyserial==3.5

@@ -1,11 +1,15 @@
 #pragma once
 
-/* Read-only FAT/exFAT profile for the fixed playback artifact PLAY.WAV. */
+/* FAT/exFAT profile: the player task owns playback and artifact creation. */
 #define FFCONF_DEF 80286
 
 #define SD_DISK_ENABLE
 
+#if defined(WFG_MSC_READ_ONLY)
 #define FF_FS_READONLY 1
+#else
+#define FF_FS_READONLY 0
+#endif
 #define FF_FS_MINIMIZE 0
 #define FF_USE_FIND 0
 #define FF_USE_MKFS 0

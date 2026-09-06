@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "observed_utc_date": "2026-09-05",
-  "scope": "Planned one-time source imports; historical donor paths are evidence, never build inputs.",
+  "observed_utc_date": "2026-09-06",
+  "scope": "One-time source imports and local adaptations; historical donor paths are evidence, never build inputs. Per-entry donor_revision overrides the initial historical donor commit where present.",
   "donor": {
     "repository": "https://github.com/kg7hf/M110-modem.git",
     "commit": "97661c6297b3044f3855313955de21df87c54167",
@@ -81,6 +81,125 @@
       "license_identifier": "unspecified",
       "dependencies": "PowerShell 7",
       "notes": "First-party Phase 2/3 engineering tool; results are engineering evidence only, never formal M110 conformance."
+    },
+    {
+      "path": "waveform-source/",
+      "purpose": "Encoder-agnostic sequential payload/PCM source contract, incremental canonical WAV writer and payload/WAV/PCM SHA-256 implementation.",
+      "license_identifier": "unspecified",
+      "dependencies": "C++23 standard library; local signal-lab and common status",
+      "notes": "A fake encoder test links only this library. Encoder profiles are opaque to the WAV writer."
+    },
+    {
+      "path": "native-m110/",
+      "purpose": "Bounded M110B payload-to-PCM encoder adapter over the locally imported donor TX closure.",
+      "license_identifier": "unspecified",
+      "dependencies": "C++23 standard library including the unchanged donor floating-point math; local waveform-source",
+      "notes": "The adapter preserves donor message framing, continuous FEC state and PCM quantization. Host donor equivalence is tested; cross-platform PCM identity requires measured comparison.",
+      "behavior_reference_sources": [
+        {
+          "donor_path": "app/modem_transmitter.cpp",
+          "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+          "donor_sha256": "131769983c5f92a1ace4b8b6c1e1dd86a72cbd1d0a3e33a1354bd344c291dd07",
+          "donor_size_bytes": 9699,
+          "selected_donor_dirty": false,
+          "selected_donor_status": ""
+        },
+        {
+          "donor_path": "app/modem_transmitter.hpp",
+          "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+          "donor_sha256": "6344c8c2ec709be877ec9571320f1e5fae5ae8cb59aceaed5723a4b464d3f350",
+          "donor_size_bytes": 3771,
+          "selected_donor_dirty": false,
+          "selected_donor_status": ""
+        },
+        {
+          "donor_path": "tools/tx_to_pcm.cpp",
+          "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+          "donor_sha256": "f1c693baba0a30c850aada56aa5ad978cf2967699884a4b983daa3a1a3279a25",
+          "donor_size_bytes": 5855,
+          "selected_donor_dirty": false,
+          "selected_donor_status": ""
+        },
+        {
+          "donor_path": "tools/tx_message.cpp",
+          "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+          "donor_sha256": "5b33c7b9fd2be09cc7aa66527af073e0e3114d6fc1a20fb425819e6ab878c82a",
+          "donor_size_bytes": 4736,
+          "selected_donor_dirty": false,
+          "selected_donor_status": ""
+        },
+        {
+          "donor_path": "tools/tx_message.hpp",
+          "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+          "donor_sha256": "49777d3c4a9cb18c0eabcc3e446e516f4230c0ee86dd2b8153a2b2a87364081e",
+          "donor_size_bytes": 1055,
+          "selected_donor_dirty": false,
+          "selected_donor_status": ""
+        }
+      ]
+    },
+    {
+      "path": "host/tx/",
+      "purpose": "Positional wfg_m110_tx utility producing clean WAV or raw PCM plus an exact retained BIN payload and JSON artifact manifest.",
+      "license_identifier": "unspecified",
+      "dependencies": "C++23 standard library; local native-m110 and waveform-source",
+      "notes": "Uses the same incremental artifact writer as firmware. Retains payload/WAV/PCM SHA-256, generator version and source manifest identity."
+    },
+    {
+      "path": "common/live_protocol.cpp",
+      "purpose": "Fixed-capacity WFG-LIVE/1 command parser for staged artifacts, generation requests and sample-indexed live impairment control.",
+      "license_identifier": "unspecified",
+      "dependencies": "C++23 standard library and local contracts",
+      "notes": "Transport parsing owns no waveform encoder and performs no filesystem work."
+    },
+    {
+      "path": "common/tx_protocol.cpp",
+      "purpose": "Local artifact-control adapter for DD-006 command spellings and DD008 payload transfer.",
+      "license_identifier": "unspecified",
+      "dependencies": "C++23 standard library and local contracts",
+      "notes": "SENDBUFFER produces a WAV artifact; playback remains an explicit subsequent operation."
+    },
+    {
+      "path": "rt1170/encoder_catalog.cpp",
+      "purpose": "Firmware composition registry mapping encoder IDs to caller-owned workspace factories and generator versions.",
+      "license_identifier": "unspecified",
+      "dependencies": "Local waveform-source and selected native-m110 adapter",
+      "notes": "Adding an encoder changes this registry and its adapter, without changing the generic WAV writer, impairment engine or player."
+    },
+    {
+      "path": "rt1170/tx_artifact.cpp",
+      "purpose": "Player-task-owned incremental SD payload-to-WAV artifact utility with a JSON completion marker and retained input payload.",
+      "license_identifier": "unspecified",
+      "dependencies": "Local waveform-source and encoder registry; locked FatFs and FreeRTOS",
+      "notes": "Writes temporary files, syncs and closes them, then publishes WAV and manifest. It does not feed encoder output directly to the audio codec."
+    },
+    {
+      "path": "rt1170/tx_usb.cpp",
+      "purpose": "DD008 control/data bridge and bounded mailbox for USB payload uploads and SD artifact generation.",
+      "license_identifier": "unspecified",
+      "dependencies": "Local common/dd008, tx_protocol and TinyUSB transport",
+      "notes": "All filesystem and generation work stays in the player task."
+    },
+    {
+      "path": "host/live_control.py",
+      "purpose": "Identity-checked WFG-LIVE/1 host controller and journaled sample-indexed impairment sweeps.",
+      "license_identifier": "unspecified",
+      "dependencies": "Python standard library and pyserial for hardware transport",
+      "notes": "Explicit port and expected serial are required for hardware; protocol tests use a fake transport."
+    },
+    {
+      "path": "host/tx_upload.py",
+      "purpose": "Identity-checked DD008 payload upload or existing-SD-payload artifact generation utility with retained session journal.",
+      "license_identifier": "unspecified",
+      "dependencies": "Python standard library, local host/dd008.py and pyserial for hardware transport",
+      "notes": "Waits for complete artifact state and validates counters/digest syntax; playback and retrieval remain separate operations."
+    },
+    {
+      "path": "host/render/live_replay.cpp",
+      "purpose": "Host replay of recorded sample-indexed live impairment events for deterministic PCM comparison.",
+      "license_identifier": "unspecified",
+      "dependencies": "C++23 standard library and local signal-lab",
+      "notes": "Replay evidence is distinct from unmeasured physical playback or USB timing."
     }
   ],
   "git_metadata_policy": "Historical donor commit is provenance only. Exported builds use a local source manifest; live Git metadata is optional.",
@@ -223,12 +342,13 @@
       "destination": "rt1170/usb/usb_tinyusb_port.h",
       "license_identifier": "unspecified",
       "retained_notice_paths": [],
-      "local_sha256": "4813763ab66ba88be62c2899bde5c49147ec223bfcba5798171aa16a2ad2987f",
-      "local_size_bytes": 837,
+      "local_sha256": "e7655435b599a2097382f7ea13c46caa6db44bdff82745f7b6675cd270bba58b",
+      "local_size_bytes": 876,
       "adaptations": [
-        "Imported byte-for-byte from the observed donor."
+        "Imported byte-for-byte from the observed donor.",
+        "2026-09-06 Phases 4/5: expose the local CDC byte transport and connection interface used by live control and DD008 artifact upload."
       ],
-      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation."
     },
     {
       "id": "m110-010",
@@ -239,12 +359,13 @@
       "destination": "rt1170/usb/usb_tinyusb_port.c",
       "license_identifier": "unspecified",
       "retained_notice_paths": [],
-      "local_sha256": "9d0cac12c811ce2bb903013098f008c599e486b7fd276ff26f5e5f92d1276e3a",
-      "local_size_bytes": 2814,
+      "local_sha256": "f6b2392445aa1959037d85f093f304d197a1ad4d8caeb1103ffcde199532f7e9",
+      "local_size_bytes": 2889,
       "adaptations": [
-        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below.",
+        "2026-09-06 Phases 4/5: dispatch connected CDC bytes through the local live-control and DD008 artifact upload front ends; preserve media ownership and task boundaries."
       ],
-      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation."
     },
     {
       "id": "m110-011",
@@ -483,13 +604,14 @@
       "destination": "host/signal_lab/awgn.py",
       "license_identifier": "unspecified",
       "retained_notice_paths": [],
-      "local_sha256": "40c22aa69c09b8ce633fd667f3dbc03797d0b690b2b4333b8702e9815199c8d2",
-      "local_size_bytes": 3874,
+      "local_sha256": "94e75de0f4994b042de78333a6f60970e3dc92b38f2017c76df4ad7180f1dc42",
+      "local_size_bytes": 3942,
       "adaptations": [
         "Band-limited noise kernel (513-tap Blackman-windowed sinc 300-3300 Hz, L2-normalised, 8192-point overlap-save), the reference-interval RMS level convention, the raised-cosine fade shape, the CW tone/ramp model and the PCG64 SeedSequence([seed, family, index]) seeding were adopted from the donor so the shared models reproduce it bit-exactly (tests/test_signal_lab.py::test_matches_pcm_stress_for_shared_models).",
-        "Restructured as block-streaming Impairment stages (host/signal_lab/*.py) so the same shape ports to the Phase 2 C++ engine; static crashes (exponential-decay ringing) and sample deletion/duplication are new, not donor code."
+        "Restructured as block-streaming Impairment stages (host/signal_lab/*.py) so the same shape ports to the Phase 2 C++ engine; static crashes (exponential-decay ringing) and sample deletion/duplication are new, not donor code.",
+        "2026-09-06 PR 1 fixes: retain legacy AWGN stream zero for the first instance and assign independent streams to additional AWGN instances; record the resolved stream index."
       ],
-      "notes": "Materialized on 2026-09-06 for the Phase 1 test-waveform generator; the donor is never imported at run time (standalone boundary)."
+      "notes": "Local bytes re-verified on 2026-09-06 after PR 1 fixes. Historical donor identity is unchanged; optional parent-reference tests require explicit opt-in and are not part of the standalone default suite."
     },
     {
       "id": "m110-026",
@@ -506,6 +628,462 @@
         "Adds a NOLOAD .ocram output section placed in m_data2 (OCRAM2) for the post-impairment output FIFO; everything else is the locked vendor script byte-for-byte."
       ],
       "notes": "Materialized on 2026-09-06 for the watermark-paced output FIFO (Phase 3 revision); the vendor script is the donor, not a build input."
+    },
+    {
+      "id": "m110-027",
+      "status": "materialized",
+      "donor_path": "core/transmitter.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "1d2229953980786ce6982946a815d24a1e5e47f971067e4389382b0eda73becd",
+      "donor_size_bytes": 1974,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/transmitter.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "1d2229953980786ce6982946a815d24a1e5e47f971067e4389382b0eda73becd",
+      "local_size_bytes": 1974
+    },
+    {
+      "id": "m110-028",
+      "status": "materialized",
+      "donor_path": "core/transmitter.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "df122ccfb490372a0179c32aed848241a195d2ea1bc0335f675030ade9ada7d3",
+      "donor_size_bytes": 7672,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/transmitter.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "df122ccfb490372a0179c32aed848241a195d2ea1bc0335f675030ade9ada7d3",
+      "local_size_bytes": 7672
+    },
+    {
+      "id": "m110-029",
+      "status": "materialized",
+      "donor_path": "core/body_waveform.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "7242fc2c7f8eaa1818d0d9a85c7a2febb250377a2d7e2818e5148b9f932b16f6",
+      "donor_size_bytes": 9160,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/body_waveform.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "7242fc2c7f8eaa1818d0d9a85c7a2febb250377a2d7e2818e5148b9f932b16f6",
+      "local_size_bytes": 9160
+    },
+    {
+      "id": "m110-030",
+      "status": "materialized",
+      "donor_path": "core/status.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "653b3f43fd44c9a6e4d0f9e199ffe5d6f9d5214804e01790b341d04919e4e410",
+      "donor_size_bytes": 1905,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/status.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "forward to existing common/status.hpp to prevent duplicate definitions"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "2ce4200bbda7b71a28d296f86e39f6bfbd606e9597aee921624aacdfe9a4ec14",
+      "local_size_bytes": 117
+    },
+    {
+      "id": "m110-031",
+      "status": "materialized",
+      "donor_path": "core/types.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "e159b112138c6ad0c65d61fe4ddadb704096c988eaf7e0a9b059b9d5147f1707",
+      "donor_size_bytes": 6357,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/types.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "e159b112138c6ad0c65d61fe4ddadb704096c988eaf7e0a9b059b9d5147f1707",
+      "local_size_bytes": 6357
+    },
+    {
+      "id": "m110-032",
+      "status": "materialized",
+      "donor_path": "core/waveform.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "34d7a384680c94617202766a8e4f0a7a6b46a90b7d7723d0cc644ab1f75227cd",
+      "donor_size_bytes": 3810,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/waveform.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "34d7a384680c94617202766a8e4f0a7a6b46a90b7d7723d0cc644ab1f75227cd",
+      "local_size_bytes": 3810
+    },
+    {
+      "id": "m110-033",
+      "status": "materialized",
+      "donor_path": "core/body_waveform.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "ec2b53243494bab1ab4088c031f8ca5e7aebe36fe4df726a4bae054704e1029f",
+      "donor_size_bytes": 37159,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/body_waveform.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "ec2b53243494bab1ab4088c031f8ca5e7aebe36fe4df726a4bae054704e1029f",
+      "local_size_bytes": 37159
+    },
+    {
+      "id": "m110-034",
+      "status": "materialized",
+      "donor_path": "core/types.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "5116f7ad47150b841f974cd91da1ad2a6146c7fb854618f60884b6265f10fbe5",
+      "donor_size_bytes": 1208,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/types.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "5116f7ad47150b841f974cd91da1ad2a6146c7fb854618f60884b6265f10fbe5",
+      "local_size_bytes": 1208
+    },
+    {
+      "id": "m110-035",
+      "status": "materialized",
+      "donor_path": "core/waveform.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "84771959e3b21133d58db266e94dc43086c0ca3a238e4bf987a9dadfd2d8f513",
+      "donor_size_bytes": 14305,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/waveform.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "84771959e3b21133d58db266e94dc43086c0ca3a238e4bf987a9dadfd2d8f513",
+      "local_size_bytes": 14305
+    },
+    {
+      "id": "m110-036",
+      "status": "materialized",
+      "donor_path": "core/demapper.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "c512310b8786179bc65de5c8d76ef2a6742709bac4a3172c3c57e4664823a06c",
+      "donor_size_bytes": 3215,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/demapper.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "c512310b8786179bc65de5c8d76ef2a6742709bac4a3172c3c57e4664823a06c",
+      "local_size_bytes": 3215
+    },
+    {
+      "id": "m110-037",
+      "status": "materialized",
+      "donor_path": "core/fec.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "081a82cfcf4ee2d0ddeb7075a111cd1349f9c2304d0e7e30261569145fa5f1b2",
+      "donor_size_bytes": 4605,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/fec.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "081a82cfcf4ee2d0ddeb7075a111cd1349f9c2304d0e7e30261569145fa5f1b2",
+      "local_size_bytes": 4605
+    },
+    {
+      "id": "m110-038",
+      "status": "materialized",
+      "donor_path": "core/interleaver.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "758c2e0232ef5135705728955adbf6b9bda7d4e2f9b3da03df53e0a030cfea37",
+      "donor_size_bytes": 3075,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/interleaver.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "758c2e0232ef5135705728955adbf6b9bda7d4e2f9b3da03df53e0a030cfea37",
+      "local_size_bytes": 3075
+    },
+    {
+      "id": "m110-039",
+      "status": "materialized",
+      "donor_path": "core/scrambler.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "a51d322697651c2e9d929fffb91b1cbcb4c1eb07214ebd176e9848068a3d14db",
+      "donor_size_bytes": 2604,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/scrambler.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "a51d322697651c2e9d929fffb91b1cbcb4c1eb07214ebd176e9848068a3d14db",
+      "local_size_bytes": 2604
+    },
+    {
+      "id": "m110-040",
+      "status": "materialized",
+      "donor_path": "core/synchronization.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "04cae7a9eb2b5c56b50427780406416a8129952dafe60b8244ce2558f049fc05",
+      "donor_size_bytes": 11128,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/synchronization.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "04cae7a9eb2b5c56b50427780406416a8129952dafe60b8244ce2558f049fc05",
+      "local_size_bytes": 11128
+    },
+    {
+      "id": "m110-041",
+      "status": "materialized",
+      "donor_path": "core/demapper.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "80479fe1e1b6d080da96b1cf9c75f188e05d3ab1393bacfe8ce80f140443f9be",
+      "donor_size_bytes": 10394,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/demapper.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "80479fe1e1b6d080da96b1cf9c75f188e05d3ab1393bacfe8ce80f140443f9be",
+      "local_size_bytes": 10394
+    },
+    {
+      "id": "m110-042",
+      "status": "materialized",
+      "donor_path": "core/fec.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "a013ee898c9477be900e6d43850ddd0e05f98af912a97c73f2f18ff7569a2e18",
+      "donor_size_bytes": 20661,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/fec.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "a013ee898c9477be900e6d43850ddd0e05f98af912a97c73f2f18ff7569a2e18",
+      "local_size_bytes": 20661
+    },
+    {
+      "id": "m110-043",
+      "status": "materialized",
+      "donor_path": "core/interleaver.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "2a4a0bbb1599dc9d52da4f84413c87ce62273d6be527deffe265ee98c1c50c86",
+      "donor_size_bytes": 13050,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/interleaver.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "2a4a0bbb1599dc9d52da4f84413c87ce62273d6be527deffe265ee98c1c50c86",
+      "local_size_bytes": 13050
+    },
+    {
+      "id": "m110-044",
+      "status": "materialized",
+      "donor_path": "core/scrambler.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "5ab3af3ae4f018ec0aa8d82f5ea6d3a37a2f9169b9b5b27c64c86a87082a7ad1",
+      "donor_size_bytes": 6196,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/scrambler.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "5ab3af3ae4f018ec0aa8d82f5ea6d3a37a2f9169b9b5b27c64c86a87082a7ad1",
+      "local_size_bytes": 6196
+    },
+    {
+      "id": "m110-045",
+      "status": "materialized",
+      "donor_path": "core/synchronization.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "ea0849d5ab08554394c110d8bf2d8aeb4b35fcc072cc1557d147df566468d499",
+      "donor_size_bytes": 62980,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "native-m110/core/synchronization.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "verbatim"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "ea0849d5ab08554394c110d8bf2d8aeb4b35fcc072cc1557d147df566468d499",
+      "local_size_bytes": 62980
+    },
+    {
+      "id": "m110-046",
+      "status": "materialized",
+      "donor_path": "app/cdc_mux_protocol.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "a3fbe45c9209ae1689c67a21c9ec3e67a55ec1bfcef772e6034d442ac2f8b5fd",
+      "donor_size_bytes": 3808,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "common/dd008/cdc_mux_protocol.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "Local includes and maximum payload default 256 bytes only"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "b68db5def4e23f1ec2cd72fe8109709dc8f1aa3bf89e4ca6fcb2563cda8d9ddc",
+      "local_size_bytes": 3809
+    },
+    {
+      "id": "m110-047",
+      "status": "materialized",
+      "donor_path": "app/cdc_mux_protocol.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "64ad88cedcaece27fc17e6f31ba7e58456aa3c501869ecfab9cf963bf42ada64",
+      "donor_size_bytes": 12771,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "common/dd008/cdc_mux_protocol.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "Local includes and maximum payload default 256 bytes only"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "5cbcbde710c43f5e7377c57c9cabe1bf8a8704dba5d3099f43932cdeb7a97914",
+      "local_size_bytes": 12780
+    },
+    {
+      "id": "m110-048",
+      "status": "materialized",
+      "donor_path": "app/cdc_mux_session.hpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "4ce93517f9eac9d77c3e3f63e20557a55e31d2861ab400e857650387be9e9cc2",
+      "donor_size_bytes": 5383,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "common/dd008/cdc_mux_session.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "Local includes and maximum payload default 256 bytes only"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "6e78c54cb181755b6ffe9fc34f4b2264b6257b6ab9026dc282608e74de95c6be",
+      "local_size_bytes": 5392
+    },
+    {
+      "id": "m110-049",
+      "status": "materialized",
+      "donor_path": "app/cdc_mux_session.cpp",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "54f25ef6e81e39136b64166f8a0314d060fa017031a33b57d66cca3e78ca90ce",
+      "donor_size_bytes": 19453,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "common/dd008/cdc_mux_session.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "Local includes and maximum payload default 256 bytes only"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "eb986b77aedb3c0c00666be09dc3a790b5540fa3fe7a56c0774a55cf1e9868f0",
+      "local_size_bytes": 19462
+    },
+    {
+      "id": "m110-050",
+      "status": "materialized",
+      "donor_path": "tools/cdc_mux_protocol.py",
+      "donor_revision": "b20ae7dfab068937f438a10bd37c73429f54e591",
+      "donor_sha256": "68715991ae8f3fec6823070b23ffc5b925f3c384deb8172f9b6b6ab999cb94ef",
+      "donor_size_bytes": 10071,
+      "selected_donor_dirty": false,
+      "selected_donor_status": "",
+      "destination": "host/dd008.py",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "adaptations": [
+        "Byte-exact local copy; host negotiates device payload bound"
+      ],
+      "notes": "Materialized on 2026-09-06 from the explicitly authorized TX or DD008 donor closure. Historical donor paths are provenance only; compilation uses these local copies. Local bytes re-verified on 2026-09-06 for the current Phase 4/5 implementation.",
+      "local_sha256": "68715991ae8f3fec6823070b23ffc5b925f3c384deb8172f9b6b6ab999cb94ef",
+      "local_size_bytes": 10071
     }
   ]
 }

@@ -6,6 +6,10 @@
 #include "platform/waveform_msc.h"
 #include "platform/wm8960_codec.hpp"
 #include "status_contract.hpp"
+#include "common/live_protocol.hpp"
+#include "tx_artifact.hpp"
+#include "tx_usb.hpp"
+#include "fsl_common.h"
 #endif
 
 extern "C"
@@ -16,17 +20,19 @@ extern "C"
 
 #include <cstdint>
 #include <cstring>
+#include <cstdio>
+#include <string_view>
 
 namespace waveform_generator
 {
 
-constexpr std::uint32_t usb_stack_words = 1024U;
+constexpr std::uint32_t usb_stack_words = 2048U;
 StaticTask_t usb_task_control;
 StackType_t usb_task_stack[usb_stack_words];
 TaskHandle_t usb_task_handle{};
 
 #if defined(WFG_PLAYER_IMAGE)
-constexpr std::size_t control_line_capacity = 32U;
+constexpr std::size_t control_line_capacity = live_protocol::wire_capacity;
 constexpr std::size_t response_capacity = cdc_response_capacity;
 char control_line[control_line_capacity]{};
 std::size_t control_line_size{};
@@ -35,6 +41,14 @@ char response_buffer[response_capacity]{};
 std::size_t response_size{};
 std::size_t response_written{};
 bool response_overflowed{};
+bool json_fields{};
+bool player_reply_waiting{};
+bool legacy_reply{};
+bool discard_player_reply{};
+bool tx_reply_waiting{};
+bool connected_before{};
+std::uint32_t last_sequence{};
+std::uint32_t response_sequence{};
 
 void append_char(char value) noexcept
 {
@@ -58,9 +72,9 @@ void append_literal(const char* value) noexcept
     }
 }
 
-void append_uint(std::uint32_t value) noexcept
+void append_uint(std::uint64_t value) noexcept
 {
-    char digits[10]{};
+    char digits[20]{};
     std::size_t digit_count = 0U;
 
     do
@@ -77,11 +91,11 @@ void append_uint(std::uint32_t value) noexcept
     }
 }
 
-void append_field(const char* name, std::uint32_t value) noexcept
+void append_field(const char* name, std::uint64_t value) noexcept
 {
-    append_char(' ');
+    append_literal(json_fields ? ",\"" : " ");
     append_literal(name);
-    append_char('=');
+    append_literal(json_fields ? "\":" : "=");
     append_uint(value);
 }
 
@@ -123,13 +137,40 @@ void queue_simple_ok(const char* message) noexcept
     finish_response();
 }
 
-void queue_status() noexcept
+
+void begin_json(bool ok) noexcept
+{
+    const auto player = player_snapshot();
+    const auto live = player_live_snapshot();
+    begin_response("{\"seq\":"); append_uint(response_sequence);
+    append_literal(",\"protocol\":\"WFG-LIVE/1\",\"ok\":"); append_literal(ok ? "true" : "false");
+    append_literal(",\"state\":"); append_uint(player.state);
+    append_literal(",\"run_id\":");
+    if (live.run_id[0]) { append_char('"'); append_literal(live.run_id); append_char('"'); }
+    else append_literal("null");
+}
+
+void queue_json_error(const char* code) noexcept
+{
+    begin_json(false);
+    append_literal(",\"error\":{\"code\":\""); append_literal(code);
+    append_literal("\",\"message\":\""); append_literal(code); append_literal("\"}}");
+    finish_response();
+}
+
+void queue_status(const char* field = nullptr) noexcept
 {
     const auto media = WFG_MediaGetSnapshot();
     const auto player = player_snapshot();
     const auto& codec = m110::imxrt1170::wm8960_codec();
 
-    begin_response("OK STATUS");
+    if (!field) begin_response("OK STATUS");
+    else
+    {
+        begin_json(true);
+        append_literal(",\""); append_literal(field); append_literal("\":{\"format\":\"engineering-counters\"");
+        json_fields = true;
+    }
     append_field("media_state", media.state);
     append_field("media_error", media.error);
     append_field("card_ready", media.card_ready);
@@ -208,67 +249,128 @@ void queue_status() noexcept
     append_field("producer_rate_sps", player.producer_rate_sps);
     append_field("producer_worst_block_cycles", player.producer_worst_block_cycles);
     append_field("producer_sleeps", player.producer_sleeps);
+    if (field)
+    {
+        const auto live = player_live_snapshot();
+        append_field("live_seed", live.seed);
+        append_field("live_frame", live.live_frame);
+        append_field("live_digest_hi", live.live_digest >> 32);
+        append_field("live_digest_lo", live.live_digest & UINT32_MAX);
+        append_field("live_clipped", live.live_clipped);
+        append_field("live_events", live.live_events);
+        append_field("live_queue_free", live.queue_free);
+        append_field("live_capture_free", live.capture_free);
+        const auto artifact = tx_artifact_snapshot();
+        append_field("tx_artifact_state", artifact.state);
+        append_field("tx_payload_bytes", artifact.payload_bytes);
+        append_field("tx_frames_written", artifact.frames_written);
+        append_field("tx_total_frames", artifact.total_frames);
+        append_literal(",\"tx_filename\":\""); append_literal(artifact.filename); append_literal("\"");
+        append_literal(",\"tx_wav_sha256\":\""); append_literal(artifact.wav_sha256); append_literal("\"");
+        append_literal(",\"tx_error\":\""); append_literal(artifact.error); append_literal("\"");
+        append_literal(",\"live_reference_rms\":");
+        char number[32]{};
+        if (live.reference_rms > 0) { std::snprintf(number, sizeof(number), "%.17g", live.reference_rms); append_literal(number); }
+        else append_literal("null");
+        append_literal(",\"selected_file\":\""); append_literal(live.selected_file); append_literal("\"}}");
+        json_fields = false;
+    }
+    finish_response();
+}
+
+
+void queue_info() noexcept
+{
+    begin_json(true);
+    append_literal(",\"info\":{\"kind\":\"waveform-player\",\"board\":\"MIMXRT1170-EVK\",\"firmware_version\":\"0.2.0\",\"sample_rate_hz\":48000,\"usb_serial\":\"");
+    constexpr char hex[] = "0123456789ABCDEF";
+    const std::uint32_t words[] = {OCOTP->FUSEN[1].FUSE, OCOTP->FUSEN[2].FUSE};
+    for (const auto word : words) for (int i = 7; i >= 0; --i) append_char(hex[(word >> (4 * i)) & 15]);
+    append_literal("\",\"source_manifest_sha256\":\"");
+    append_literal(WFG_SOURCE_MANIFEST_SHA256);
+    append_literal("\",\"capabilities\":[\"wav-files\",\"live-controls\",\"sample-indexed-replay\",\"stepped-sweeps\",\"reusable-playback\"");
+#if !defined(WFG_MSC_READ_ONLY)
+    append_literal(",\"sd-wav-generation\",\"dd008-payload-upload\"],\"encoders\":[\"M110B\"]");
+#else
+    append_literal("],\"encoders\":[],\"read_only\":true");
+#endif
+    append_literal(",\"qualification\":false,\"request_capacity\":192,\"response_capacity\":4096}}");
     finish_response();
 }
 
 void handle_control_line() noexcept
 {
     control_line[control_line_size] = '\0';
-
-    if (std::strcmp(control_line, "STATUS") == 0)
+    std::string_view line(control_line, control_line_size);
+    if (!line.empty() && line.back() == '\r') line.remove_suffix(1);
+    // Preserve the original checkpoint tools. All new functionality uses sequences.
+    if (line == "STATUS") { queue_status(); return; }
+    if (line == "MEDIA HOST" || line == "MEDIA LOCAL")
     {
-        queue_status();
-    }
-    else if (std::strcmp(control_line, "MEDIA HOST") == 0)
-    {
-        if (!player_allows_media_host())
+        if (line == "MEDIA HOST")
         {
-            queue_error("BUSY");
-        }
-        else
-        {
-            const wfg_media_host_request_result_t result = WFG_MediaRequestHost();
-            if (result == kWFG_MediaHostRequestReady)
-            {
-                queue_simple_ok("MEDIA HOST");
-            }
-            else if (result == kWFG_MediaHostRequestInitializing)
-            {
-                queue_simple_ok("MEDIA HOST INIT");
-            }
+            if (!player_allows_media_host()) queue_error("BUSY");
             else
             {
-                queue_error("MEDIA HOST FAILED");
+                const auto result = WFG_MediaRequestHost();
+                if (result == kWFG_MediaHostRequestReady) queue_simple_ok("MEDIA HOST");
+                else if (result == kWFG_MediaHostRequestInitializing) queue_simple_ok("MEDIA HOST INIT");
+                else queue_error("MEDIA HOST FAILED");
             }
         }
+        else if (WFG_MediaSetLocal()) queue_simple_ok("MEDIA LOCAL");
+        else queue_error("MEDIA LOCAL FAILED");
+        return;
     }
-    else if (std::strcmp(control_line, "MEDIA LOCAL") == 0)
+    live_protocol::Request command{};
+    legacy_reply = line == "PLAY";
+    if (legacy_reply) command.kind = live_protocol::Kind::play;
+    else if (!live_protocol::parse(std::string_view(control_line, control_line_size), last_sequence, command))
     {
-        if (WFG_MediaSetLocal())
-        {
-            queue_simple_ok("MEDIA LOCAL");
-        }
-        else
-        {
-            queue_error("MEDIA LOCAL FAILED");
-        }
+        response_sequence = command.seq;
+        queue_json_error("BAD_REQUEST");
+        return;
     }
-    else if (std::strcmp(control_line, "PLAY") == 0)
+    response_sequence = command.seq;
+    using live_protocol::Kind;
+    if (command.kind == Kind::generate_file)
     {
-        const auto status = request_player_play();
-        if (status.is_ok())
-        {
-            queue_simple_ok("PLAY");
-        }
-        else
-        {
-            queue_error(status.message);
-        }
+        tx_protocol::Request request{};
+        request.kind = tx_protocol::Kind::generate_file;
+        request.rate = static_cast<std::uint16_t>(command.rate);
+        request.interleave = static_cast<std::uint8_t>(command.interleave);
+        std::strcpy(request.name, command.name);
+        std::strcpy(request.input_name, command.input_name);
+        std::strcpy(request.encoder, command.encoder);
+        std::strcpy(request.profile, command.profile);
+        if (!submit_tx_request(request)) queue_json_error("BUSY");
+        else tx_reply_waiting = true;
+        return;
     }
-    else
+    if (command.kind == Kind::info) { queue_info(); return; }
+    if (command.kind == Kind::status || command.kind == Kind::counters)
     {
-        queue_error("BAD REQUEST");
+        queue_status(command.kind == Kind::status ? "status" : "counters");
+        return;
     }
+    if (command.kind == Kind::media_host || command.kind == Kind::media_local)
+    {
+        bool ok = false;
+        if (command.kind == Kind::media_host)
+        {
+            if (player_allows_media_host()) ok = WFG_MediaRequestHost() != kWFG_MediaHostRequestFailed;
+        }
+        else ok = WFG_MediaSetLocal();
+        if (!ok) { queue_json_error("BUSY"); return; }
+        begin_json(true); append_literal(",\"result\":{\"accepted\":true}}"); finish_response();
+        return;
+    }
+    if (!submit_player_command(command))
+    {
+        if (legacy_reply) queue_error("BUSY"); else queue_json_error("BUSY");
+        return;
+    }
+    player_reply_waiting = true;
 }
 
 void service_response() noexcept
@@ -295,57 +397,93 @@ void service_response() noexcept
 
 void service_control() noexcept
 {
-    if (response_size != 0U)
+    const bool connected = m110_tinyusb_cdc_connected();
+    if (connected_before && !connected)
     {
-        service_response();
+        last_sequence = 0;
+        control_line_size = 0;
+        control_line_too_long = false;
+        response_size = response_written = 0;
+        if (player_reply_waiting) discard_player_reply = true;
+        if (tx_usb_active() || tx_reply_waiting) tx_usb_disconnect();
+        tx_reply_waiting = false;
+    }
+    connected_before = connected;
+    if (tx_usb_active())
+    {
+        tx_usb_service();
+        while (m110_tinyusb_cdc_available() && !tx_usb_blocked())
+        {
+            std::uint8_t byte{};
+            if (m110_tinyusb_cdc_read(&byte, 1) != 1) break;
+            tx_usb_feed(byte);
+        }
+        tx_usb_service();
         return;
     }
-
-    while (m110_tinyusb_cdc_available() != 0U && response_size == 0U)
+    if (tx_reply_waiting)
+    {
+        tx_protocol::Reply reply{};
+        if (!take_tx_reply(reply)) return;
+        tx_reply_waiting = false;
+        if (!reply.ok) queue_json_error(reply.error);
+        else
+        {
+            begin_json(true);
+            append_literal(",\"result\":{\"accepted\":true,\"generating\":true}}");
+            finish_response();
+        }
+    }
+    if (player_reply_waiting)
+    {
+        ControlReply reply{};
+        if (!take_player_reply(reply)) return;
+        player_reply_waiting = false;
+        if (discard_player_reply) { discard_player_reply = false; return; }
+        if (legacy_reply)
+        {
+            if (reply.ok) queue_simple_ok("PLAY"); else queue_error(reply.error);
+        }
+        else if (!reply.ok) queue_json_error(reply.error);
+        else
+        {
+            begin_json(true);
+            append_literal(",\"result\":{\"accepted\":true,\"apply_frame\":"); append_uint(reply.apply_frame);
+            append_literal(",\"events\":"); append_uint(reply.events); append_literal("}}");
+            finish_response();
+        }
+    }
+    if (response_size) { service_response(); return; }
+    while (m110_tinyusb_cdc_available() && !response_size && !player_reply_waiting && !tx_reply_waiting)
     {
         char byte{};
-        if (m110_tinyusb_cdc_read(&byte, 1U) != 1U)
+        if (m110_tinyusb_cdc_read(&byte, 1) != 1) break;
+        // DD008 starts with a NUL resynchronizer, then COBS HELLO code 0x05.
+        // Bind one protocol per CDC
+        // connection; switch by closing/reopening the port, never mid-record.
+        if (!control_line_size && !last_sequence && (byte == 0 || static_cast<unsigned char>(byte) == 5U))
         {
-            break;
+            tx_usb_feed(static_cast<std::uint8_t>(byte));
+            return;
         }
-
         if (control_line_too_long)
         {
             if (byte == '\n')
             {
                 control_line_too_long = false;
-                control_line_size = 0U;
-                queue_error("LINE TOO LONG");
+                control_line_size = 0;
+                response_sequence = 0;
+                queue_json_error("LINE_TOO_LONG");
             }
             continue;
         }
-
-        if (byte == '\r')
-        {
-            continue;
-        }
-        if (byte == '\n')
-        {
-            handle_control_line();
-            control_line_size = 0U;
-        }
-        else if (control_line_size + 1U < control_line_capacity)
-        {
-            control_line[control_line_size] = byte;
-            control_line_size++;
-        }
-        else
-        {
-            control_line_too_long = true;
-            control_line_size = 0U;
-        }
+        if (byte == '\n') { handle_control_line(); control_line_size = 0; }
+        else if (control_line_size + 1 < control_line_capacity) control_line[control_line_size++] = byte;
+        else { control_line_too_long = true; control_line_size = 0; }
     }
-
-    if (response_size != 0U)
-    {
-        service_response();
-    }
+    if (response_size) service_response();
 }
+
 #endif
 
 void usb_task_entry(void*) noexcept

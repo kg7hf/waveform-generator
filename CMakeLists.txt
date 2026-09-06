@@ -4,9 +4,9 @@ set(WFG_TARGET "host" CACHE STRING "Build target: host or rt1170")
 set_property(CACHE WFG_TARGET PROPERTY STRINGS host rt1170)
 
 if(WFG_TARGET STREQUAL "rt1170")
-    project(M110WaveformGenerator VERSION 0.1.0 LANGUAGES C CXX ASM)
+    project(M110WaveformGenerator VERSION 0.2.0 LANGUAGES C CXX ASM)
 else()
-    project(M110WaveformGenerator VERSION 0.1.0 LANGUAGES CXX)
+    project(M110WaveformGenerator VERSION 0.2.0 LANGUAGES CXX)
 endif()
 
 set(CMAKE_CXX_STANDARD 23)
@@ -65,15 +65,29 @@ file(WRITE "${WFG_SOURCE_MANIFEST_PATH}" "${WFG_SOURCE_MANIFEST}")
 file(SHA256 "${WFG_SOURCE_MANIFEST_PATH}" WFG_SOURCE_MANIFEST_SHA256)
 
 set(WFG_BUILD_ID
-    "wfg-0.1.0,source=${WFG_SOURCE_MANIFEST_SHA256},deps=${WFG_DEPENDENCY_LOCK_SHA256},imports=${WFG_SOURCE_IMPORTS_SHA256}")
+    "wfg-${PROJECT_VERSION},source=${WFG_SOURCE_MANIFEST_SHA256},deps=${WFG_DEPENDENCY_LOCK_SHA256},imports=${WFG_SOURCE_IMPORTS_SHA256}")
 
 if(WFG_TARGET STREQUAL "host")
     include(CTest)
     enable_testing()
     add_subdirectory(signal-lab)
+    add_subdirectory(waveform-source)
+    add_subdirectory(native-m110)
     add_subdirectory(host/capture)
     add_subdirectory(host/render)
+    add_subdirectory(host/tx)
     add_subdirectory(tests)
+    # Retain actual GNU link inputs for the same post-build boundary audit used
+    # by firmware. Output paths are local build artifacts, not source dependencies.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        foreach(wfg_binary IN ITEMS waveform_capture signal_lab_render wfg_m110_tx
+                wfg_signal_lab_tests wfg_live_control_tests wfg_waveform_source_tests
+                wfg_native_m110_tests wfg_live_protocol_tests wfg_tx_protocol_tests
+                wfg_tx_usb_host_tests wfg_player_live_host_tests wfg_tx_artifact_host_tests
+                wfg_contract_tests wfg_capture_core_tests)
+            target_link_options(${wfg_binary} PRIVATE "-Wl,-Map,$<TARGET_FILE:${wfg_binary}>.map")
+        endforeach()
+    endif()
 elseif(WFG_TARGET STREQUAL "rt1170")
     add_subdirectory(rt1170)
 else()

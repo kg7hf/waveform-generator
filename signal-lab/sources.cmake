@@ -15,6 +15,7 @@ set(WFG_SIGNAL_LAB_SOURCES
     "${WFG_SIGNAL_LAB_ROOT}/src/sample_slip.cpp"
     "${WFG_SIGNAL_LAB_ROOT}/src/mixer.cpp"
     "${WFG_SIGNAL_LAB_ROOT}/src/sample_stream.cpp"
+    "${WFG_SIGNAL_LAB_ROOT}/src/live_control.cpp"
 )
 # Determinism across host and target: no floating-point contraction, no fast-math.
 set(WFG_SIGNAL_LAB_COMPILE_OPTIONS -ffp-contract=off -fno-fast-math)

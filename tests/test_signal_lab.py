@@ -2,11 +2,13 @@
 """Unit tests for the Phase-1 signal_lab engine, reference sizing and decoder-output scoring.
 
 Run from the waveform-generator root:  python -m unittest tests.test_signal_lab -v
-Tests that cross-check against the parent M110 repository (pathsim-campaign.py PN-11 and
-corner table, tools/pcm_stress.py numerics) are skipped when that tree is not present.
+Optional cross-checks against the parent M110 repository (pathsim-campaign.py PN-11 and
+corner table, tools/pcm_stress.py numerics) require WFG_PARENT_REFERENCE_TESTS=1.
 """
 
 import importlib.util
+import contextlib
+import io
 import json
 import math
 import os
@@ -14,6 +16,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 
@@ -22,20 +25,23 @@ sys.path.insert(0, str(ROOT / "host"))
 
 import m110_reference  # noqa: E402
 import m110_score  # noqa: E402
+import corpus_phase1  # noqa: E402
 from signal_lab import FS  # noqa: E402
-from signal_lab.awgn import Awgn, filter_kernel  # noqa: E402
+from signal_lab.awgn import Awgn, BandNoise, filter_kernel  # noqa: E402
 from signal_lab.cw import Cw  # noqa: E402
 from signal_lab.fade import Fade  # noqa: E402
 from signal_lab.impulse import Impulse  # noqa: E402
-from signal_lab.render import render  # noqa: E402
+from signal_lab.render import RenderError, render  # noqa: E402
+from signal_lab.rng import FAMILY_BACKGROUND_NOISE, generator  # noqa: E402
 from signal_lab.sample_slip import SampleSlip  # noqa: E402
 from signal_lab.scenario import ScenarioError, validate  # noqa: E402
 from signal_lab.stream import Pipeline  # noqa: E402
-from signal_lab.wav_io import read_float, wav_info, write_pcm16  # noqa: E402
+from signal_lab.wav_io import read_float, sha256_file, wav_info, write_pcm16  # noqa: E402
 
 PARENT = ROOT.parent.parent
 PATHSIM_CAMPAIGN = PARENT / "tools" / "pathsim-campaign.py"
 PCM_STRESS = PARENT / "tools" / "pcm_stress.py"
+PARENT_REFERENCE_TESTS = os.environ.get("WFG_PARENT_REFERENCE_TESTS") == "1"
 
 
 def load_module(path, name):
@@ -60,13 +66,13 @@ class Pn11Tests(unittest.TestCase):
         self.assertEqual(data[:6].hex(), "80301e0cc7fb")
         self.assertEqual(data[:2047], data[2047:4094])
 
-    @unittest.skipUnless(PATHSIM_CAMPAIGN.exists(), "parent pathsim-campaign.py not present")
+    @unittest.skipUnless(PARENT_REFERENCE_TESTS and PATHSIM_CAMPAIGN.exists(), "parent reference tests not enabled or unavailable")
     def test_matches_pathsim_campaign(self):
         campaign = load_module(PATHSIM_CAMPAIGN, "pathsim_campaign")
         for length in (1, 100, 4188, 43766):
             self.assertEqual(m110_reference.pn11_payload(length), campaign.pn11_payload(length))
 
-    @unittest.skipUnless(PATHSIM_CAMPAIGN.exists(), "parent pathsim-campaign.py not present")
+    @unittest.skipUnless(PARENT_REFERENCE_TESTS and PATHSIM_CAMPAIGN.exists(), "parent reference tests not enabled or unavailable")
     def test_corner_table_matches_campaign(self):
         campaign = load_module(PATHSIM_CAMPAIGN, "pathsim_campaign")
         spec = json.loads((ROOT / "corpus" / "phase1-corpus.json").read_text(encoding="utf-8"))
@@ -122,6 +128,29 @@ class ImpairmentLevelTests(unittest.TestCase):
         freqs = np.fft.rfftfreq(len(noise), 1 / FS)
         outside = spectrum[(freqs < 200) | (freqs > 3400)].sum() / spectrum.sum()
         self.assertLess(outside, 0.01)
+
+    def test_repeated_awgn_is_independent_and_preserves_first_legacy_stream(self):
+        # A preceding fade must not change the first AWGN's historical stream 0.
+        stages = [Fade({"depth_db": 0, "duration_ms": 100, "starts_seconds": []}),
+                  Awgn({"snr_db": 10}), Awgn({"snr_db": 10})]
+        pipeline = Pipeline(stages)
+        pipeline.prepare(self.reference, len(self.signal), 42)
+        noises = [[], []]
+        for first in range(0, len(self.signal), 4096):
+            block = np.zeros(min(4096, len(self.signal) - first))
+            for index, stage in enumerate(stages[1:]):
+                noises[index].append(stage.process(block, first))
+        first_noise, second_noise = [np.concatenate(parts) for parts in noises]
+        legacy = BandNoise(generator(42, FAMILY_BACKGROUND_NOISE, 0), stationary=True)
+        legacy_noise = np.concatenate([legacy.next(min(4096, len(self.signal) - first))
+                                       for first in range(0, len(self.signal), 4096)]) * (self.reference * 10 ** (-10 / 20))
+        self.assertTrue(np.array_equal(first_noise, legacy_noise))
+        self.assertFalse(np.array_equal(first_noise, second_noise))
+        self.assertLess(abs(float(np.corrcoef(first_noise, second_noise)[0, 1])), 0.05)
+        combined_db = 10 * math.log10(np.dot(first_noise + second_noise, first_noise + second_noise) /
+                                     np.dot(first_noise, first_noise))
+        self.assertAlmostEqual(combined_db, 10 * math.log10(2), delta=0.3)
+        self.assertEqual([stage.resolved()["rng_index"] for stage in stages[1:]], [0, 1])
 
     def test_impulse_peak_and_schedule(self):
         stage = Impulse({"period_seconds": 1.0, "first_seconds": 0.5, "peak_db": 20, "decay_ms": 5, "ring_hz": 0, "phase_degrees": 0})
@@ -201,7 +230,19 @@ class ScenarioAndRenderTests(unittest.TestCase):
             c = render(dict(scenario, seed=43), Path(temp) / "c.wav", base_dir=temp)
             self.assertNotEqual(a["output"]["pcm"]["sha256"], c["output"]["pcm"]["sha256"])
 
-    @unittest.skipUnless(PCM_STRESS.exists(), "parent tools/pcm_stress.py not present")
+    def test_output_levels_measure_emitted_saturated_pcm(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp = Path(temp)
+            write_pcm16(temp / "src.wav", np.tile([0.75, -0.75, 0.125, -0.125], 2048))
+            scenario = {"test_id": "saturation", "source": {"path": "src.wav"},
+                        "source_gain_db": 20 * math.log10(2), "clip_policy": "saturate"}
+            sidecar = render(scenario, temp / "out.wav", base_dir=temp)
+            emitted, _ = read_float(temp / "out.wav")
+            self.assertGreater(sidecar["output"]["clipped_samples"], 0)
+            self.assertAlmostEqual(sidecar["output"]["peak_dbfs"], 20 * math.log10(np.max(np.abs(emitted))), places=13)
+            self.assertAlmostEqual(sidecar["output"]["rms_dbfs"], 10 * math.log10(np.mean(emitted * emitted)), places=13)
+
+    @unittest.skipUnless(PARENT_REFERENCE_TESTS and PCM_STRESS.exists(), "parent reference tests not enabled or unavailable")
     def test_matches_pcm_stress_for_shared_models(self):
         """AWGN + raised-cosine fade + CW must reproduce the owner's pcm_stress renderer bit-exactly."""
         pcm_stress = load_module(PCM_STRESS, "pcm_stress")
@@ -256,6 +297,67 @@ summary decoded_bursts=1 exact_payloads=1 required_exact_payloads=1 clipped_samp
         self.assertEqual(diag["first_mismatch_byte"], 100)
         self.assertEqual(diag["tail_best_shift_bytes"], 5)
         self.assertTrue(diag["tail_realigned"])
+
+
+class CorpusRecoveryTests(unittest.TestCase):
+    def test_score_cache_and_record_use_actual_wav_for_both_sidecar_schemas(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp = Path(temp)
+            decoder = temp / "decoder.exe"
+            decoder.write_bytes(b"fixed decoder identity")
+            payload = temp / "payload.bin"
+            payload.write_bytes(bytes.fromhex("00112233"))
+            for artifact_key in ("wav", "output"):
+                with self.subTest(sidecar_schema=artifact_key):
+                    wav = temp / (artifact_key + ".wav")
+                    wav.write_bytes(b"first WAV")
+                    sidecar = {"test_id": artifact_key, "mode": "600L", artifact_key: {"sha256": sha256_file(wav)}}
+                    expected = {"path": str(payload)}
+                    if artifact_key == "wav":
+                        sidecar.update(kind="reference_perfect", payload=expected)
+                    else:
+                        sidecar.update(source_reference={"payload": expected, "mode": "600L"},
+                                       tags={"family": "noise"})
+                    wav.with_suffix(".json").write_text(json.dumps(sidecar), encoding="utf-8")
+                    with patch("m110_score.run_decoder", return_value=([], 0, 0.0, ScoreParserTests.LOG)) as run, \
+                            contextlib.redirect_stdout(io.StringIO()):
+                        first = corpus_phase1.stage_score([wav], decoder, ["siso"], 1, False)
+                        self.assertEqual(run.call_count, 1)
+                        unchanged = corpus_phase1.stage_score([wav], decoder, ["siso"], 1, False)
+                        self.assertEqual(run.call_count, 1)
+                        self.assertEqual(first, unchanged)
+                        wav.write_bytes(b"regenerated WAV")
+                        sidecar[artifact_key]["sha256"] = sha256_file(wav)
+                        wav.with_suffix(".json").write_text(json.dumps(sidecar), encoding="utf-8")
+                        regenerated = corpus_phase1.stage_score([wav], decoder, ["siso"], 1, False)
+                        self.assertEqual(run.call_count, 2)
+                        self.assertEqual(regenerated["siso"][0]["wav_sha256"], sha256_file(wav))
+                        # Changed input bytes must also invalidate a cache when its sidecar is stale.
+                        wav.write_bytes(b"replaced WAV with stale sidecar")
+                        replaced = corpus_phase1.stage_score([wav], decoder, ["siso"], 1, False)
+                        self.assertEqual(run.call_count, 3)
+                        self.assertEqual(replaced["siso"][0]["wav_sha256"], sha256_file(wav))
+
+    def test_verify_reports_missing_cases_and_mismatches(self):
+        with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):
+            temp = Path(temp)
+            write_pcm16(temp / "src.wav", np.full(128, 0.25))
+            scenario = {"test_id": "present", "source": {"path": "src.wav"}, "source_gain_db": 0}
+            output = temp / "present.wav"
+            sidecar = render(scenario, output, base_dir=temp)
+            present = (scenario, output)
+            missing = (dict(scenario, test_id="missing"), temp / "missing.wav")
+            self.assertEqual(corpus_phase1.stage_verify([present], 1), [])
+            self.assertEqual(corpus_phase1.stage_verify([present, missing], 1), ["missing"])
+            sidecar["output"]["pcm"]["sha256"] = "incorrect digest"
+            output.with_suffix(".json").write_text(json.dumps(sidecar), encoding="utf-8")
+            self.assertEqual(corpus_phase1.stage_verify([present], 1), ["present"])
+
+    def test_verify_missing_corpus_fails_command_and_empty_plan_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(corpus_phase1.main(["--root", temp, "--stage", "verify"]), 4)
+        with self.assertRaisesRegex(RenderError, "no scenarios"):
+            corpus_phase1.stage_verify([], 1)
 
 
 if __name__ == "__main__":
