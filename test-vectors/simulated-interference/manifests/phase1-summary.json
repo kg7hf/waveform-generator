@@ -1,0 +1,926 @@
+{
+ "corpus_id": "phase1-simulated-interference",
+ "counts": {
+  "by_family": {
+   "cw": 22,
+   "fade": 20,
+   "impulse": 19,
+   "mixed": 30,
+   "noise": 23,
+   "reference": 12,
+   "sample-slip": 21
+  },
+  "by_mode": {
+   "1200L": 22,
+   "1200S": 22,
+   "300L": 22,
+   "300S": 22,
+   "600L": 37,
+   "600S": 22
+  },
+  "by_mode_family": {
+   "1200L/cw": 3,
+   "1200L/fade": 3,
+   "1200L/impulse": 3,
+   "1200L/mixed": 5,
+   "1200L/noise": 3,
+   "1200L/reference": 2,
+   "1200L/sample-slip": 3,
+   "1200S/cw": 3,
+   "1200S/fade": 3,
+   "1200S/impulse": 3,
+   "1200S/mixed": 5,
+   "1200S/noise": 3,
+   "1200S/reference": 2,
+   "1200S/sample-slip": 3,
+   "300L/cw": 3,
+   "300L/fade": 3,
+   "300L/impulse": 3,
+   "300L/mixed": 5,
+   "300L/noise": 3,
+   "300L/reference": 2,
+   "300L/sample-slip": 3,
+   "300S/cw": 3,
+   "300S/fade": 3,
+   "300S/impulse": 3,
+   "300S/mixed": 5,
+   "300S/noise": 3,
+   "300S/reference": 2,
+   "300S/sample-slip": 3,
+   "600L/cw": 7,
+   "600L/fade": 5,
+   "600L/impulse": 4,
+   "600L/mixed": 5,
+   "600L/noise": 8,
+   "600L/reference": 2,
+   "600L/sample-slip": 6,
+   "600S/cw": 3,
+   "600S/fade": 3,
+   "600S/impulse": 3,
+   "600S/mixed": 5,
+   "600S/noise": 3,
+   "600S/reference": 2,
+   "600S/sample-slip": 3
+  },
+  "by_severity": {
+   "control": 3,
+   "extreme": 3,
+   "light": 29,
+   "moderate": 55,
+   "reference": 12,
+   "severe": 45
+  }
+ },
+ "engines": {
+  "adaptive": {
+   "complete": 113,
+   "incomplete": [
+    "m110_1200L_impulse_severe_seed0409",
+    "m110_1200L_mix_MIX003_seed0432",
+    "m110_1200L_mix_MIX005_seed0434",
+    "m110_1200L_slip_del048_clustered",
+    "m110_1200S_cw_2100_ci+03",
+    "m110_1200S_fade_24db_500ms",
+    "m110_1200S_impulse_severe_seed0509",
+    "m110_1200S_mix_MIX003_seed0532",
+    "m110_1200S_mix_MIX005_seed0534",
+    "m110_1200S_slip_del048_clustered",
+    "m110_300L_mix_MIX003_seed0032",
+    "m110_300L_mix_MIX005_seed0034",
+    "m110_300L_slip_del048_clustered",
+    "m110_300S_cw_2100_ci+03",
+    "m110_300S_fade_24db_500ms",
+    "m110_300S_impulse_severe_seed0109",
+    "m110_300S_mix_MIX002_seed0131",
+    "m110_300S_mix_MIX003_seed0132",
+    "m110_300S_mix_MIX005_seed0134",
+    "m110_300S_slip_del048_clustered",
+    "m110_600L_cw_1800_ci+00",
+    "m110_600L_fade_24db_250ms_rect",
+    "m110_600L_mix_MIX003_seed0232",
+    "m110_600L_mix_MIX005_seed0234",
+    "m110_600L_noise_corner-08_seed0225",
+    "m110_600L_noise_corner-12_seed0226",
+    "m110_600L_slip_del048_clustered",
+    "m110_600S_cw_2100_ci+03",
+    "m110_600S_fade_24db_500ms",
+    "m110_600S_impulse_severe_seed0309",
+    "m110_600S_mix_MIX002_seed0331",
+    "m110_600S_mix_MIX003_seed0332",
+    "m110_600S_mix_MIX005_seed0334",
+    "m110_600S_slip_del048_clustered"
+   ],
+   "matrix": {
+    "1200L/cw": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 401952,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200L/fade": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 401952,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200L/impulse": {
+     "acquired": 3,
+     "bit_errors": 20,
+     "compared_bits": 401952,
+     "complete": 2,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200L/mixed": {
+     "acquired": 5,
+     "bit_errors": 0,
+     "compared_bits": 413216,
+     "complete": 3,
+     "eom": 3,
+     "files": 5,
+     "mode_ok": 5
+    },
+    "1200L/noise": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 401952,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200L/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 483968,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "1200L/sample-slip": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 308160,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200S/cw": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 267968,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 2
+    },
+    "1200S/fade": {
+     "acquired": 3,
+     "bit_errors": 343,
+     "compared_bits": 401952,
+     "complete": 2,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200S/impulse": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 267968,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 2
+    },
+    "1200S/mixed": {
+     "acquired": 4,
+     "bit_errors": 0,
+     "compared_bits": 412624,
+     "complete": 3,
+     "eom": 3,
+     "files": 5,
+     "mode_ok": 4
+    },
+    "1200S/noise": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 401952,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200S/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 483968,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "1200S/sample-slip": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 316800,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300L/cw": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 100080,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300L/fade": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 100080,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300L/impulse": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 100080,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300L/mixed": {
+     "acquired": 5,
+     "bit_errors": 0,
+     "compared_bits": 102704,
+     "complete": 3,
+     "eom": 3,
+     "files": 5,
+     "mode_ok": 5
+    },
+    "300L/noise": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 100080,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300L/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 120720,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "300L/sample-slip": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 76672,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300S/cw": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 66720,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 2
+    },
+    "300S/fade": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 87472,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300S/impulse": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 72352,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300S/mixed": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 66720,
+     "complete": 2,
+     "eom": 2,
+     "files": 5,
+     "mode_ok": 2
+    },
+    "300S/noise": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 100080,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300S/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 120720,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "300S/sample-slip": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 78832,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "600L/cw": {
+     "acquired": 6,
+     "bit_errors": 0,
+     "compared_bits": 401424,
+     "complete": 6,
+     "eom": 6,
+     "files": 7,
+     "mode_ok": 6
+    },
+    "600L/fade": {
+     "acquired": 5,
+     "bit_errors": 0,
+     "compared_bits": 270368,
+     "complete": 4,
+     "eom": 4,
+     "files": 5,
+     "mode_ok": 5
+    },
+    "600L/impulse": {
+     "acquired": 4,
+     "bit_errors": 0,
+     "compared_bits": 267616,
+     "complete": 4,
+     "eom": 4,
+     "files": 4,
+     "mode_ok": 4
+    },
+    "600L/mixed": {
+     "acquired": 5,
+     "bit_errors": 0,
+     "compared_bits": 206216,
+     "complete": 3,
+     "eom": 3,
+     "files": 5,
+     "mode_ok": 5
+    },
+    "600L/noise": {
+     "acquired": 8,
+     "bit_errors": 1772,
+     "compared_bits": 418576,
+     "complete": 6,
+     "eom": 6,
+     "files": 8,
+     "mode_ok": 8
+    },
+    "600L/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 241808,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "600L/sample-slip": {
+     "acquired": 6,
+     "bit_errors": 0,
+     "compared_bits": 354552,
+     "complete": 5,
+     "eom": 5,
+     "files": 6,
+     "mode_ok": 6
+    },
+    "600S/cw": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 133808,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 2
+    },
+    "600S/fade": {
+     "acquired": 3,
+     "bit_errors": 31,
+     "compared_bits": 200712,
+     "complete": 2,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "600S/impulse": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 134040,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "600S/mixed": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 139080,
+     "complete": 2,
+     "eom": 2,
+     "files": 5,
+     "mode_ok": 3
+    },
+    "600S/noise": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 200712,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "600S/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 241808,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "600S/sample-slip": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 158160,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    }
+   },
+   "rows": 147
+  },
+  "siso": {
+   "complete": 105,
+   "incomplete": [
+    "m110_1200L_cw_1800_ci+03",
+    "m110_1200L_impulse_severe_seed0409",
+    "m110_1200L_mix_MIX002_seed0431",
+    "m110_1200L_mix_MIX003_seed0432",
+    "m110_1200L_mix_MIX005_seed0434",
+    "m110_1200L_slip_del048_clustered",
+    "m110_1200S_cw_1800_ci+03",
+    "m110_1200S_cw_2100_ci+03",
+    "m110_1200S_impulse_moderate_seed0508",
+    "m110_1200S_impulse_severe_seed0509",
+    "m110_1200S_mix_MIX002_seed0531",
+    "m110_1200S_mix_MIX003_seed0532",
+    "m110_1200S_mix_MIX004_seed0533",
+    "m110_1200S_mix_MIX005_seed0534",
+    "m110_1200S_slip_del048_clustered",
+    "m110_300L_impulse_severe_seed0009",
+    "m110_300L_mix_MIX005_seed0034",
+    "m110_300L_slip_del048_clustered",
+    "m110_300S_cw_2100_ci+03",
+    "m110_300S_impulse_severe_seed0109",
+    "m110_300S_mix_MIX002_seed0131",
+    "m110_300S_mix_MIX003_seed0132",
+    "m110_300S_mix_MIX005_seed0134",
+    "m110_300S_slip_del048_clustered",
+    "m110_600L_cw_1800_ci+00",
+    "m110_600L_impulse_severe_seed0209",
+    "m110_600L_mix_MIX002_seed0231",
+    "m110_600L_mix_MIX004_seed0233",
+    "m110_600L_mix_MIX005_seed0234",
+    "m110_600L_noise_corner-08_seed0225",
+    "m110_600L_noise_corner-12_seed0226",
+    "m110_600L_noise_corner_gain-24_seed0228",
+    "m110_600L_noise_corner_gain-28_seed0229",
+    "m110_600L_slip_del048_clustered",
+    "m110_600S_cw_2100_ci+03",
+    "m110_600S_impulse_moderate_seed0308",
+    "m110_600S_impulse_severe_seed0309",
+    "m110_600S_mix_MIX002_seed0331",
+    "m110_600S_mix_MIX003_seed0332",
+    "m110_600S_mix_MIX004_seed0333",
+    "m110_600S_mix_MIX005_seed0334",
+    "m110_600S_slip_del048_clustered"
+   ],
+   "matrix": {
+    "1200L/cw": {
+     "acquired": 3,
+     "bit_errors": 424,
+     "compared_bits": 401952,
+     "complete": 2,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200L/fade": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 401952,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200L/impulse": {
+     "acquired": 3,
+     "bit_errors": 64333,
+     "compared_bits": 401952,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200L/mixed": {
+     "acquired": 5,
+     "bit_errors": 23773,
+     "compared_bits": 669920,
+     "complete": 2,
+     "eom": 4,
+     "files": 5,
+     "mode_ok": 5
+    },
+    "1200L/noise": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 401952,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200L/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 483968,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "1200L/sample-slip": {
+     "acquired": 3,
+     "bit_errors": 45564,
+     "compared_bits": 401952,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200S/cw": {
+     "acquired": 2,
+     "bit_errors": 493,
+     "compared_bits": 267968,
+     "complete": 1,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 2
+    },
+    "1200S/fade": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 401952,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200S/impulse": {
+     "acquired": 3,
+     "bit_errors": 67482,
+     "compared_bits": 401952,
+     "complete": 1,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 2
+    },
+    "1200S/mixed": {
+     "acquired": 4,
+     "bit_errors": 10353,
+     "compared_bits": 535936,
+     "complete": 1,
+     "eom": 4,
+     "files": 5,
+     "mode_ok": 4
+    },
+    "1200S/noise": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 401952,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "1200S/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 483968,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "1200S/sample-slip": {
+     "acquired": 3,
+     "bit_errors": 43038,
+     "compared_bits": 401952,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300L/cw": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 100080,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300L/fade": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 100080,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300L/impulse": {
+     "acquired": 3,
+     "bit_errors": 12413,
+     "compared_bits": 100080,
+     "complete": 2,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300L/mixed": {
+     "acquired": 5,
+     "bit_errors": 11,
+     "compared_bits": 166800,
+     "complete": 4,
+     "eom": 5,
+     "files": 5,
+     "mode_ok": 5
+    },
+    "300L/noise": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 100080,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300L/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 120720,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "300L/sample-slip": {
+     "acquired": 3,
+     "bit_errors": 10926,
+     "compared_bits": 100080,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300S/cw": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 66720,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 2
+    },
+    "300S/fade": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 100080,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300S/impulse": {
+     "acquired": 3,
+     "bit_errors": 9860,
+     "compared_bits": 100080,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300S/mixed": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 66720,
+     "complete": 2,
+     "eom": 2,
+     "files": 5,
+     "mode_ok": 2
+    },
+    "300S/noise": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 100080,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "300S/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 120720,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "300S/sample-slip": {
+     "acquired": 3,
+     "bit_errors": 10594,
+     "compared_bits": 100080,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "600L/cw": {
+     "acquired": 6,
+     "bit_errors": 0,
+     "compared_bits": 401424,
+     "complete": 6,
+     "eom": 6,
+     "files": 7,
+     "mode_ok": 6
+    },
+    "600L/fade": {
+     "acquired": 5,
+     "bit_errors": 0,
+     "compared_bits": 334520,
+     "complete": 5,
+     "eom": 5,
+     "files": 5,
+     "mode_ok": 5
+    },
+    "600L/impulse": {
+     "acquired": 4,
+     "bit_errors": 33890,
+     "compared_bits": 267616,
+     "complete": 3,
+     "eom": 3,
+     "files": 4,
+     "mode_ok": 3
+    },
+    "600L/mixed": {
+     "acquired": 5,
+     "bit_errors": 1282,
+     "compared_bits": 334520,
+     "complete": 2,
+     "eom": 4,
+     "files": 5,
+     "mode_ok": 5
+    },
+    "600L/noise": {
+     "acquired": 8,
+     "bit_errors": 95358,
+     "compared_bits": 535232,
+     "complete": 4,
+     "eom": 5,
+     "files": 8,
+     "mode_ok": 8
+    },
+    "600L/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 241808,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "600L/sample-slip": {
+     "acquired": 6,
+     "bit_errors": 22565,
+     "compared_bits": 401424,
+     "complete": 5,
+     "eom": 5,
+     "files": 6,
+     "mode_ok": 6
+    },
+    "600S/cw": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 133808,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 2
+    },
+    "600S/fade": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 200712,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "600S/impulse": {
+     "acquired": 3,
+     "bit_errors": 26019,
+     "compared_bits": 200712,
+     "complete": 1,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "600S/mixed": {
+     "acquired": 3,
+     "bit_errors": 4385,
+     "compared_bits": 200712,
+     "complete": 1,
+     "eom": 3,
+     "files": 5,
+     "mode_ok": 3
+    },
+    "600S/noise": {
+     "acquired": 3,
+     "bit_errors": 0,
+     "compared_bits": 200712,
+     "complete": 3,
+     "eom": 3,
+     "files": 3,
+     "mode_ok": 3
+    },
+    "600S/reference": {
+     "acquired": 2,
+     "bit_errors": 0,
+     "compared_bits": 241808,
+     "complete": 2,
+     "eom": 2,
+     "files": 2,
+     "mode_ok": 2
+    },
+    "600S/sample-slip": {
+     "acquired": 3,
+     "bit_errors": 21541,
+     "compared_bits": 200712,
+     "complete": 2,
+     "eom": 2,
+     "files": 3,
+     "mode_ok": 3
+    }
+   },
+   "rows": 147
+  }
+ },
+ "files": 147,
+ "schema": "signal-lab.corpus/1.summary"
+}

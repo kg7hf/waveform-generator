@@ -39,6 +39,10 @@ add_test(
     NAME wfg-analyze-capture
     COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/test_analyze_capture.py")
 add_test(
+    NAME wfg-signal-lab
+    COMMAND "${Python3_EXECUTABLE}" -m unittest tests.test_signal_lab -v
+    WORKING_DIRECTORY "${WFG_ROOT}")
+add_test(
     NAME wfg-source-boundary
     COMMAND "${Python3_EXECUTABLE}" "${WFG_ROOT}/scripts/verify-standalone.py"
             --root "${WFG_ROOT}" --check-provenance)

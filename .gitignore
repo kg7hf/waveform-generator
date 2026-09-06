@@ -1,5 +1,14 @@
 /build/
 /artifacts/
+# Regenerable Phase-1 corpus (host/corpus_phase1.py rebuilds it bit-exactly from corpus/*.json).
+# Only the payloads and the hash-bearing manifests/score summaries are tracked; the WAVs,
+# per-file sidecars, decoder logs and per-file scores are derived artifacts.
+/test-vectors/**
+!/test-vectors/simulated-interference/
+!/test-vectors/simulated-interference/manifests/
+!/test-vectors/simulated-interference/manifests/**
+!/test-vectors/simulated-interference/payload/
+!/test-vectors/simulated-interference/payload/**
 /.venv/
 /.pytest_cache/
 **/__pycache__/

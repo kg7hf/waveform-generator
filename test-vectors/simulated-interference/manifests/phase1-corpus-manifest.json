@@ -1,0 +1,2645 @@
+{
+ "corpus_id": "phase1-simulated-interference",
+ "count": 147,
+ "counts": {
+  "by_family": {
+   "cw": 22,
+   "fade": 20,
+   "impulse": 19,
+   "mixed": 30,
+   "noise": 23,
+   "reference": 12,
+   "sample-slip": 21
+  },
+  "by_mode": {
+   "1200L": 22,
+   "1200S": 22,
+   "300L": 22,
+   "300S": 22,
+   "600L": 37,
+   "600S": 22
+  },
+  "by_mode_family": {
+   "1200L/cw": 3,
+   "1200L/fade": 3,
+   "1200L/impulse": 3,
+   "1200L/mixed": 5,
+   "1200L/noise": 3,
+   "1200L/reference": 2,
+   "1200L/sample-slip": 3,
+   "1200S/cw": 3,
+   "1200S/fade": 3,
+   "1200S/impulse": 3,
+   "1200S/mixed": 5,
+   "1200S/noise": 3,
+   "1200S/reference": 2,
+   "1200S/sample-slip": 3,
+   "300L/cw": 3,
+   "300L/fade": 3,
+   "300L/impulse": 3,
+   "300L/mixed": 5,
+   "300L/noise": 3,
+   "300L/reference": 2,
+   "300L/sample-slip": 3,
+   "300S/cw": 3,
+   "300S/fade": 3,
+   "300S/impulse": 3,
+   "300S/mixed": 5,
+   "300S/noise": 3,
+   "300S/reference": 2,
+   "300S/sample-slip": 3,
+   "600L/cw": 7,
+   "600L/fade": 5,
+   "600L/impulse": 4,
+   "600L/mixed": 5,
+   "600L/noise": 8,
+   "600L/reference": 2,
+   "600L/sample-slip": 6,
+   "600S/cw": 3,
+   "600S/fade": 3,
+   "600S/impulse": 3,
+   "600S/mixed": 5,
+   "600S/noise": 3,
+   "600S/reference": 2,
+   "600S/sample-slip": 3
+  },
+  "by_severity": {
+   "control": 3,
+   "extreme": 3,
+   "light": 29,
+   "moderate": 55,
+   "reference": 12,
+   "severe": 45
+  }
+ },
+ "files": [
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "f46163a7edddce67443bdde4092d43e9254b417bc806ea0e3a8bd80cc5fb6935",
+   "test_id": "m110_300L_reference_perfect",
+   "wav": "300L/reference/m110_300L_reference_perfect.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "acb433d6ed8511614b3bc84a8987872e3e9f1299cdae1ca3f7583ae4d3e9a686",
+   "test_id": "m110_300S_reference_perfect",
+   "wav": "300S/reference/m110_300S_reference_perfect.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "9d45feabbe425bebeb7174ebd0586a6ef21348ce02fb0acc888fa896d6d44567",
+   "test_id": "m110_600L_reference_perfect",
+   "wav": "600L/reference/m110_600L_reference_perfect.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "ba8b272545035a3f4fb18a8829f4786f7fd7c3700d9398963528b5c4fc750826",
+   "test_id": "m110_600S_reference_perfect",
+   "wav": "600S/reference/m110_600S_reference_perfect.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "deef6055458887c599757e764f0110e40578797fa53c4eb392ca8d952b6665db",
+   "test_id": "m110_1200L_reference_perfect",
+   "wav": "1200L/reference/m110_1200L_reference_perfect.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "152c160b9179cf2087b2232eb52288d59934348fbf25df07585c97ffb2fc292f",
+   "test_id": "m110_1200S_reference_perfect",
+   "wav": "1200S/reference/m110_1200S_reference_perfect.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 298.6,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "300L",
+   "payload_bytes": 10920,
+   "samples": 14332800,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "30a125976f439ccbede8967512cb74c4616a10221cd4c93a50a574e2da4c4efd",
+   "test_id": "m110_300L_reference_perfect_5min",
+   "wav": "300L/reference/m110_300L_reference_perfect_5min.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 293.8,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "300S",
+   "payload_bytes": 10920,
+   "samples": 14102400,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "9565e1d41cf957c97ce9e7f67704e0b24d2f08e67ced3edee40fdb004e56c02f",
+   "test_id": "m110_300S_reference_perfect_5min",
+   "wav": "300S/reference/m110_300S_reference_perfect_5min.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 298.6,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "600L",
+   "payload_bytes": 21863,
+   "samples": 14332800,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "fffe2f8aa10d60076773726f9a68880264d010420b8b6d4f09490fd34f4c8766",
+   "test_id": "m110_600L_reference_perfect_5min",
+   "wav": "600L/reference/m110_600L_reference_perfect_5min.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 293.8,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "600S",
+   "payload_bytes": 21863,
+   "samples": 14102400,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "43728f049f0fe91339b5bcaa4eb3b73f600ceac1c30332240fb81810bb864299",
+   "test_id": "m110_600S_reference_perfect_5min",
+   "wav": "600S/reference/m110_600S_reference_perfect_5min.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 298.6,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "1200L",
+   "payload_bytes": 43748,
+   "samples": 14332800,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "8775acc93399d3242b1c4f466651a30f3bfdb1d6b6e959e2cffe2f65bd9bd441",
+   "test_id": "m110_1200L_reference_perfect_5min",
+   "wav": "1200L/reference/m110_1200L_reference_perfect_5min.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 293.8,
+   "family": "reference",
+   "impairment_order": [],
+   "mode": "1200S",
+   "payload_bytes": 43748,
+   "samples": 14102400,
+   "scenario_sha256": null,
+   "seed": null,
+   "severity": "",
+   "sha256": "25c1a68334a77a6e02ad1df22fe8512bf677cd72a6e6fed7a6213c9f14d0949c",
+   "test_id": "m110_1200S_reference_perfect_5min",
+   "wav": "1200S/reference/m110_1200S_reference_perfect_5min.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "a5a7f06a60b8d47cc9d1c39e5f8ee5d8a9d35df720ec4e08927785acf510221d",
+   "seed": 0,
+   "severity": "moderate",
+   "sha256": "677288cb743871805854073b38e0be60673e4a46397207ba0aaf576beb2ba4ba",
+   "test_id": "m110_300L_cw_1800_ci+06",
+   "wav": "300L/cw/m110_300L_cw_1800_ci+06.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "42a4c56d406db7e927166a969e167186611c3d3fe825e843d9d86a8e75e25d35",
+   "seed": 1,
+   "severity": "severe",
+   "sha256": "bcdb797ed61c44955d777dda27e0f932303376b41403f52473a249b05cc02aa7",
+   "test_id": "m110_300L_cw_1800_ci+03",
+   "wav": "300L/cw/m110_300L_cw_1800_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "c82823960df3e66d72281fd3a248cca58c34e98f1b4f4d784d4c10ff4e447006",
+   "seed": 2,
+   "severity": "severe",
+   "sha256": "4b7d53b827d33a7666092ebc697d9f0a2064f2ef977ac538c6f081b922960566",
+   "test_id": "m110_300L_cw_2100_ci+03",
+   "wav": "300L/cw/m110_300L_cw_2100_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "ab5a67919945c148b19306153d7702b5b21496a12c6de53d932e1b96d8b5513d",
+   "seed": 7,
+   "severity": "light",
+   "sha256": "f68e5a9a2ee1bf7a3e031a8d9cc52124a8725740e790d32b5ff8c5086869bc67",
+   "test_id": "m110_300L_impulse_light_seed0007",
+   "wav": "300L/impulse/m110_300L_impulse_light_seed0007.wav"
+  },
+  {
+   "clipped_samples": 467,
+   "duration_seconds": 121.0,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "e2f40faaf057df6b02710e7a21dd46a118a3a90cc38923eb1e6df595f2444a61",
+   "seed": 8,
+   "severity": "moderate",
+   "sha256": "3f25581aae3633fe1a929921323569d76ab622bcd28aa9974f58b021fb4f439d",
+   "test_id": "m110_300L_impulse_moderate_seed0008",
+   "wav": "300L/impulse/m110_300L_impulse_moderate_seed0008.wav"
+  },
+  {
+   "clipped_samples": 537122,
+   "duration_seconds": 121.0,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "810a90b8c242c1b73a58f2ca84b1839c8bb5137e3ad4b147648a2733a801b05b",
+   "seed": 9,
+   "severity": "severe",
+   "sha256": "724865734ee310760cd8c9b3efb1b0d6e4044173471e4ad256d8d9c19453e4fa",
+   "test_id": "m110_300L_impulse_severe_seed0009",
+   "wav": "300L/impulse/m110_300L_impulse_severe_seed0009.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "f29d3682a0ed4c258b0a82d2d8fa0965d044ad60e81bcef110e40f68982a5732",
+   "seed": 11,
+   "severity": "light",
+   "sha256": "cc02c9e300a84beb5e68665b64fa31d034e41790fcedad83b5748e34e884aff4",
+   "test_id": "m110_300L_fade_12db_250ms",
+   "wav": "300L/fade/m110_300L_fade_12db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "f4250360ca01aecd3040d821a2712859c53a6f101f4f1014946ca38573a956d5",
+   "seed": 12,
+   "severity": "moderate",
+   "sha256": "368594c00d772a397a7808672e1d40b4d62427e7859b792140fb86001ef87185",
+   "test_id": "m110_300L_fade_18db_250ms",
+   "wav": "300L/fade/m110_300L_fade_18db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "1731409c9c1c954064703f06d132c6b786b139d9b2b13bac23dd3f7c86ab7605",
+   "seed": 13,
+   "severity": "severe",
+   "sha256": "79c0d1cd832c0250eb8985754ce0498fd2fab731d6456d7a03c88df57a166fc4",
+   "test_id": "m110_300L_fade_24db_500ms",
+   "wav": "300L/fade/m110_300L_fade_24db_500ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 120.99947916666666,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5807975,
+   "scenario_sha256": "712535936562c136cddec2ef86479ce914f2e2169ec1676277747928e963b236",
+   "seed": 16,
+   "severity": "moderate",
+   "sha256": "1e0addb027f8eaa2a9d491edf1c1354e71d09a269261c8f5f205fc1f40048635",
+   "test_id": "m110_300L_slip_del005_spaced",
+   "wav": "300L/sample-slip/m110_300L_slip_del005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 120.995,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5807760,
+   "scenario_sha256": "76c1befa526c3ddfedd08cac9ac53e7af50519e44380f6121287e7601f90cac7",
+   "seed": 17,
+   "severity": "severe",
+   "sha256": "a0f3edd95a51f6911fa54df6d7786b3221212ffbd669a11a586156eeec443da7",
+   "test_id": "m110_300L_slip_del048_clustered",
+   "wav": "300L/sample-slip/m110_300L_slip_del048_clustered.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.00052083333334,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808025,
+   "scenario_sha256": "e0887040d2d324426e9a68404ada23f05ba775cdfd6118f1b4e3b2f57b3b6679",
+   "seed": 18,
+   "severity": "moderate",
+   "sha256": "8e2d2d338061ae5e3acc86adc04cef34d4c65972a48a5892ab70a53c6703bd95",
+   "test_id": "m110_300L_slip_dup005_spaced",
+   "wav": "300L/sample-slip/m110_300L_slip_dup005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "85e30b45d6444ed56dbd709f8028052ca805bf33ca4b989d0d91d2ba9994e880",
+   "seed": 22,
+   "severity": "light",
+   "sha256": "94510949073199e43195425acfc3afba4a413f34e6d6c8d7c7575af8157b51b1",
+   "test_id": "m110_300L_noise_corner_seed0022",
+   "wav": "300L/noise/m110_300L_noise_corner_seed0022.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "d0b0a9857fccde713f54a2f33e331eb85c2e3add23937d53b6d97274fef5b7a0",
+   "seed": 23,
+   "severity": "moderate",
+   "sha256": "9e9872d9a5d7ddca2d240cfcd51d654ad20f2eb36e6c632703fa942c7905bc79",
+   "test_id": "m110_300L_noise_corner-02_seed0023",
+   "wav": "300L/noise/m110_300L_noise_corner-02_seed0023.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "f3eed5967c5e080f232af60aea87802e7b382beb824aea6978f568f0c078ef55",
+   "seed": 24,
+   "severity": "severe",
+   "sha256": "1650d189f9d46413bd9655b7c473eafdb3973dd6e8d5731d1bb558f6a9097887",
+   "test_id": "m110_300L_noise_corner-04_seed0024",
+   "wav": "300L/noise/m110_300L_noise_corner-04_seed0024.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "5ef7fe22ca7f8beae0e944a74f2648aa03ab892efbf1c92064e114ee5d387e75",
+   "seed": 30,
+   "severity": "light",
+   "sha256": "db6da24b4a5caab6421b4bc65f816617cdd05f6b2a8b62d91042e64312d937df",
+   "test_id": "m110_300L_mix_MIX001_seed0030",
+   "wav": "300L/mixed/m110_300L_mix_MIX001_seed0030.wav"
+  },
+  {
+   "clipped_samples": 1236,
+   "duration_seconds": 121.0,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "2ab7b928de46c6a7dc2fe0e7a4831faca3ba69aa020ff311129527eaf20c2f84",
+   "seed": 31,
+   "severity": "moderate",
+   "sha256": "a39470ecdb6884de18bafdbb21ce744135abca6cd76ae90f8b814a08ac8dc932",
+   "test_id": "m110_300L_mix_MIX002_seed0031",
+   "wav": "300L/mixed/m110_300L_mix_MIX002_seed0031.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5808000,
+   "scenario_sha256": "abab669c17432863981f975121364e2d074eb4abba00a97a1bd518c387b4953d",
+   "seed": 32,
+   "severity": "moderate",
+   "sha256": "9217f3729371dd837c19ba1f451b8c1105e84f9ff4f71180287affb80f5f7158",
+   "test_id": "m110_300L_mix_MIX003_seed0032",
+   "wav": "300L/mixed/m110_300L_mix_MIX003_seed0032.wav"
+  },
+  {
+   "clipped_samples": 846,
+   "duration_seconds": 120.99947916666666,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5807975,
+   "scenario_sha256": "8a62cafa28347ec58fb01804e80b8cb2c2b3af0b275dfa7478fef9c2862b95ca",
+   "seed": 33,
+   "severity": "moderate",
+   "sha256": "2afc715ffafee963ab5ce0248fa9fa7445620641452bc235b2f9c17a65c6aa12",
+   "test_id": "m110_300L_mix_MIX004_seed0033",
+   "wav": "300L/mixed/m110_300L_mix_MIX004_seed0033.wav"
+  },
+  {
+   "clipped_samples": 1164,
+   "duration_seconds": 120.99947916666666,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "300L",
+   "payload_bytes": 4170,
+   "samples": 5807975,
+   "scenario_sha256": "3d20f2ffa7f5a6f53b4ea017f75a889a6b862c796ccd05f9637d8581c9b71618",
+   "seed": 34,
+   "severity": "severe",
+   "sha256": "22d3ce751e014323987c6b0949cfa18d2f245b810a716806aaf566dd6529b4e2",
+   "test_id": "m110_300L_mix_MIX005_seed0034",
+   "wav": "300L/mixed/m110_300L_mix_MIX005_seed0034.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "5fa260450316d19478e62c47537fe872eee09d9062186a7a4d6e8bda9d921034",
+   "seed": 100,
+   "severity": "moderate",
+   "sha256": "7fec78a591bdbf1dc9e4cbd0f371e4f9ea04c7f040b235327775ba780225d374",
+   "test_id": "m110_300S_cw_1800_ci+06",
+   "wav": "300S/cw/m110_300S_cw_1800_ci+06.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "c279b2809891815076d65fb80f74ad59b63037ebd912a2d6118db7fcf3a669d1",
+   "seed": 101,
+   "severity": "severe",
+   "sha256": "2c96751c1fca75a180138ae2e5dc1aa73fc8b40c72eac376218c8be2fb66cb9b",
+   "test_id": "m110_300S_cw_1800_ci+03",
+   "wav": "300S/cw/m110_300S_cw_1800_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "e806f6e0aecb3fcd35d6575d09029dc3d8475bb24b4a5ab10ce9af8863bcf70e",
+   "seed": 102,
+   "severity": "severe",
+   "sha256": "c63ef77115cae567e434820540b6a3c2a12747822fe31809a71ef09a11aa9f51",
+   "test_id": "m110_300S_cw_2100_ci+03",
+   "wav": "300S/cw/m110_300S_cw_2100_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "371c6ace8c7b635d55da8716bc371be793aa7b547d20e51cb65b8ee7fb0dcec9",
+   "seed": 107,
+   "severity": "light",
+   "sha256": "632fb21445d53255f47cdc674c5705ff6210550d4ae73c534a8c173645d44e57",
+   "test_id": "m110_300S_impulse_light_seed0107",
+   "wav": "300S/impulse/m110_300S_impulse_light_seed0107.wav"
+  },
+  {
+   "clipped_samples": 631,
+   "duration_seconds": 113.8,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "d41e643d8d347a0dbe13e0d6a07dae4a586ab57b54cc5f767d38377a8c1586ed",
+   "seed": 108,
+   "severity": "moderate",
+   "sha256": "26dde0995e4aef1ce6afc7638c14f4ca589fdf3952a74bf248302f6553efb700",
+   "test_id": "m110_300S_impulse_moderate_seed0108",
+   "wav": "300S/impulse/m110_300S_impulse_moderate_seed0108.wav"
+  },
+  {
+   "clipped_samples": 577964,
+   "duration_seconds": 113.8,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "701f653e020f586c643bd81263616b756b77701843fcfe7d09c0d8e4ffde6897",
+   "seed": 109,
+   "severity": "severe",
+   "sha256": "022099b68808bba1bef7d2e2198037e0970341cfdc135b9e04423dcb47340c62",
+   "test_id": "m110_300S_impulse_severe_seed0109",
+   "wav": "300S/impulse/m110_300S_impulse_severe_seed0109.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "d6a4de6165e6e24952472bec94daae23cc61678397dadbc3a8a7e5363a04985d",
+   "seed": 111,
+   "severity": "light",
+   "sha256": "28f576c6d666d3fe7ccfcd4e0dd0f4c46c73d48fd5f962945388a97788aca8a9",
+   "test_id": "m110_300S_fade_12db_250ms",
+   "wav": "300S/fade/m110_300S_fade_12db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "27c0b70ece22aa7080aec56df7e7d4606d9f43d63e667698a7f392a43d556213",
+   "seed": 112,
+   "severity": "moderate",
+   "sha256": "eb6da905d316288675d1e532520b86db6a31975bdd6d4ff834bfc022c11b113b",
+   "test_id": "m110_300S_fade_18db_250ms",
+   "wav": "300S/fade/m110_300S_fade_18db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "1bbb6edbcc86911d8a43cf093d6d057d9aa0921d5ee8fd6b1f4c37b9eaaaf4dc",
+   "seed": 113,
+   "severity": "severe",
+   "sha256": "bc892a62e2deb179345fe78099bddc2fecd8c10e8152572d0c7bc4be8bea88ff",
+   "test_id": "m110_300S_fade_24db_500ms",
+   "wav": "300S/fade/m110_300S_fade_24db_500ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.79947916666667,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462375,
+   "scenario_sha256": "3b26575427a6d867b402721af5f71809a438d764239dedc9a2dccec04b1166db",
+   "seed": 116,
+   "severity": "moderate",
+   "sha256": "cf7640f848f47c81de5d06135b2775feee1fa3a8ee1b186168eb32895f794752",
+   "test_id": "m110_300S_slip_del005_spaced",
+   "wav": "300S/sample-slip/m110_300S_slip_del005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.795,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462160,
+   "scenario_sha256": "8c5e4f7a94d92417fa106d6d2634d3b78534b4be00cd24b6a6e1b66090d0315d",
+   "seed": 117,
+   "severity": "severe",
+   "sha256": "d3f3645ed04c4c11e2785cd652fb3d79185a71d57a6dfc85fecd3b81def9c73e",
+   "test_id": "m110_300S_slip_del048_clustered",
+   "wav": "300S/sample-slip/m110_300S_slip_del048_clustered.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.80052083333334,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462425,
+   "scenario_sha256": "931c382660ed3a40b24754a8c304e29e6a5cc3cf4568c5d056f5dc0aadebc32c",
+   "seed": 118,
+   "severity": "moderate",
+   "sha256": "6d439da706b2b9f68e53ba36e3a2ab70962941a9b8cb9215dd760ef5d1a13d39",
+   "test_id": "m110_300S_slip_dup005_spaced",
+   "wav": "300S/sample-slip/m110_300S_slip_dup005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "0d0a53e19c9039b094caa6381ab1b113830239a17fce3caa42429df749097422",
+   "seed": 122,
+   "severity": "light",
+   "sha256": "bf95ea5a0a4df3429e9a35b073209409f8122c6757105ed6da4b4fccd528cb18",
+   "test_id": "m110_300S_noise_corner_seed0122",
+   "wav": "300S/noise/m110_300S_noise_corner_seed0122.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "77b81228cc62180fc18272e740efc57d42760391bddba3a352188fda2b42f9d3",
+   "seed": 123,
+   "severity": "moderate",
+   "sha256": "f21b78bf98b48d8dac2812895bdd3d6cb4476b74b9952bf3e3d4198eb653aa46",
+   "test_id": "m110_300S_noise_corner-02_seed0123",
+   "wav": "300S/noise/m110_300S_noise_corner-02_seed0123.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "a72f1aae56bf09447b6a46c08e74346468c5d876f4462b8a754cf3636896a9d7",
+   "seed": 124,
+   "severity": "severe",
+   "sha256": "fbaca757311c05cf7a70665839dedb010b25a2a5a80ed1a219b213b7369aff3a",
+   "test_id": "m110_300S_noise_corner-04_seed0124",
+   "wav": "300S/noise/m110_300S_noise_corner-04_seed0124.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "88c3228798531306d427fd4f6bf259b6539056e4b0314aa4ffacb3ddd024923b",
+   "seed": 130,
+   "severity": "light",
+   "sha256": "425e95421bf5a7420e6e8cd9207448531ae6de28ec54d81b9d6f49fad2d71d45",
+   "test_id": "m110_300S_mix_MIX001_seed0130",
+   "wav": "300S/mixed/m110_300S_mix_MIX001_seed0130.wav"
+  },
+  {
+   "clipped_samples": 1067,
+   "duration_seconds": 113.8,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "cac5da3f1f54b181f6a8778b562ca108a5ce43318af9215646a7a8b437b923f0",
+   "seed": 131,
+   "severity": "moderate",
+   "sha256": "3773e9c524a229aa935e0405406d8f9524bb93202750b8d1b9dfbc9a163d1aae",
+   "test_id": "m110_300S_mix_MIX002_seed0131",
+   "wav": "300S/mixed/m110_300S_mix_MIX002_seed0131.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462400,
+   "scenario_sha256": "051e526f4421824c4f8e3c45c9b9e0aa6c911cb4d2ee631f996d60053309cd65",
+   "seed": 132,
+   "severity": "moderate",
+   "sha256": "382a72c8decdc1f64dad4de67ca557facf8beb367f1013a588a953cfe6293082",
+   "test_id": "m110_300S_mix_MIX003_seed0132",
+   "wav": "300S/mixed/m110_300S_mix_MIX003_seed0132.wav"
+  },
+  {
+   "clipped_samples": 817,
+   "duration_seconds": 113.79947916666667,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462375,
+   "scenario_sha256": "ec80c49bbed1ba901970a6d91a5db3c5151c0d6d586e19f8e362eeab2e11f8e2",
+   "seed": 133,
+   "severity": "moderate",
+   "sha256": "a4d1a5385574796c027ed8828a7064bd0d15dd830e210f874bc05179c2c673e1",
+   "test_id": "m110_300S_mix_MIX004_seed0133",
+   "wav": "300S/mixed/m110_300S_mix_MIX004_seed0133.wav"
+  },
+  {
+   "clipped_samples": 1165,
+   "duration_seconds": 113.79947916666667,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "300S",
+   "payload_bytes": 4170,
+   "samples": 5462375,
+   "scenario_sha256": "b889ed42a2ff8451e1b1d88f01a6475aba2923ddcfa76412c41c876238fb92bb",
+   "seed": 134,
+   "severity": "severe",
+   "sha256": "442ed9289bd256a1d14a25069bc40b6571b804ab6c649102fa20bfa705afcbf5",
+   "test_id": "m110_300S_mix_MIX005_seed0134",
+   "wav": "300S/mixed/m110_300S_mix_MIX005_seed0134.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "6588dd0cecb3fabea132dc28638462e73530774d26c2f3bf846ea949b3d53f45",
+   "seed": 200,
+   "severity": "moderate",
+   "sha256": "884220023760a0d1dbaf7b242bc8f8717c8b895c5c5493be78d8d7164224f838",
+   "test_id": "m110_600L_cw_1800_ci+06",
+   "wav": "600L/cw/m110_600L_cw_1800_ci+06.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "8703a650791f3512eb2183b08983060a3bd53a9db45fe583f273f2d2d64a9251",
+   "seed": 201,
+   "severity": "severe",
+   "sha256": "f41359ed231cad748c443208ac4b9fb338b0601f0e6ec0c18074408d06c073fa",
+   "test_id": "m110_600L_cw_1800_ci+03",
+   "wav": "600L/cw/m110_600L_cw_1800_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "286f1b57dededc9ee3541384f60847ed414ebf6767cf8e5ec2a73852dc595c30",
+   "seed": 202,
+   "severity": "severe",
+   "sha256": "ed076a15d4804dea4924d4e7d5ee44e746d21f921418b5c93fe0712e8361b822",
+   "test_id": "m110_600L_cw_2100_ci+03",
+   "wav": "600L/cw/m110_600L_cw_2100_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "067ee53f8ef6c7c2212589eb23eb80cf2950edaa3f86767feb0ad503f3156606",
+   "seed": 203,
+   "severity": "extreme",
+   "sha256": "9fdd936c108ab79352d957c22445c488b9c077ac644c930b5e609439ca7e8caf",
+   "test_id": "m110_600L_cw_1800_ci+00",
+   "wav": "600L/cw/m110_600L_cw_1800_ci+00.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "04dc8de20b28d146f2243dce5dcafc2ac18118274a9a1354e23178ace02bc146",
+   "seed": 204,
+   "severity": "light",
+   "sha256": "c712c3a92c27888bed804c0b9bb565de8aee85ef021ae0312006c90e52ef356c",
+   "test_id": "m110_600L_cw_0600_ci+10",
+   "wav": "600L/cw/m110_600L_cw_0600_ci+10.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "f8a9419067d915820abe069d317288af30dc180ef493f5b8e92f21429c3ca0a1",
+   "seed": 205,
+   "severity": "severe",
+   "sha256": "3b27637dda0022c5a180bb2d5fb664b7707b5afae5d315cdb424660c8782887a",
+   "test_id": "m110_600L_cw_1500_ci+03",
+   "wav": "600L/cw/m110_600L_cw_1500_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "df36534f5dc1e75e338f22999adbead91b8f1accf9ca0cfeede4cec2712b4b10",
+   "seed": 206,
+   "severity": "light",
+   "sha256": "d3dc079f239deceef425f19b920704b593f050a8f59eb147da8f66a49c683f7a",
+   "test_id": "m110_600L_cw_3000_ci+10",
+   "wav": "600L/cw/m110_600L_cw_3000_ci+10.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "48bfb00b360d3b014a616013cbf10926ba17abefd479890e47fe3e666f211b4b",
+   "seed": 207,
+   "severity": "light",
+   "sha256": "769e14f6ac1b4c7d28ae8efaa5ea6bb15f3112953c90adf89d2f54f7a2a3c596",
+   "test_id": "m110_600L_impulse_light_seed0207",
+   "wav": "600L/impulse/m110_600L_impulse_light_seed0207.wav"
+  },
+  {
+   "clipped_samples": 563,
+   "duration_seconds": 121.0,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "439851c7287f85c20b0c13e4a0ca219f88eaa7c5e704d0337b434130b7aa020b",
+   "seed": 208,
+   "severity": "moderate",
+   "sha256": "f623c3dd96f43bb054c5da849a891bc15323141689b32cff04e71a665494ed45",
+   "test_id": "m110_600L_impulse_moderate_seed0208",
+   "wav": "600L/impulse/m110_600L_impulse_moderate_seed0208.wav"
+  },
+  {
+   "clipped_samples": 587287,
+   "duration_seconds": 121.0,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "1df9e6f8ae093ca6d2ea63807fc34446ba9fe81b782fd429f50dc1a35d61b8a9",
+   "seed": 209,
+   "severity": "severe",
+   "sha256": "5dc03708c073bd5831ce5a67e28bc61df0888acb42257c09051c8e4cce204fbd",
+   "test_id": "m110_600L_impulse_severe_seed0209",
+   "wav": "600L/impulse/m110_600L_impulse_severe_seed0209.wav"
+  },
+  {
+   "clipped_samples": 15327,
+   "duration_seconds": 121.0,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "54d6794f329fddf5c9d32adb83667faa851aa2482f594d329cec68fcf9e8eaab",
+   "seed": 210,
+   "severity": "moderate",
+   "sha256": "8eb92fbc75778b198a83b750814391c7972c035b5948e129c7da23ec0b82df01",
+   "test_id": "m110_600L_impulse_moderate_noise_seed0210",
+   "wav": "600L/impulse/m110_600L_impulse_moderate_noise_seed0210.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "0c3395774ae4e0b998ee228af5daaffdf5ee4d4d1ca6ece6456d717bb2aab621",
+   "seed": 211,
+   "severity": "light",
+   "sha256": "d86ffdb6b1ba08e533bdc31a5a2cba8c57f7c0376e9a9c88e146406ead3f3783",
+   "test_id": "m110_600L_fade_12db_250ms",
+   "wav": "600L/fade/m110_600L_fade_12db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "fce5fc325f47fbd340c235b71b3ccbbea7f9f08409cee4cac453b84b8dc8bdc5",
+   "seed": 212,
+   "severity": "moderate",
+   "sha256": "9194639833dc5a2e5194662bb9434051f22a1b8b34a28005209d033b60e90548",
+   "test_id": "m110_600L_fade_18db_250ms",
+   "wav": "600L/fade/m110_600L_fade_18db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "056bccfaa61fbeec2a51402a0af517952f8e344f4ef8c412467ccb76f71a0156",
+   "seed": 213,
+   "severity": "severe",
+   "sha256": "af405f3e3e0b580551c96e15085f110fd7d894ea1b98902f2b5938f9c27ec39e",
+   "test_id": "m110_600L_fade_24db_500ms",
+   "wav": "600L/fade/m110_600L_fade_24db_500ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "b1cd62c3f01dd70b77b61d6fedf83433dd90241efb69262adfc905fa308193eb",
+   "seed": 214,
+   "severity": "light",
+   "sha256": "d5a77b3bcf04ae9be5e9f0726e978162471578c9670a59e6318926562259bd3a",
+   "test_id": "m110_600L_fade_18db_100ms",
+   "wav": "600L/fade/m110_600L_fade_18db_100ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "6a221e7f1e2f6928a48d9d02faa73083506ef4000e70d7a34221cdca82db48c7",
+   "seed": 215,
+   "severity": "severe",
+   "sha256": "a1d8815029e49050419deda638f6bc36f81c0b001709096282d042f190151368",
+   "test_id": "m110_600L_fade_24db_250ms_rect",
+   "wav": "600L/fade/m110_600L_fade_24db_250ms_rect.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 120.99947916666666,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5807975,
+   "scenario_sha256": "9f58ff57c5fc1fcc3c584487b71a5b24c8b3df598e59ca45dd9f4e9fff68613e",
+   "seed": 216,
+   "severity": "moderate",
+   "sha256": "bb1908a652cd1725449085c095ee81330c2dbda1734927fb671677688bbe6640",
+   "test_id": "m110_600L_slip_del005_spaced",
+   "wav": "600L/sample-slip/m110_600L_slip_del005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 120.995,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5807760,
+   "scenario_sha256": "9334583ac24e471cf23e7fb3e434ec626ca98640c84d51d989b5f43772e3a2bf",
+   "seed": 217,
+   "severity": "severe",
+   "sha256": "eec0806dde2ee6c14d7696c7f5a46956013e33b178db94cd0c3f1f90980405cb",
+   "test_id": "m110_600L_slip_del048_clustered",
+   "wav": "600L/sample-slip/m110_600L_slip_del048_clustered.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.00052083333334,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808025,
+   "scenario_sha256": "056f94656b4b3068a7860380a455273e00d04b05e4db9136bd6852f4a2b790e4",
+   "seed": 218,
+   "severity": "moderate",
+   "sha256": "0853ded4c8aa0ebd785e365bdd649b6886a9f5b516fa1c16ccddf116fe79ca8e",
+   "test_id": "m110_600L_slip_dup005_spaced",
+   "wav": "600L/sample-slip/m110_600L_slip_dup005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 120.99997916666666,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5807999,
+   "scenario_sha256": "b941384d112e256e961b526fab1213c63b14b9b9d57e35d4ca180ef4c45e34c9",
+   "seed": 219,
+   "severity": "light",
+   "sha256": "a6a19469971ab3755c519c62b9d349072838566890ec7abb880534da7bf18685",
+   "test_id": "m110_600L_slip_del001_single",
+   "wav": "600L/sample-slip/m110_600L_slip_del001_single.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.001,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808048,
+   "scenario_sha256": "7b0f84998a19d8d9ab981de82022d040fb21ac2dee4740a5662f2843bcc99b0d",
+   "seed": 220,
+   "severity": "severe",
+   "sha256": "3edeaf471a0fcdf8df8abc305c5c1ecd5b8c382ea41634032e17977184cebc5c",
+   "test_id": "m110_600L_slip_dup048_single",
+   "wav": "600L/sample-slip/m110_600L_slip_dup048_single.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.00010416666667,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808005,
+   "scenario_sha256": "1a444d5caa40b4227c40f2807cdd88afc0cf40792e8c0c1fd60fe01f1f269f74",
+   "seed": 221,
+   "severity": "light",
+   "sha256": "9b7227a4033c093f3a2e07be921124588ee2c70e9210dc2edbcfe31140079d29",
+   "test_id": "m110_600L_slip_dup001_clustered",
+   "wav": "600L/sample-slip/m110_600L_slip_dup001_clustered.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "b6e3ade6f9bf8feff105dfc70a662339a9d5b01f9d7fab0021dfba3cbe2ce164",
+   "seed": 222,
+   "severity": "light",
+   "sha256": "1623c64dc6d0094d3ede8cff872b8e19d52b0938f302f530f0e49dc639d57633",
+   "test_id": "m110_600L_noise_corner_seed0222",
+   "wav": "600L/noise/m110_600L_noise_corner_seed0222.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "bbf3d1cd5087ac690a16ca5d5333c42728916ff10e74259d17e692dd664a68c2",
+   "seed": 223,
+   "severity": "moderate",
+   "sha256": "2cd1d8e2b51192b0685a4cb0548382b67fc298477e7ad24210c6b1dc20d560b5",
+   "test_id": "m110_600L_noise_corner-02_seed0223",
+   "wav": "600L/noise/m110_600L_noise_corner-02_seed0223.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "b53df03027f14248ba7e7b96494a06ead2b8110ab08f6b95d6097525a3a7da93",
+   "seed": 224,
+   "severity": "severe",
+   "sha256": "a21fe6e96fa0e4ec5f62c5a22cbe59d49ac4270e9309dccb0b93053b6447f462",
+   "test_id": "m110_600L_noise_corner-04_seed0224",
+   "wav": "600L/noise/m110_600L_noise_corner-04_seed0224.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "1d3e2945cbde6a3a08eeb19f95cc71281e4039b1fa18b6d45190bcba76a8c26c",
+   "seed": 225,
+   "severity": "extreme",
+   "sha256": "18e2a1b4c9f71166d0d7e37c4c70650453847ce4e7a4f55265e89ad3007b5baa",
+   "test_id": "m110_600L_noise_corner-08_seed0225",
+   "wav": "600L/noise/m110_600L_noise_corner-08_seed0225.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "424b494ed5aa1937eaf7376878859da9fcec1ce80d9fd25571b49a0ec3603baa",
+   "seed": 226,
+   "severity": "extreme",
+   "sha256": "689c35f1c3c74b1da800e622dd47e10121d9087041b95f143d20141bf0011ab8",
+   "test_id": "m110_600L_noise_corner-12_seed0226",
+   "wav": "600L/noise/m110_600L_noise_corner-12_seed0226.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "2ebcbf7a098c4717f515a7c21d5ee944edb359c3c1a949a04c1ecf6bbd7f8387",
+   "seed": 227,
+   "severity": "control",
+   "sha256": "19d9d9a471115ac9c41b63921afeed09866029f366805f4b5651fbcf322fa614",
+   "test_id": "m110_600L_noise_corner_gain-18_seed0227",
+   "wav": "600L/noise/m110_600L_noise_corner_gain-18_seed0227.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "7cc88afa6bbec40093523a2e5837715562cf6345c2bf5b9bedea832dd92451db",
+   "seed": 228,
+   "severity": "control",
+   "sha256": "484079fcde90779f7968f298614525d78b113570db2d0f9f7bc11bd639a0b56d",
+   "test_id": "m110_600L_noise_corner_gain-24_seed0228",
+   "wav": "600L/noise/m110_600L_noise_corner_gain-24_seed0228.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "5230d39476bcec1b0fc6957da759e69b10188309648d90f162425023826725c5",
+   "seed": 229,
+   "severity": "control",
+   "sha256": "59fe6efb33ab7803557a067f593eb7d247b96af1deeebd21bf2ec5eac89d830a",
+   "test_id": "m110_600L_noise_corner_gain-28_seed0229",
+   "wav": "600L/noise/m110_600L_noise_corner_gain-28_seed0229.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "d970533fc72f382c8ee6095a60133850c162191d65d6217a7f5064dc51ccbb8c",
+   "seed": 230,
+   "severity": "light",
+   "sha256": "97076c969cfe27fb11a279367022483da48029c5c608a18249ae906fea50e8d3",
+   "test_id": "m110_600L_mix_MIX001_seed0230",
+   "wav": "600L/mixed/m110_600L_mix_MIX001_seed0230.wav"
+  },
+  {
+   "clipped_samples": 738,
+   "duration_seconds": 121.0,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "e9851f265aecf0491bd0041f7a19c5f1c2b0d8729276f567d55dcc77abbf6af4",
+   "seed": 231,
+   "severity": "moderate",
+   "sha256": "216c24206d7e8d826f9383d6ad773b6daf0f710975f3b78bba55e1ef5e7f41e3",
+   "test_id": "m110_600L_mix_MIX002_seed0231",
+   "wav": "600L/mixed/m110_600L_mix_MIX002_seed0231.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5808000,
+   "scenario_sha256": "6c752116411e971fc4db58dcae04ec5b5577a747c0156e00f09b1451674abd50",
+   "seed": 232,
+   "severity": "moderate",
+   "sha256": "7451b28eaba6ebb9b1c6a923b8fc7898fd920814660e733c91c30ae35fcb3ca3",
+   "test_id": "m110_600L_mix_MIX003_seed0232",
+   "wav": "600L/mixed/m110_600L_mix_MIX003_seed0232.wav"
+  },
+  {
+   "clipped_samples": 861,
+   "duration_seconds": 120.99947916666666,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5807975,
+   "scenario_sha256": "968d7d6ce1d0a968c3489c10123546c37f177d672f51cdbbc55948458da7e348",
+   "seed": 233,
+   "severity": "moderate",
+   "sha256": "c45e75c24c3c115766e409dc80edadcc131d8cb30688e38a4cddfd11dfe709ea",
+   "test_id": "m110_600L_mix_MIX004_seed0233",
+   "wav": "600L/mixed/m110_600L_mix_MIX004_seed0233.wav"
+  },
+  {
+   "clipped_samples": 1169,
+   "duration_seconds": 120.99947916666666,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "600L",
+   "payload_bytes": 8363,
+   "samples": 5807975,
+   "scenario_sha256": "6fec3ce5d4da71c91e802776ab1b77ff607ec154acbb4f668f706964162519b3",
+   "seed": 234,
+   "severity": "severe",
+   "sha256": "94042710174d3d078a58d65ae1914e996bd43445f4edb54b69d23f109e5cd8bb",
+   "test_id": "m110_600L_mix_MIX005_seed0234",
+   "wav": "600L/mixed/m110_600L_mix_MIX005_seed0234.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "7bcfe86f9511633efdba9216a0cffbd2afa9cbe57ac9fab4e57d5a12e3549c16",
+   "seed": 300,
+   "severity": "moderate",
+   "sha256": "c03d80bdd3d13320e556a6e979fca328f483cec33ba16a2aa385c9a927107db8",
+   "test_id": "m110_600S_cw_1800_ci+06",
+   "wav": "600S/cw/m110_600S_cw_1800_ci+06.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "9c1b94991fdbe2184a224d2ddb434639d8cb1b6091d8a78755785ae69bb04a57",
+   "seed": 301,
+   "severity": "severe",
+   "sha256": "8cd4778bebfc4d38dc8b00e4df01a654564ce89cdc613d883e107b3dd8bc8b73",
+   "test_id": "m110_600S_cw_1800_ci+03",
+   "wav": "600S/cw/m110_600S_cw_1800_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "d98581cae8e5ffd1ba143d428b49c496366d325bf9922e0828cd48a0ec2141f3",
+   "seed": 302,
+   "severity": "severe",
+   "sha256": "9ea0d177921f15474fb20f59b7c5adafca74c9e8918b0458d0db1f7bf78f7f81",
+   "test_id": "m110_600S_cw_2100_ci+03",
+   "wav": "600S/cw/m110_600S_cw_2100_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "639eb497908d4696ec17f6fe2ed29c0dd56ae01310c81d6be14f756c1b273c1e",
+   "seed": 307,
+   "severity": "light",
+   "sha256": "f37ef11d01bc63bbda70e6df1b9d800ef4ef92b16a34cf16eb147518d193f587",
+   "test_id": "m110_600S_impulse_light_seed0307",
+   "wav": "600S/impulse/m110_600S_impulse_light_seed0307.wav"
+  },
+  {
+   "clipped_samples": 722,
+   "duration_seconds": 113.8,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "48234e4c598394e626eede96203aa7f8b81f56fc99654434aca2652eac18a1ab",
+   "seed": 308,
+   "severity": "moderate",
+   "sha256": "48f6b3cf4397984a8a5a76930e8b33b5224b94428640db75672a336218dd7cb0",
+   "test_id": "m110_600S_impulse_moderate_seed0308",
+   "wav": "600S/impulse/m110_600S_impulse_moderate_seed0308.wav"
+  },
+  {
+   "clipped_samples": 529131,
+   "duration_seconds": 113.8,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "dd8c66cb0b5a1dcebc0b5912aa818c8e06bd0e3f8223137e1add4feaa5c090bb",
+   "seed": 309,
+   "severity": "severe",
+   "sha256": "61c8b9f005ebff1d77ae15eee4c2983d4247d6ae48cc6b0792fde87896dde1f5",
+   "test_id": "m110_600S_impulse_severe_seed0309",
+   "wav": "600S/impulse/m110_600S_impulse_severe_seed0309.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "de534566a610d92bfcfb942f2a008de25f4b42d2de50487ced7eeff779cf0e1e",
+   "seed": 311,
+   "severity": "light",
+   "sha256": "fd8db0ac5142536dc0acb7f2f446f7fa7eba16bf4140951e211d9c6f777e902e",
+   "test_id": "m110_600S_fade_12db_250ms",
+   "wav": "600S/fade/m110_600S_fade_12db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "3b32540272e29273bad74c06510d84dc1e4c2c863c04a50cfe0fc5cedc45d500",
+   "seed": 312,
+   "severity": "moderate",
+   "sha256": "529aa5076567f9db8367c9a2c78b122d368dc7aea1d4872fd6a59744fdc3a295",
+   "test_id": "m110_600S_fade_18db_250ms",
+   "wav": "600S/fade/m110_600S_fade_18db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "3565554d7b6b828325609e7d336ae93ede44cd73a16633ff9e35f739397a2b1b",
+   "seed": 313,
+   "severity": "severe",
+   "sha256": "da3713418224eedb19b4523ffe753d1af92c941584cb5c0b739f58ca93f6359a",
+   "test_id": "m110_600S_fade_24db_500ms",
+   "wav": "600S/fade/m110_600S_fade_24db_500ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.79947916666667,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462375,
+   "scenario_sha256": "876aba28016960048e9cf2cd00b785cd350528efdee779c263df0f7bd4b71553",
+   "seed": 316,
+   "severity": "moderate",
+   "sha256": "35e71f26817e37126e301539a14171d3312234d70fe94cbaee5dc38f36cb8c54",
+   "test_id": "m110_600S_slip_del005_spaced",
+   "wav": "600S/sample-slip/m110_600S_slip_del005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.795,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462160,
+   "scenario_sha256": "b4e69bb5a60128567413d19ca26172cc7b4e27f419145cd04e61ea9f2d5d6e6b",
+   "seed": 317,
+   "severity": "severe",
+   "sha256": "b71f1580ef03f0760377178f9d13c9b13b6605d5f2d9d75010351b428ade6dbd",
+   "test_id": "m110_600S_slip_del048_clustered",
+   "wav": "600S/sample-slip/m110_600S_slip_del048_clustered.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.80052083333334,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462425,
+   "scenario_sha256": "7cb2e75de023e6a790ddb951599b27fee642b3fb37885e3830a1e4ad22f8cca4",
+   "seed": 318,
+   "severity": "moderate",
+   "sha256": "9fe34ef7d5ab2101c0d6a23419a2f50a17d79458d1da1a4bed2cf4cddf7ab8f1",
+   "test_id": "m110_600S_slip_dup005_spaced",
+   "wav": "600S/sample-slip/m110_600S_slip_dup005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "e1c55427731d8215a33ea805a4074f95198b1d33556d9d69a1a343bd5ffa3ec8",
+   "seed": 322,
+   "severity": "light",
+   "sha256": "76595c81102d544eca9324c96481a732063af6ef1bcce29729dc3ae705fd569b",
+   "test_id": "m110_600S_noise_corner_seed0322",
+   "wav": "600S/noise/m110_600S_noise_corner_seed0322.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "9f304953a3573adb1c8bef3945510337c19b78ad93200bbd1e06a2e4870238eb",
+   "seed": 323,
+   "severity": "moderate",
+   "sha256": "483c88e24a582ee1f7aedbd6aa14294e1201dce36fae6c20d608cfb588e069d4",
+   "test_id": "m110_600S_noise_corner-02_seed0323",
+   "wav": "600S/noise/m110_600S_noise_corner-02_seed0323.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "c2dcc0abc4fe6a0e9d5476f7dda35e14d093cb0c615ac508206a21d1cad2e810",
+   "seed": 324,
+   "severity": "severe",
+   "sha256": "4f9db625b349eb0bf6c5a861151366f18affc9f13a792538926fb39422ac5b18",
+   "test_id": "m110_600S_noise_corner-04_seed0324",
+   "wav": "600S/noise/m110_600S_noise_corner-04_seed0324.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "5815813c3a2333b64b5148f42aa965eb2a8628b4cba0286fcfc1006b3213180e",
+   "seed": 330,
+   "severity": "light",
+   "sha256": "1c8d889c821a7de23bbbc69298bf5760c3cca1fb9fe5fdda316aabefedf513ef",
+   "test_id": "m110_600S_mix_MIX001_seed0330",
+   "wav": "600S/mixed/m110_600S_mix_MIX001_seed0330.wav"
+  },
+  {
+   "clipped_samples": 1025,
+   "duration_seconds": 113.8,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "7315937596e95f7e4939ecc8889c54947485a25ba85aad8fc56a8b8a1de4a55f",
+   "seed": 331,
+   "severity": "moderate",
+   "sha256": "45038301f8b2ca383765435060bee6ea43b52ece374cb4ff13bd6e8e88c9df84",
+   "test_id": "m110_600S_mix_MIX002_seed0331",
+   "wav": "600S/mixed/m110_600S_mix_MIX002_seed0331.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462400,
+   "scenario_sha256": "5db7687a1e999186b2979a3fe8c03ce5eeafcc02038a942b78ab0ae9b921dc4b",
+   "seed": 332,
+   "severity": "moderate",
+   "sha256": "fc04e232883688de6ce232f0db5244d701a3e17b36ab863b5a9cf16ba45d77f0",
+   "test_id": "m110_600S_mix_MIX003_seed0332",
+   "wav": "600S/mixed/m110_600S_mix_MIX003_seed0332.wav"
+  },
+  {
+   "clipped_samples": 992,
+   "duration_seconds": 113.79947916666667,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462375,
+   "scenario_sha256": "2280fdbaa81767be25f330ffafeb770052fab801d608e1a705c7e2d8d4edd2a1",
+   "seed": 333,
+   "severity": "moderate",
+   "sha256": "5a998d4ac11566ea56f4747d05f03932d1e4a54ac2733b71775ed1af984d6987",
+   "test_id": "m110_600S_mix_MIX004_seed0333",
+   "wav": "600S/mixed/m110_600S_mix_MIX004_seed0333.wav"
+  },
+  {
+   "clipped_samples": 1098,
+   "duration_seconds": 113.79947916666667,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "600S",
+   "payload_bytes": 8363,
+   "samples": 5462375,
+   "scenario_sha256": "2402a2bcda01c168ff0002b34bd1e3bcc87b2da087219191d84fc8340c4d0d47",
+   "seed": 334,
+   "severity": "severe",
+   "sha256": "2b9c8c8a275342020237b43dc620191096b24581130e35239d260d7ec64d547d",
+   "test_id": "m110_600S_mix_MIX005_seed0334",
+   "wav": "600S/mixed/m110_600S_mix_MIX005_seed0334.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "027efef8703b4dda469c3844301f5a2b5870483709693bccaef539574ecc6719",
+   "seed": 400,
+   "severity": "moderate",
+   "sha256": "7ec2c90290733ea889e032563045d56783f85ed858bbf31c31a88dcd743acbc0",
+   "test_id": "m110_1200L_cw_1800_ci+06",
+   "wav": "1200L/cw/m110_1200L_cw_1800_ci+06.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "f4b4f3c8c3a8bfeafaed1d1c14e6a878f712ef3e4896c369919a4a8a0a4cdefa",
+   "seed": 401,
+   "severity": "severe",
+   "sha256": "311f5cb8856b9c064477644731d06da9bcc4c2b26f0930f3cddb370476e2bf12",
+   "test_id": "m110_1200L_cw_1800_ci+03",
+   "wav": "1200L/cw/m110_1200L_cw_1800_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "69522a7f646259f39b9182e043f08e4b238162a718130ba648b2ab0a16d95c44",
+   "seed": 402,
+   "severity": "severe",
+   "sha256": "7a02efef7b93a89075e2d161295dfe04512a6245861625dbd90bac8a243cf2b7",
+   "test_id": "m110_1200L_cw_2100_ci+03",
+   "wav": "1200L/cw/m110_1200L_cw_2100_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "6ee0820746fbc6dd53dbe341caf95ce7ad82093680ba85449feaa17014f76cf8",
+   "seed": 407,
+   "severity": "light",
+   "sha256": "241f65dae0294adcaa253670e605d33378ed7bd69b8f257df65cc51d541d3047",
+   "test_id": "m110_1200L_impulse_light_seed0407",
+   "wav": "1200L/impulse/m110_1200L_impulse_light_seed0407.wav"
+  },
+  {
+   "clipped_samples": 471,
+   "duration_seconds": 121.0,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "d714bee700ac97392d3e8960dd42ee29fd5b6bd6f6f72376d13808b2190e6272",
+   "seed": 408,
+   "severity": "moderate",
+   "sha256": "8843328138ded06b0b69049a08f7ed4599dc08d7b2037dfac1431e6084723b3b",
+   "test_id": "m110_1200L_impulse_moderate_seed0408",
+   "wav": "1200L/impulse/m110_1200L_impulse_moderate_seed0408.wav"
+  },
+  {
+   "clipped_samples": 610752,
+   "duration_seconds": 121.0,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "8b99a39cd2748a96b201d4e0eb1fb2ebbefa1c4d9435cf0c118e3d3506c72dde",
+   "seed": 409,
+   "severity": "severe",
+   "sha256": "e11c01a000d0a3723367d1f4351a048e4bfa3dcc2ba874496c84952308d2bcc5",
+   "test_id": "m110_1200L_impulse_severe_seed0409",
+   "wav": "1200L/impulse/m110_1200L_impulse_severe_seed0409.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "fad7311c4507d46468596b56fe757259f31d8bdf81db008fe1e09c7754a9f3df",
+   "seed": 411,
+   "severity": "light",
+   "sha256": "6d7b1405884b65ba3b58deb49f768ab8d89f7a010357c0fd58c6dbf3922c951f",
+   "test_id": "m110_1200L_fade_12db_250ms",
+   "wav": "1200L/fade/m110_1200L_fade_12db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "9d18f3899e1cea44180503d42a95a86ba34da090589dbf96a8c0b30b3c4d530b",
+   "seed": 412,
+   "severity": "moderate",
+   "sha256": "71490ec2d47b576bf08c9a4eb67bbda4d84effb80e00dd8e9d31d8d45d968700",
+   "test_id": "m110_1200L_fade_18db_250ms",
+   "wav": "1200L/fade/m110_1200L_fade_18db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "167399b6f9287465b961bc97155604ef00866c28bc1364a65206b70a605585b5",
+   "seed": 413,
+   "severity": "severe",
+   "sha256": "f7c56a66bd36dbe1acba36ad773594971ab579d141ee76ab08bbb2c4dbf87086",
+   "test_id": "m110_1200L_fade_24db_500ms",
+   "wav": "1200L/fade/m110_1200L_fade_24db_500ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 120.99947916666666,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5807975,
+   "scenario_sha256": "271b53ad10846177aa88b8682f77fb05b51007bcac402b7a99d89e0bc3a83755",
+   "seed": 416,
+   "severity": "moderate",
+   "sha256": "ad45235e2a940bdae399eeec69711d6dd09cfaf1f0232512084bf416b81d788b",
+   "test_id": "m110_1200L_slip_del005_spaced",
+   "wav": "1200L/sample-slip/m110_1200L_slip_del005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 120.995,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5807760,
+   "scenario_sha256": "457a459b2553d1bdae70ca21acbcaf6f3f0100db2890f577599adef7a8d31caa",
+   "seed": 417,
+   "severity": "severe",
+   "sha256": "78d25edc570e5b88b872b45cddfe9b6f035fcdea6cb868990711a57b3ecb3660",
+   "test_id": "m110_1200L_slip_del048_clustered",
+   "wav": "1200L/sample-slip/m110_1200L_slip_del048_clustered.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.00052083333334,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808025,
+   "scenario_sha256": "8008cfc421197ed731dbea2b39de9a9e3e6e3d328610fe239a40cf483d84a340",
+   "seed": 418,
+   "severity": "moderate",
+   "sha256": "0a7c20f0cc1f7683cfe82760e61480634a4ce2aa8c67e56df79af7edc7490161",
+   "test_id": "m110_1200L_slip_dup005_spaced",
+   "wav": "1200L/sample-slip/m110_1200L_slip_dup005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "b8eb34fe7939db3ec715cf69662a3da3fce2aa58d56b08ed3871f98fa6945547",
+   "seed": 422,
+   "severity": "light",
+   "sha256": "88333671e3e2a346827e46decfd2418598943c6ce61e937815f3365dc282a2ee",
+   "test_id": "m110_1200L_noise_corner_seed0422",
+   "wav": "1200L/noise/m110_1200L_noise_corner_seed0422.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "70f283bfd1ce24d0158c1954085b4b465728e87053f5f5add115a3e55904ff89",
+   "seed": 423,
+   "severity": "moderate",
+   "sha256": "6bda9791b48700ae2aced62080cf40f7d6c7d2994cd18e4be4e8b0fa2c261e5f",
+   "test_id": "m110_1200L_noise_corner-02_seed0423",
+   "wav": "1200L/noise/m110_1200L_noise_corner-02_seed0423.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "da83b442ae28c31045bacad25eb2da18df713cb5a7a36bbfba30313cc6d3fc55",
+   "seed": 424,
+   "severity": "severe",
+   "sha256": "a7ddf7b2152b2f7cb449b8f189333a844d964fe4b3f49938f32485527a8defcd",
+   "test_id": "m110_1200L_noise_corner-04_seed0424",
+   "wav": "1200L/noise/m110_1200L_noise_corner-04_seed0424.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "58547f449f558d34761163a97a2575734ecce5ad33696a352735ad61df90b959",
+   "seed": 430,
+   "severity": "light",
+   "sha256": "b334e620096cc670d194e361fbb8b6ed9a5671b116f54c9a2a0dbd7e7569e444",
+   "test_id": "m110_1200L_mix_MIX001_seed0430",
+   "wav": "1200L/mixed/m110_1200L_mix_MIX001_seed0430.wav"
+  },
+  {
+   "clipped_samples": 712,
+   "duration_seconds": 121.0,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "059333d9da87093177ec2992105872e15ff5f9142249fe6f21a690b95b22e4f6",
+   "seed": 431,
+   "severity": "moderate",
+   "sha256": "7802ac97071943f903cbbdea908293da54c77a9c111ff99651b62eb19a16daa4",
+   "test_id": "m110_1200L_mix_MIX002_seed0431",
+   "wav": "1200L/mixed/m110_1200L_mix_MIX002_seed0431.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 121.0,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5808000,
+   "scenario_sha256": "980bb5fe2a2dd9534262a5b901782ec6bec33cdf329035ffcb48d7a121707173",
+   "seed": 432,
+   "severity": "moderate",
+   "sha256": "383726ad63d030b2df48773457027e4af641c8687490c72735d93fe321ea8f0a",
+   "test_id": "m110_1200L_mix_MIX003_seed0432",
+   "wav": "1200L/mixed/m110_1200L_mix_MIX003_seed0432.wav"
+  },
+  {
+   "clipped_samples": 756,
+   "duration_seconds": 120.99947916666666,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5807975,
+   "scenario_sha256": "b15984c917b13c3a4f2cd1ffe1021d02e8522a02bc6781f841c67fde2c31f280",
+   "seed": 433,
+   "severity": "moderate",
+   "sha256": "f33622fe89038dd6edc3af4bf8ff6e2d202e84df051c6535c087801263cd6795",
+   "test_id": "m110_1200L_mix_MIX004_seed0433",
+   "wav": "1200L/mixed/m110_1200L_mix_MIX004_seed0433.wav"
+  },
+  {
+   "clipped_samples": 1183,
+   "duration_seconds": 120.99947916666666,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "1200L",
+   "payload_bytes": 16748,
+   "samples": 5807975,
+   "scenario_sha256": "8d025cfd467c68c103f4c861befd97934009f1f59bc6645385c23262ed3b42fc",
+   "seed": 434,
+   "severity": "severe",
+   "sha256": "524efa779c29dcc35fd4fdc825195866feaf8d2d28bf80003c78dc4df544232d",
+   "test_id": "m110_1200L_mix_MIX005_seed0434",
+   "wav": "1200L/mixed/m110_1200L_mix_MIX005_seed0434.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "fbd4a97288faf4d575beee848bec0a7b71f29e3d91ed54804110b78bac287a79",
+   "seed": 500,
+   "severity": "moderate",
+   "sha256": "dc2b9d7a9f8572baf1ccb7de67e7a7d654d8d8ff2e6ab46ed05d0e56da8927c2",
+   "test_id": "m110_1200S_cw_1800_ci+06",
+   "wav": "1200S/cw/m110_1200S_cw_1800_ci+06.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "aea650871c7465fb980b8d0f0bf2df30beae78f5784ac552be51bb786050b93b",
+   "seed": 501,
+   "severity": "severe",
+   "sha256": "8331e09ff40c2fca413d9125014fe4de0b9803ac57b089773f1ae1a65d96488a",
+   "test_id": "m110_1200S_cw_1800_ci+03",
+   "wav": "1200S/cw/m110_1200S_cw_1800_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "cw",
+   "impairment_order": [
+    "cw"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "d544a87619620012d9445c90212dd42137d83c62f935e062d5c868db88a0630d",
+   "seed": 502,
+   "severity": "severe",
+   "sha256": "e2337c2a4f32e622f128c355a5890361f900c566f4a79fb1bbc569800ef726fa",
+   "test_id": "m110_1200S_cw_2100_ci+03",
+   "wav": "1200S/cw/m110_1200S_cw_2100_ci+03.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "97f64c505cee5fb9681849a03f66661995179f1c7ce5e41ef8b9fde2bba5e0e9",
+   "seed": 507,
+   "severity": "light",
+   "sha256": "1d8bdc788f462d1de84702bccbe7f536ef54c57e316b2d5ca9f9381e25524fef",
+   "test_id": "m110_1200S_impulse_light_seed0507",
+   "wav": "1200S/impulse/m110_1200S_impulse_light_seed0507.wav"
+  },
+  {
+   "clipped_samples": 840,
+   "duration_seconds": 113.8,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "f400a8fe839f187794812f595a02b035a04a26225470ed7987b6b32b84cb82d2",
+   "seed": 508,
+   "severity": "moderate",
+   "sha256": "b0e86e62415343a910f9d87209d61ea9a8f4f9e8c327790ae6235de26e025c6f",
+   "test_id": "m110_1200S_impulse_moderate_seed0508",
+   "wav": "1200S/impulse/m110_1200S_impulse_moderate_seed0508.wav"
+  },
+  {
+   "clipped_samples": 547437,
+   "duration_seconds": 113.8,
+   "family": "impulse",
+   "impairment_order": [
+    "impulse"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "e8dd3af823835de378c597db56126d04ea8dccd5f85cdfefd653528be6276fbe",
+   "seed": 509,
+   "severity": "severe",
+   "sha256": "570b3f634b04138cb5ff7fc171fb1b6207bcebf934342a7db4edc9a2f40394e3",
+   "test_id": "m110_1200S_impulse_severe_seed0509",
+   "wav": "1200S/impulse/m110_1200S_impulse_severe_seed0509.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "2995fc66ba9b696adbb6586cce91295071a2022d7accf0a6a7233c9328c83049",
+   "seed": 511,
+   "severity": "light",
+   "sha256": "040d07780596c25a1ade63ac5c67dc531d0cf8d96b2a214a9a43c1bca59b6ffb",
+   "test_id": "m110_1200S_fade_12db_250ms",
+   "wav": "1200S/fade/m110_1200S_fade_12db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "c96d52289bd6dc56943441fa5b321138c43a2f3da72d7862caf209521cdc5d5d",
+   "seed": 512,
+   "severity": "moderate",
+   "sha256": "5cebc40614a7eb60882295d1f2e907a0906be579661a2a4e11481a3eea3d7217",
+   "test_id": "m110_1200S_fade_18db_250ms",
+   "wav": "1200S/fade/m110_1200S_fade_18db_250ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "fade",
+   "impairment_order": [
+    "fade"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "dcdc9b15d0082b843592bd6a27e88f58cbea3d0c0909a9d39134c4556b0d5eba",
+   "seed": 513,
+   "severity": "severe",
+   "sha256": "5b10f3cd8a83b8d1cac5ac1d949f1426dec36627afda246f7fe2a68d2dc15ccf",
+   "test_id": "m110_1200S_fade_24db_500ms",
+   "wav": "1200S/fade/m110_1200S_fade_24db_500ms.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.79947916666667,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462375,
+   "scenario_sha256": "7ee505f4c09a00e583db9b5bca22808fc7c444cc2a4ce728eff4a6d6b660a586",
+   "seed": 516,
+   "severity": "moderate",
+   "sha256": "4275ca2db829b968418ac641411b0a623116bfeaa0a38ad65956eddc5983b985",
+   "test_id": "m110_1200S_slip_del005_spaced",
+   "wav": "1200S/sample-slip/m110_1200S_slip_del005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.795,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462160,
+   "scenario_sha256": "518d8c1761ba36ac7e630a37ed57af3f58fe0f0e6adba874338272199c8c4758",
+   "seed": 517,
+   "severity": "severe",
+   "sha256": "5c59c979a381c315c79b38fc373f355ed8068f2acd95bdb2e9a95eae054e3516",
+   "test_id": "m110_1200S_slip_del048_clustered",
+   "wav": "1200S/sample-slip/m110_1200S_slip_del048_clustered.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.80052083333334,
+   "family": "sample-slip",
+   "impairment_order": [
+    "sample_slip"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462425,
+   "scenario_sha256": "419b0d14e8b5ba8443519814c3824f8bcf4b6e7b6f9d448da6be216dcd269d5f",
+   "seed": 518,
+   "severity": "moderate",
+   "sha256": "3bc4998775000be562183d1d53e3c27c2f2d127cc5892399fba33bc59b1fb8f7",
+   "test_id": "m110_1200S_slip_dup005_spaced",
+   "wav": "1200S/sample-slip/m110_1200S_slip_dup005_spaced.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "df1530750d5a7b7211ee20a77a0a23e2d4ae7391d09fd58474840f0e57a2cabe",
+   "seed": 522,
+   "severity": "light",
+   "sha256": "be02cb98ada98d27abe5cb8dbbe5cce0573c78d206e688816a869e406fa73480",
+   "test_id": "m110_1200S_noise_corner_seed0522",
+   "wav": "1200S/noise/m110_1200S_noise_corner_seed0522.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "cdc3857e3aa14f76d81d944adab3205a691e49e372078afea99f050bd4318f17",
+   "seed": 523,
+   "severity": "moderate",
+   "sha256": "e31bc3fc573750341985a7bf4551f4b09948be4a5b30e1324251455015593e7e",
+   "test_id": "m110_1200S_noise_corner-02_seed0523",
+   "wav": "1200S/noise/m110_1200S_noise_corner-02_seed0523.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "noise",
+   "impairment_order": [
+    "awgn"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "dda91d57700191dd2b869fffc50dc60e314f8d3ee6a0110bd351024ae55cbc90",
+   "seed": 524,
+   "severity": "severe",
+   "sha256": "79351cb737a5741d6beaa957ab4200273f6a5f9f89d780dbf7cab1e7c83648df",
+   "test_id": "m110_1200S_noise_corner-04_seed0524",
+   "wav": "1200S/noise/m110_1200S_noise_corner-04_seed0524.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "2ffa6510fec6c8c7dc557685e28d4c9ae5b8a1271829e52e7beb67374ecf6c38",
+   "seed": 530,
+   "severity": "light",
+   "sha256": "ae0788121f9d41f329fcbff43acb63d4c761a0b885230af6949b17fb8f0c6225",
+   "test_id": "m110_1200S_mix_MIX001_seed0530",
+   "wav": "1200S/mixed/m110_1200S_mix_MIX001_seed0530.wav"
+  },
+  {
+   "clipped_samples": 973,
+   "duration_seconds": 113.8,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "cw",
+    "impulse"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "17c703cc86f5b1935b61c2ab0e78e64b151abaeb35008bfc88f73a597903a2f4",
+   "seed": 531,
+   "severity": "moderate",
+   "sha256": "92bb2b937b7d0932a6363a2aa1250ebe989fc538f35d80c9e7f4653545f65c5a",
+   "test_id": "m110_1200S_mix_MIX002_seed0531",
+   "wav": "1200S/mixed/m110_1200S_mix_MIX002_seed0531.wav"
+  },
+  {
+   "clipped_samples": 0,
+   "duration_seconds": 113.8,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462400,
+   "scenario_sha256": "741135a7e917ffc52a3e056ac33b0ba5d72cfec695e5ba7075707fae331a29f0",
+   "seed": 532,
+   "severity": "moderate",
+   "sha256": "43e59c3cb3c900bcc3d00122dc59ee95801779eefb68c988aa1176c17c99dad4",
+   "test_id": "m110_1200S_mix_MIX003_seed0532",
+   "wav": "1200S/mixed/m110_1200S_mix_MIX003_seed0532.wav"
+  },
+  {
+   "clipped_samples": 589,
+   "duration_seconds": 113.79947916666667,
+   "family": "mixed",
+   "impairment_order": [
+    "awgn",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462375,
+   "scenario_sha256": "e9e1db5a36856aa040bfc9b1c91192d0ab557d99de0dd3fbc459e36099d4e789",
+   "seed": 533,
+   "severity": "moderate",
+   "sha256": "9778030dfa1933d5bdf543309f87a3f6525db9736bcc9061b78a2dca458dd26d",
+   "test_id": "m110_1200S_mix_MIX004_seed0533",
+   "wav": "1200S/mixed/m110_1200S_mix_MIX004_seed0533.wav"
+  },
+  {
+   "clipped_samples": 789,
+   "duration_seconds": 113.79947916666667,
+   "family": "mixed",
+   "impairment_order": [
+    "fade",
+    "awgn",
+    "cw",
+    "impulse",
+    "sample_slip"
+   ],
+   "mode": "1200S",
+   "payload_bytes": 16748,
+   "samples": 5462375,
+   "scenario_sha256": "1f5f95ed860fb54c673ad93b2a5673c33875b51880a3bf9fcdb20cb2cb0f2779",
+   "seed": 534,
+   "severity": "severe",
+   "sha256": "399673cf43fe9c3dd8e8e55802e514fe3ade2fb9f9f41eef268bbf9ea2eff0cf",
+   "test_id": "m110_1200S_mix_MIX005_seed0534",
+   "wav": "1200S/mixed/m110_1200S_mix_MIX005_seed0534.wav"
+  }
+ ],
+ "generator": {
+  "files": [
+   "__init__.py",
+   "awgn.py",
+   "cw.py",
+   "fade.py",
+   "impulse.py",
+   "render.py",
+   "rng.py",
+   "sample_slip.py",
+   "scenario.py",
+   "stream.py",
+   "wav_io.py"
+  ],
+  "name": "signal-lab-py/0.1.0",
+  "numpy": "2.4.2",
+  "package_sha256": "ddc0e215f86a272bc2e5d44e63654c786385783b28db964ccb6a98c1fad631d4",
+  "python": "3.13.14"
+ },
+ "schema": "signal-lab.corpus/1.manifest",
+ "spec_sha256": null
+}
