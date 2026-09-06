@@ -1,0 +1,22 @@
+{
+  "schema_version": "fixture-recipe/1",
+  "status": "recipe_not_generated",
+  "fixture_id": "clean-300l-short",
+  "card_filename": "C300S.WAV",
+  "source_kind": "m110_clean",
+  "purpose": "Short 300L engineering decode and repeat/re-arm check using one complete transmission.",
+  "format": {"container": "RIFF/WAVE", "encoding": "pcm_s16le", "sample_rate_hz": 48000, "channels": 1, "bits_per_sample": 16},
+  "preparation": {
+    "kind": "external_m110_transmitter", "rate_bps": 300, "interleave": "long", "transmission_count": 1,
+    "payload": {
+      "algorithm": "sha256_domain_nul_counter_stream_v1", "domain_ascii": "M110-WFG-300L-SHORT-v1",
+      "bytes": 256, "sha256": "6fe022b1ba676e9a3bdc9fe38b86923a3bcfcccda080ea88326f5bd6d0e399d4",
+      "counter_encoding": "uint64_little_endian", "initial_counter": 0, "bit_order": "lsb_first_within_octet"
+    },
+    "nominal_payload_dwell_seconds": 6.826666666666667,
+    "producer_contract": "explicit_tx_to_pcm_compatible_executable",
+    "framing_policy": "one_preamble_one_eom_no_loop_no_padding_to_fake_dwell"
+  },
+  "level_policy": {"digital_gain": 1, "codec_calibration": "required_before_gated_run", "initial_codec_percent": 70, "initial_setting_is_qualified": false},
+  "qualification": {"class": "short_m110_clean", "evidence_scope": "engineering_only", "allowed_clean_arms": ["A", "B"], "decode_execution": "offline", "minimum_payload_dwell_seconds": 6.826666666666667, "generated_artifact_required": true}
+}

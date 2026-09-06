@@ -1,0 +1,22 @@
+{
+  "schema_version": "fixture-recipe/1",
+  "status": "recipe_not_generated",
+  "fixture_id": "clean-300l-1h",
+  "card_filename": "C300H.WAV",
+  "source_kind": "m110_clean",
+  "purpose": "One-hour 300L clean analog fixture/capture baseline followed by offline application-chain decoding; no live scheduling or conformance claim.",
+  "format": {"container": "RIFF/WAVE", "encoding": "pcm_s16le", "sample_rate_hz": 48000, "channels": 1, "bits_per_sample": 16},
+  "preparation": {
+    "kind": "external_m110_transmitter", "rate_bps": 300, "interleave": "long", "transmission_count": 1,
+    "payload": {
+      "algorithm": "sha256_domain_nul_counter_stream_v1", "domain_ascii": "M110-WFG-300L-1H-v1",
+      "bytes": 135000, "sha256": "2de0370aa20d399e51570c75a9a79cecb4774ed8f25566bde48f6f11ce28a1f7",
+      "counter_encoding": "uint64_little_endian", "initial_counter": 0, "bit_order": "lsb_first_within_octet"
+    },
+    "nominal_payload_dwell_seconds": 3600,
+    "producer_contract": "explicit_tx_to_pcm_compatible_executable",
+    "framing_policy": "one_preamble_one_eom_no_loop_no_padding_to_fake_dwell"
+  },
+  "level_policy": {"digital_gain": 1, "codec_calibration": "required_before_gated_run", "initial_codec_percent": 70, "initial_setting_is_qualified": false},
+  "qualification": {"class": "one_hour_m110_clean", "evidence_scope": "engineering_only", "allowed_clean_arms": ["A", "B"], "decode_execution": "offline", "minimum_payload_dwell_seconds": 3600, "generated_artifact_required": true}
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": "fixture-recipe/1",
+  "status": "recipe_not_generated",
+  "fixture_id": "tone-10s",
+  "card_filename": "TONE10.WAV",
+  "source_kind": "tone",
+  "purpose": "Engineering gain, wiring, sample-clock and playback-integrity calibration; no modem acceptance claim.",
+  "format": {"container": "RIFF/WAVE", "encoding": "pcm_s16le", "sample_rate_hz": 48000, "channels": 1, "bits_per_sample": 16},
+  "preparation": {
+    "kind": "local_integer_period",
+    "samples": 480000,
+    "frequency_hz": 1000,
+    "pcm16_period": [0, 535, 1060, 1567, 2048, 2493, 2896, 3250, 3547, 3784, 3956, 4061, 4096, 4061, 3956, 3784, 3547, 3250, 2896, 2493, 2048, 1567, 1060, 535, 0, -535, -1060, -1567, -2048, -2493, -2896, -3250, -3547, -3784, -3956, -4061, -4096, -4061, -3956, -3784, -3547, -3250, -2896, -2493, -2048, -1567, -1060, -535],
+    "period_repetitions": 10000
+  },
+  "level_policy": {"digital_gain": 1, "codec_calibration": "required_before_gated_run", "initial_codec_percent": 70, "initial_setting_is_qualified": false},
+  "qualification": {"class": "tone_calibration", "evidence_scope": "engineering_only", "allowed_clean_arms": ["A", "B"], "decode_execution": "not_applicable", "minimum_payload_dwell_seconds": null, "generated_artifact_required": true}
+}

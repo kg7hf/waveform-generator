@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:waveform-generator:schema:fixture-recipe:1",
+  "title": "Waveform generator fixture recipe v1",
+  "description": "A reproducible preparation recipe, not evidence that a WAV was generated or qualified.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "fixture_id", "card_filename", "source_kind", "purpose", "format", "preparation", "level_policy", "qualification"],
+  "properties": {
+    "schema_version": {"const": "fixture-recipe/1"},
+    "status": {"const": "recipe_not_generated"},
+    "fixture_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"},
+    "card_filename": {"type": "string", "pattern": "^[A-Z0-9_]{1,8}[.]WAV$"},
+    "source_kind": {"enum": ["tone", "m110_clean"]},
+    "purpose": {"type": "string", "minLength": 1},
+    "format": {
+      "type": "object", "additionalProperties": false,
+      "required": ["container", "encoding", "sample_rate_hz", "channels", "bits_per_sample"],
+      "properties": {
+        "container": {"const": "RIFF/WAVE"}, "encoding": {"const": "pcm_s16le"},
+        "sample_rate_hz": {"const": 48000}, "channels": {"const": 1}, "bits_per_sample": {"const": 16}
+      }
+    },
+    "preparation": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "samples", "frequency_hz", "pcm16_period", "period_repetitions"],
+          "properties": {
+            "kind": {"const": "local_integer_period"}, "samples": {"const": 480000},
+            "frequency_hz": {"const": 1000}, "period_repetitions": {"const": 10000},
+            "pcm16_period": {"type": "array", "minItems": 48, "maxItems": 48, "items": {"type": "integer", "minimum": -32768, "maximum": 32767}}
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "rate_bps", "interleave", "transmission_count", "payload", "nominal_payload_dwell_seconds", "producer_contract", "framing_policy"],
+          "properties": {
+            "kind": {"const": "external_m110_transmitter"}, "rate_bps": {"const": 300},
+            "interleave": {"const": "long"}, "transmission_count": {"const": 1},
+            "nominal_payload_dwell_seconds": {"type": "number", "exclusiveMinimum": 0},
+            "producer_contract": {"const": "explicit_tx_to_pcm_compatible_executable"},
+            "framing_policy": {"const": "one_preamble_one_eom_no_loop_no_padding_to_fake_dwell"},
+            "payload": {
+              "type": "object", "additionalProperties": false,
+              "required": ["algorithm", "domain_ascii", "bytes", "sha256", "counter_encoding", "initial_counter", "bit_order"],
+              "properties": {
+                "algorithm": {"const": "sha256_domain_nul_counter_stream_v1"},
+                "domain_ascii": {"type": "string", "pattern": "^[A-Z0-9-]+[a-z0-9-]*$", "minLength": 1},
+                "bytes": {"type": "integer", "minimum": 1}, "sha256": {"$ref": "#/$defs/sha256"},
+                "counter_encoding": {"const": "uint64_little_endian"}, "initial_counter": {"const": 0},
+                "bit_order": {"const": "lsb_first_within_octet"}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "level_policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["digital_gain", "codec_calibration", "initial_codec_percent", "initial_setting_is_qualified"],
+      "properties": {
+        "digital_gain": {"const": 1}, "codec_calibration": {"const": "required_before_gated_run"},
+        "initial_codec_percent": {"type": "integer", "minimum": 1, "maximum": 100},
+        "initial_setting_is_qualified": {"const": false}
+      }
+    },
+    "qualification": {
+      "type": "object", "additionalProperties": false,
+      "required": ["class", "evidence_scope", "allowed_clean_arms", "decode_execution", "minimum_payload_dwell_seconds", "generated_artifact_required"],
+      "properties": {
+        "class": {"enum": ["tone_calibration", "short_m110_clean", "one_hour_m110_clean"]},
+        "evidence_scope": {"const": "engineering_only"},
+        "allowed_clean_arms": {"const": ["A", "B"]},
+        "decode_execution": {"enum": ["not_applicable", "offline"]},
+        "minimum_payload_dwell_seconds": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "generated_artifact_required": {"const": true}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"source_kind": {"const": "tone"}}},
+      "then": {
+        "properties": {
+          "preparation": {"properties": {"kind": {"const": "local_integer_period"}}},
+          "qualification": {"properties": {"class": {"const": "tone_calibration"}, "decode_execution": {"const": "not_applicable"}, "minimum_payload_dwell_seconds": {"type": "null"}}}
+        }
+      },
+      "else": {
+        "properties": {
+          "preparation": {"properties": {"kind": {"const": "external_m110_transmitter"}}},
+          "qualification": {"properties": {"class": {"enum": ["short_m110_clean", "one_hour_m110_clean"]}, "decode_execution": {"const": "offline"}, "minimum_payload_dwell_seconds": {"type": "number", "exclusiveMinimum": 0}}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"qualification": {"properties": {"class": {"const": "one_hour_m110_clean"}}}}},
+      "then": {"properties": {"qualification": {"properties": {"minimum_payload_dwell_seconds": {"minimum": 3600}}}, "preparation": {"properties": {"nominal_payload_dwell_seconds": {"minimum": 3600}}}}}
+    }
+  ],
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

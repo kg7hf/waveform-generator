@@ -1,0 +1,421 @@
+{
+  "schema_version": 1,
+  "observed_utc_date": "2026-09-05",
+  "scope": "Planned one-time source imports; historical donor paths are evidence, never build inputs.",
+  "donor": {
+    "repository": "https://github.com/kg7hf/M110-modem.git",
+    "commit": "97661c6297b3044f3855313955de21df87c54167",
+    "selected_tracked_files_dirty": false,
+    "repository_dirty": true,
+    "dirty_context": "Untracked planning document and two mock configuration files existed; no sampled tracked donor changes were observed."
+  },
+  "first_party_license": {
+    "status": "unspecified",
+    "evidence": "No repository-level license or license headers in the sampled first-party donors were found. No new license grant is made."
+  },
+  "status_definitions": {
+    "planned": "Donor identified and hashed; local implementation has not been verified against this entry.",
+    "materialized": "Destination bytes exist and are bound by local_sha256 and local_size_bytes.",
+    "unresolved": "Identity or acquisition evidence is unavailable; entry cannot supply build source."
+  },
+  "local_tools": [
+    {
+      "path": "host/analyze_capture.py",
+      "purpose": "Generator-local streaming post-capture WAV integrity, level, dropout, and bounded two-anchor timing diagnostics.",
+      "license_identifier": "unspecified",
+      "dependencies": "Python standard library only",
+      "notes": "First-party engineering analysis tool; it does not establish M110 formal conformance."
+    }
+  ],
+  "git_metadata_policy": "Historical donor commit is provenance only. Exported builds use a local source manifest; live Git metadata is optional.",
+  "imports": [
+    {
+      "id": "m110-001",
+      "status": "materialized",
+      "donor_path": "platform/imxrt1170/wm8960_codec.hpp",
+      "donor_sha256": "95393d501e47c657255720c102dd21ee00fcf2625b19dcac5d69c2ad43c31733",
+      "donor_size_bytes": 6497,
+      "destination": "rt1170/platform/wm8960_codec.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "90daabd74ce51889a5f24454422f19665593b6a8dfb0568c5b6bc14fb9f88c1c",
+      "local_size_bytes": 4664,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-002",
+      "status": "materialized",
+      "donor_path": "platform/imxrt1170/wm8960_codec.cpp",
+      "donor_sha256": "2c69d601627b11c5d8e50ff7d778b373f19eeed877e79ad2efa4709865fae47d",
+      "donor_size_bytes": 19262,
+      "destination": "rt1170/platform/wm8960_codec.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "61b5cdf6b3ac5d73ebbb2ba5084f4d57ac612e27c8ad57e689e1c2f2fd625e92",
+      "local_size_bytes": 18543,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-003",
+      "status": "materialized",
+      "donor_path": "platform/imxrt1170/board.cpp",
+      "donor_sha256": "2cb3dff550b944f0a903fe9b891bb98e58596c4dedea5e3b2dbe8c9344c4126a",
+      "donor_size_bytes": 1588,
+      "destination": "rt1170/platform/board.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "261b0b66b736951a85c966e219b1a47664c3aba2abe20f547a55f27edbce6220",
+      "local_size_bytes": 1592,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-004",
+      "status": "materialized",
+      "donor_path": "platform/imxrt1170/board_pins.c",
+      "donor_sha256": "4c9e070a6a5f2b348ba330baaf72f5b2115509be37d99ee503d7d540e1d4b199",
+      "donor_size_bytes": 315,
+      "destination": "rt1170/platform/board_pins.c",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "0e368c9bb610b2c3bf34b10b9bd17eaab3ecd290782687e4fd029dd3cc9097b4",
+      "local_size_bytes": 1745,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below.",
+        "P1.2 adds the Original-EVK USDHC1 microSD pin mux, card-detect route, and pad settings only in the player and SD-only diagnostic images."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-005",
+      "status": "materialized",
+      "donor_path": "platform/imxrt1170/board_pins.h",
+      "donor_sha256": "ed7215930be6226a8309ab133563b670601a202cc8edeceb395d449155c8d6ff",
+      "donor_size_bytes": 114,
+      "destination": "rt1170/platform/board_pins.h",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "833ede4371a02748a1f0450dab5eff9074c52b0ad90b675f85589d8fdad4a9d1",
+      "local_size_bytes": 118,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-006",
+      "status": "materialized",
+      "donor_path": "platform/imxrt1170/runtime.cpp",
+      "donor_sha256": "48e2acf1c9b0845a32165f3b544d6593723c96d45f8d2e37b53772495ff64331",
+      "donor_size_bytes": 2241,
+      "destination": "rt1170/platform/runtime.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "0837e3a7837471d77a9e8fe45883e160c83f81effe5dc4464a7546b4099cc6e5",
+      "local_size_bytes": 2240,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-007",
+      "status": "materialized",
+      "donor_path": "platform/board.hpp",
+      "donor_sha256": "abcdb4d5dfc75074040e04d1a781b966f8246e35cf817759c5f7bb1dd477bdb9",
+      "donor_size_bytes": 550,
+      "destination": "rt1170/platform/board.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "abcdb4d5dfc75074040e04d1a781b966f8246e35cf817759c5f7bb1dd477bdb9",
+      "local_size_bytes": 550,
+      "adaptations": [
+        "Imported byte-for-byte from the observed donor."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-008",
+      "status": "materialized",
+      "donor_path": "platform/runtime.hpp",
+      "donor_sha256": "36e8fc1018fc0c1a92e3841d33fee43a8085f16ba5499cc107ff6c4086eb08f0",
+      "donor_size_bytes": 332,
+      "destination": "rt1170/platform/runtime.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "36e8fc1018fc0c1a92e3841d33fee43a8085f16ba5499cc107ff6c4086eb08f0",
+      "local_size_bytes": 332,
+      "adaptations": [
+        "Imported byte-for-byte from the observed donor."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-009",
+      "status": "materialized",
+      "donor_path": "platform/usb/usb_tinyusb_port.h",
+      "donor_sha256": "4813763ab66ba88be62c2899bde5c49147ec223bfcba5798171aa16a2ad2987f",
+      "donor_size_bytes": 837,
+      "destination": "rt1170/usb/usb_tinyusb_port.h",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "4813763ab66ba88be62c2899bde5c49147ec223bfcba5798171aa16a2ad2987f",
+      "local_size_bytes": 837,
+      "adaptations": [
+        "Imported byte-for-byte from the observed donor."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-010",
+      "status": "materialized",
+      "donor_path": "platform/imxrt1170/usb_tinyusb_port.c",
+      "donor_sha256": "834eaf6dd6610a310321ca85a8de63dc88176e911b468b2f89cca84eb5e32c23",
+      "donor_size_bytes": 2823,
+      "destination": "rt1170/usb/usb_tinyusb_port.c",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "9d0cac12c811ce2bb903013098f008c599e486b7fd276ff26f5e5f92d1276e3a",
+      "local_size_bytes": 2814,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-011",
+      "status": "materialized",
+      "donor_path": "platform/usb/usb_descriptors.c",
+      "donor_sha256": "e60718fa2409584702c53e2db1f521e74d799ca0c8d68cc9e536aecb0c6da610",
+      "donor_size_bytes": 5882,
+      "destination": "rt1170/usb/usb_descriptors.c",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "63dc6ebf661c32fc8aab64b11cde3b613bf315fbadc1530b692a61567c6c5302",
+      "local_size_bytes": 6119,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below.",
+        "P1.2 keeps scaffold and resident-tone images CDC-only, while the player image uses a distinct composite PID with CDC interfaces 0/1 and MSC interface 2.",
+        "The card-inspection player has a second composite PID and product strings that identify its USB mass-storage LUN as read-only."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-012",
+      "status": "materialized",
+      "donor_path": "platform/usb/tusb_config.h",
+      "donor_sha256": "a325100492150298036f583d1f73c854c0f39bef35fb889a2dc732daf209e6a6",
+      "donor_size_bytes": 2265,
+      "destination": "rt1170/usb/tusb_config.h",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "9718c58a413754f5af05c33d6bbb520c0197a5bd22b35941b4b78e821a687db3",
+      "local_size_bytes": 2365,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below.",
+        "P1.2 enables one TinyUSB MSC function and a 512-byte MSC endpoint buffer only for the player image; all TinyUSB storage buffers keep at least 32-byte alignment."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-013",
+      "status": "materialized",
+      "donor_path": "platform/imxrt1170/FreeRTOSConfig.h",
+      "donor_sha256": "d297b3a5527462686e0146fe8e5518f7036d714f9f2894a7676527f45245c96f",
+      "donor_size_bytes": 3015,
+      "destination": "rt1170/os/FreeRTOSConfig.h",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "729e608bd33af1fd25841b0cc74ca3444780c447ad209009bd759dec902aa10c",
+      "local_size_bytes": 3093,
+      "adaptations": [
+        "P1.2 enables static recursive mutexes and counting semaphores required by the locked SDMMC FreeRTOS OSA adapter."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-014",
+      "status": "materialized",
+      "donor_path": "os/task.hpp",
+      "donor_sha256": "4c247ed19ee475ba6d964aa1436134ccbea4c514ca15536529ce7cc6f836ea8b",
+      "donor_size_bytes": 2419,
+      "destination": "rt1170/os/task.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "b905b3660dcee1e4854d290fb2995b771299160c9beeeb8f59238cb4724affaf",
+      "local_size_bytes": 2421,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-015",
+      "status": "materialized",
+      "donor_path": "os/freertos_task.cpp",
+      "donor_sha256": "0dd9f6c4a64fac5b888b6de2ead635ec4ca39b3e9269471c3304e7986cd2058b",
+      "donor_size_bytes": 4893,
+      "destination": "rt1170/os/task.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "0dd9f6c4a64fac5b888b6de2ead635ec4ca39b3e9269471c3304e7986cd2058b",
+      "local_size_bytes": 4893,
+      "adaptations": [
+        "Imported byte-for-byte from the observed donor."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-016",
+      "status": "materialized",
+      "donor_path": "core/status.hpp",
+      "donor_sha256": "653b3f43fd44c9a6e4d0f9e199ffe5d6f9d5214804e01790b341d04919e4e410",
+      "donor_size_bytes": 1905,
+      "destination": "common/status.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "653b3f43fd44c9a6e4d0f9e199ffe5d6f9d5214804e01790b341d04919e4e410",
+      "local_size_bytes": 1905,
+      "adaptations": [
+        "Imported byte-for-byte from the observed donor."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-017",
+      "status": "materialized",
+      "donor_path": "core/status.cpp",
+      "donor_sha256": "fd9897091699e0daa220c4cfdedabe87bee3e6637a7974669478326b3faa68c2",
+      "donor_size_bytes": 548,
+      "destination": "common/status.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "4cb376c74c3d0c1845a24c175b2dd1633dc411af43b9dd7d74805cb0eda96c38",
+      "local_size_bytes": 550,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-018",
+      "status": "materialized",
+      "donor_path": "tools/rx_capture.cpp",
+      "donor_sha256": "d55b929b0a10bf4717fe7424bfb6f9efe6c0b23dd6def52c45a4b77d2d3fcf72",
+      "donor_size_bytes": 5834,
+      "destination": "host/capture/capture_main.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "e975a62e92731d861d91d4495201757f094b76dcee95f87ad9b8fcad74ea9647",
+      "local_size_bytes": 24972,
+      "adaptations": [
+        "Reworked into the standalone waveform_capture CLI with JSON Lines readiness/final records, explicit device selection, safety deadline, and a writer-thread boundary."
+      ],
+      "notes": "Local adaptation verified on 2026-09-06; no donor path is a build input."
+    },
+    {
+      "id": "m110-019",
+      "status": "materialized",
+      "donor_path": "platform/audio.hpp",
+      "donor_sha256": "c34e4da0492c10c5f800b3fb185c85b891a4db23d19488dd846403ab09f68015",
+      "donor_size_bytes": 3357,
+      "destination": "host/capture/winmm_audio.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "8ba7d300c94c14a253d004e11d019dced3ec5889b89252932a23b2f95322a589",
+      "local_size_bytes": 4020,
+      "adaptations": [
+        "Reduced to the capture-only WinMM device identity, callback, and counter interface; generic playback and parent status dependencies were excluded."
+      ],
+      "notes": "Local adaptation verified on 2026-09-06; no donor path is a build input."
+    },
+    {
+      "id": "m110-020",
+      "status": "materialized",
+      "donor_path": "platform/windows/winmm_audio.cpp",
+      "donor_sha256": "bbb6dce2267d0a1ae85516c43aa5faf8278d519513eb7be97d444e8dcafa9edc",
+      "donor_size_bytes": 39153,
+      "destination": "host/capture/winmm_audio.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "b18f50a7051e0134f3a562c0dc9b2b62ecceb35671711afd1eb6c64cb2fce7dc",
+      "local_size_bytes": 9971,
+      "adaptations": [
+        "Reduced to direct WinMM PCM16 stereo 48 kHz capture with sixteen fixed buffers, explicit left/right/average channel selection, deterministic conversion, and reset-tail accounting; file mock, duplex playback, parent audio state, and parent status dependencies were excluded."
+      ],
+      "notes": "Local adaptation verified on 2026-09-06; no donor path is a build input."
+    },
+    {
+      "id": "m110-021",
+      "status": "unresolved",
+      "donor_path": "platform/software_audio_level.hpp",
+      "donor_sha256": "0d182851f4cd88bc8cca871f53404c5cd3540064d5247478604aa267af20c67d",
+      "donor_size_bytes": 1570,
+      "destination": "host/capture/software_audio_level.hpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": null,
+      "local_size_bytes": null,
+      "adaptations": [
+        "Intentionally excluded: the recorder keeps unity input samples and performs no capture-side scaling."
+      ],
+      "notes": "The source component is not needed by the standalone capture path and supplies no build input."
+    },
+    {
+      "id": "m110-022",
+      "status": "materialized",
+      "donor_path": "platform/imxrt1170/cmake/base_config.cmake",
+      "donor_sha256": "d4109e9a8ba2f483369ef537d151c060939fbb5f87d26b082771f566312b78f2",
+      "donor_size_bytes": 1271,
+      "destination": "cmake/rt1170_config.cmake",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "d4109e9a8ba2f483369ef537d151c060939fbb5f87d26b082771f566312b78f2",
+      "local_size_bytes": 1271,
+      "adaptations": [
+        "Imported byte-for-byte from the observed donor."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-023",
+      "status": "materialized",
+      "donor_path": "platform/imxrt1170/cmake/flexspi_flags.cmake",
+      "donor_sha256": "f1abfe511d872a8258da194af72a4124ad07e2de10f813b0b58563f3e136f4b1",
+      "donor_size_bytes": 3048,
+      "destination": "cmake/rt1170_flags.cmake",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "dbe7f1580e38d4287ab3fe6d3e6ed9ad6069972fb3b27fc94bdd56de252a9571",
+      "local_size_bytes": 2528,
+      "adaptations": [
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-024",
+      "status": "materialized",
+      "donor_path": "tests/imxrt1170/audio_tone/audio_tone_main.cpp",
+      "donor_sha256": "545b4329d7abe2236400ec8c75e7d85c9934544756ca757f49b7cc55c216f76c",
+      "donor_size_bytes": 7150,
+      "destination": "rt1170/tone.cpp",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "9970c9ebb9e8d0b121362c9bbaeefc5759da8434fb7abba3a654d03fb9f8be15",
+      "local_size_bytes": 1782,
+      "adaptations": [
+        "New deterministic 48-frame PCM16 tone checkpoint, using the donor tone program as a behavior reference."
+      ],
+      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    }
+  ]
+}

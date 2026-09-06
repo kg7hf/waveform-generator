@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:waveform-generator:schema:waveform-manifest:1",
+  "title": "Frozen waveform package manifest v1",
+  "description": "Describes actual retained bytes. File hashes, arithmetic, source correctness, and acceptance still require semantic verification.",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "fixture_id", "source_kind", "evidence_scope", "wav", "pcm", "sidecar", "level", "generation", "recipe", "m110", "pathsim"],
+  "properties": {
+    "schema_version": {"const": "waveform-manifest/1"},
+    "fixture_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"},
+    "source_kind": {"enum": ["tone", "pn", "m110_clean", "pathsim_rendered"]},
+    "evidence_scope": {"const": "engineering_only"},
+    "wav": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact", "card_filename", "container", "format_tag", "sample_rate_hz", "channels", "bits_per_sample", "block_align", "byte_rate"],
+      "properties": {
+        "artifact": {"$ref": "#/$defs/artifact"},
+        "card_filename": {"type": "string", "pattern": "^[A-Z0-9_]{1,8}[.]WAV$"},
+        "container": {"const": "RIFF/WAVE"}, "format_tag": {"const": 1}, "sample_rate_hz": {"const": 48000},
+        "channels": {"const": 1}, "bits_per_sample": {"const": 16}, "block_align": {"const": 2}, "byte_rate": {"const": 96000}
+      }
+    },
+    "pcm": {
+      "type": "object", "additionalProperties": false,
+      "required": ["data_offset_bytes", "data_bytes", "samples", "sha256", "encoding"],
+      "properties": {
+        "data_offset_bytes": {"type": "integer", "minimum": 12, "maximum": 4294967295},
+        "data_bytes": {"type": "integer", "minimum": 2, "maximum": 4294967295, "multipleOf": 2},
+        "samples": {"type": "integer", "minimum": 1, "maximum": 2147483647},
+        "sha256": {"$ref": "#/$defs/sha256"}, "encoding": {"const": "pcm_s16le"}
+      }
+    },
+    "sidecar": {"$ref": "#/$defs/artifact"},
+    "level": {
+      "type": "object", "additionalProperties": false,
+      "required": ["digital_gain", "headphone_percent", "headphone_raw", "calibration"],
+      "properties": {
+        "digital_gain": {"const": 1}, "headphone_percent": {"type": "integer", "minimum": 0, "maximum": 100},
+        "headphone_raw": {"type": "integer", "minimum": 0, "maximum": 127},
+        "calibration": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/artifact"}]}
+      }
+    },
+    "generation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["method", "argv", "tool_identity", "created_utc", "notes"],
+      "properties": {
+        "method": {"enum": ["local_tone", "local_pn", "external_m110", "external_pathsim"]},
+        "argv": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "tool_identity": {"$ref": "#/$defs/artifact"}, "created_utc": {"type": "string", "format": "date-time"},
+        "notes": {"type": "string"}
+      }
+    },
+    "recipe": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/artifact"}]},
+    "m110": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["payload", "payload_bytes", "expected_bits", "bit_order", "rate_bps", "interleave", "transmission_count", "transmissions", "decode_execution", "decoder_contract", "decoder_arguments", "reference_assisted_decoding"],
+          "properties": {
+            "payload": {"$ref": "#/$defs/artifact"}, "payload_bytes": {"type": "integer", "minimum": 1},
+            "expected_bits": {"type": "integer", "minimum": 8, "multipleOf": 8},
+            "bit_order": {"const": "lsb_first_within_octet"}, "rate_bps": {"enum": [75, 150, 300, 600, 1200, 2400, 4800]},
+            "interleave": {"enum": ["zero", "short", "long"]}, "transmission_count": {"const": 1},
+            "transmissions": {"type": "array", "minItems": 1, "maxItems": 1, "items": {"$ref": "#/$defs/transmission"}},
+            "decode_execution": {"const": "offline"}, "decoder_contract": {"const": "m110_app_decode_text_v1"},
+            "decoder_arguments": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "reference_assisted_decoding": {"const": false}
+          }
+        }
+      ]
+    },
+    "pathsim": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["generation_manifest", "clean_input_manifest", "external_binary", "argv"],
+          "properties": {
+            "generation_manifest": {"$ref": "#/$defs/artifact"}, "clean_input_manifest": {"$ref": "#/$defs/artifact"},
+            "external_binary": {"$ref": "#/$defs/artifact"}, "argv": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"source_kind": {"enum": ["m110_clean", "pathsim_rendered"]}}},
+      "then": {"properties": {"m110": {"type": "object"}}},
+      "else": {"properties": {"m110": {"type": "null"}}}
+    },
+    {
+      "if": {"properties": {"source_kind": {"const": "pathsim_rendered"}}},
+      "then": {"properties": {"pathsim": {"type": "object"}, "generation": {"properties": {"method": {"const": "external_pathsim"}}}}},
+      "else": {"properties": {"pathsim": {"type": "null"}}}
+    },
+    {"if": {"properties": {"source_kind": {"const": "m110_clean"}}}, "then": {"properties": {"generation": {"properties": {"method": {"const": "external_m110"}}}}}},
+    {"if": {"properties": {"source_kind": {"const": "tone"}}}, "then": {"properties": {"generation": {"properties": {"method": {"const": "local_tone"}}}}}},
+    {"if": {"properties": {"source_kind": {"const": "pn"}}}, "then": {"properties": {"generation": {"properties": {"method": {"const": "local_pn"}}}}}}
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact": {
+      "type": "object", "additionalProperties": false, "required": ["path", "bytes", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "bytes": {"type": "integer", "minimum": 1}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "interval": {
+      "type": "object", "additionalProperties": false, "required": ["start_sample", "end_sample_exclusive"],
+      "properties": {"start_sample": {"type": "integer", "minimum": 0}, "end_sample_exclusive": {"type": "integer", "minimum": 0}}
+    },
+    "transmission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["preamble", "body", "eom_flush", "leading_guard", "trailing_guard", "payload_dwell_seconds", "interval_evidence"],
+      "properties": {
+        "preamble": {"$ref": "#/$defs/interval"}, "body": {"$ref": "#/$defs/interval"},
+        "eom_flush": {"$ref": "#/$defs/interval"}, "leading_guard": {"$ref": "#/$defs/interval"},
+        "trailing_guard": {"$ref": "#/$defs/interval"}, "payload_dwell_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "interval_evidence": {"$ref": "#/$defs/artifact"}
+      }
+    }
+  }
+}

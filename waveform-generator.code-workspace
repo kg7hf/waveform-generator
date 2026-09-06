@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "RT1170 Waveform Generator",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "cmake.sourceDirectory": "${workspaceFolder}",
+    "cmake.useCMakePresets": "always",
+    "cmake.configureOnOpen": false
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-vscode.cmake-tools",
+      "ms-vscode.cpptools",
+      "ms-python.python"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+First-party license status
+==========================
+
+The first-party M110 source selected for this fixture has no repository-level
+license declaration in the inspected donor revision
+97661c6297b3044f3855313955de21df87c54167. The sampled donor files also contain no
+license identifier. This file records that unspecified status; it does not
+relicense those files, grant new rights, or select an open-source license for
+the generator. A first-party license decision remains with the project owner.
+
+Third-party source retains its original copyright notices and license terms.
+See THIRD_PARTY_NOTICES.md, dependencies.lock.json, and the license files kept
+with each materialized dependency. A listed dependency may still be planned or
+unresolved; its inclusion in an inventory is not evidence of an actual import.
+
+No PathSim code is included or authorized by this file.

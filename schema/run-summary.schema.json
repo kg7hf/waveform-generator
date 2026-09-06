@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:waveform-generator:schema:run-summary:1",
+  "title": "Phase 1 engineering run summary v1",
+  "description": "A summary of one attempt. A structurally valid document is not automatically a valid or passing test.",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "run_id", "created_utc", "arm", "source_kind", "qualification_class", "evidence_scope", "decode_execution", "disposition", "reasons", "checks", "calibration", "fixture", "capture", "decode", "artifacts", "artifact_inventory", "limitations"],
+  "properties": {
+    "schema_version": {"const": "run-summary/1"}, "run_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+    "created_utc": {"type": "string", "format": "date-time"}, "arm": {"enum": ["A", "B"]},
+    "source_kind": {"enum": ["tone", "pn", "m110_clean"]},
+    "qualification_class": {"enum": ["tone_calibration", "integrity_signal", "short_m110_clean", "intermediate_m110_clean", "one_hour_m110_clean"]},
+    "evidence_scope": {"const": "engineering_only"}, "decode_execution": {"enum": ["offline", "not_applicable"]},
+    "disposition": {"enum": ["pass", "fail", "invalid", "operator-aborted"]},
+    "reasons": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "artifact_inventory": {"type": "string", "minLength": 1},
+    "checks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_identity", "fixture_integrity", "capture_integrity", "audio_acceptance", "drift_acceptance", "decode_acceptance", "evidence_integrity"],
+      "properties": {
+        "source_identity": {"$ref": "#/$defs/check"}, "fixture_integrity": {"$ref": "#/$defs/check"},
+        "capture_integrity": {"$ref": "#/$defs/check"}, "audio_acceptance": {"$ref": "#/$defs/check"},
+        "drift_acceptance": {"$ref": "#/$defs/check"}, "decode_acceptance": {"$ref": "#/$defs/check"},
+        "evidence_integrity": {"$ref": "#/$defs/check"}
+      }
+    },
+    "calibration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "record", "locked_utc", "max_abs_relative_ppm", "max_correlation_residual_samples"],
+      "properties": {
+        "status": {"enum": ["pending", "provisional", "locked"]}, "record": {"$ref": "#/$defs/nullable_artifact"},
+        "locked_utc": {"type": ["string", "null"], "format": "date-time"},
+        "max_abs_relative_ppm": {"type": ["number", "null"], "minimum": 0},
+        "max_correlation_residual_samples": {"type": ["number", "null"], "minimum": 0}
+      },
+      "allOf": [{"if": {"properties": {"status": {"const": "locked"}}}, "then": {"properties": {"record": {"type": "object"}, "locked_utc": {"type": "string"}, "max_abs_relative_ppm": {"type": "number"}, "max_correlation_residual_samples": {"type": "number"}}}}]
+    },
+    "fixture": {
+      "oneOf": [{"type": "null"}, {
+        "type": "object", "additionalProperties": false,
+        "required": ["state", "run_id", "uid", "expected_samples", "file_samples_delivered", "tx_submitted_file_samples", "tx_completed_file_samples", "error_count", "playback_hash_complete", "hardware_drain_complete", "position_exact"],
+        "properties": {
+          "state": {"enum": ["IDLE", "LOADED", "ARMING", "ARMED", "PLAYING", "DRAINING", "STOPPING", "DONE", "ABORTED", "FAULT"]},
+          "run_id": {"type": ["string", "null"], "pattern": "^[0-9a-f]{32}$"}, "uid": {"type": "string", "minLength": 1},
+          "expected_samples": {"$ref": "#/$defs/nullable_uint64"}, "file_samples_delivered": {"$ref": "#/$defs/uint64"},
+          "tx_submitted_file_samples": {"$ref": "#/$defs/uint64"}, "tx_completed_file_samples": {"$ref": "#/$defs/uint64"},
+          "error_count": {"$ref": "#/$defs/uint64"}, "playback_hash_complete": {"type": "boolean"},
+          "hardware_drain_complete": {"type": "boolean"}, "position_exact": {"type": "boolean"}
+        }
+      }]
+    },
+    "capture": {
+      "oneOf": [{"type": "null"}, {
+        "type": "object", "additionalProperties": false,
+        "required": ["endpoint_verified", "samples_written", "sample_rate_hz", "clipped_samples", "queue_overruns", "write_errors", "dropped_blocks", "out_of_order", "partial_buffers", "driver_discontinuity_detection", "relative_ppm", "correlation_residual_samples"],
+        "properties": {
+          "endpoint_verified": {"type": "boolean"}, "samples_written": {"$ref": "#/$defs/uint64"}, "sample_rate_hz": {"const": 48000},
+          "clipped_samples": {"$ref": "#/$defs/uint64"}, "queue_overruns": {"$ref": "#/$defs/uint64"},
+          "write_errors": {"$ref": "#/$defs/uint64"}, "dropped_blocks": {"$ref": "#/$defs/nullable_uint64"},
+          "out_of_order": {"$ref": "#/$defs/nullable_uint64"}, "partial_buffers": {"$ref": "#/$defs/nullable_uint64"},
+          "driver_discontinuity_detection": {"enum": ["supported", "limited", "unsupported"]},
+          "relative_ppm": {"type": ["number", "null"]}, "correlation_residual_samples": {"type": ["number", "null"], "minimum": 0}
+        }
+      }]
+    },
+    "decode": {
+      "oneOf": [{"type": "null"}, {
+        "type": "object", "additionalProperties": false,
+        "required": ["contract", "engine", "expected_bits", "decoded_bits", "compared_bits", "bit_errors", "missing_bits", "extra_bits", "transmissions", "mode_ok", "eom_exact", "reference_assisted", "payload_dwell_seconds", "exit_code"],
+        "properties": {
+          "contract": {"const": "m110_app_decode_text_v1"}, "engine": {"const": "siso"},
+          "expected_bits": {"$ref": "#/$defs/uint64"}, "decoded_bits": {"$ref": "#/$defs/uint64"}, "compared_bits": {"$ref": "#/$defs/uint64"},
+          "bit_errors": {"$ref": "#/$defs/uint64"}, "missing_bits": {"$ref": "#/$defs/uint64"}, "extra_bits": {"$ref": "#/$defs/uint64"},
+          "transmissions": {"$ref": "#/$defs/uint64"}, "mode_ok": {"type": "boolean"}, "eom_exact": {"type": "boolean"},
+          "reference_assisted": {"const": false}, "payload_dwell_seconds": {"type": "number", "minimum": 0},
+          "exit_code": {"type": ["integer", "null"]}
+        }
+      }]
+    },
+    "artifacts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_manifest", "source_wav", "sidecar", "expected_payload", "fixture_final", "host_log", "environment", "capture_wav", "capture_final", "decoder_binary", "decoder_log", "decoded_payload", "ber_report", "audio_metrics", "hf_transcript"],
+      "properties": {
+        "source_manifest": {"$ref": "#/$defs/nullable_artifact"}, "source_wav": {"$ref": "#/$defs/nullable_artifact"},
+        "sidecar": {"$ref": "#/$defs/nullable_artifact"}, "expected_payload": {"$ref": "#/$defs/nullable_artifact"},
+        "fixture_final": {"$ref": "#/$defs/nullable_artifact"}, "host_log": {"$ref": "#/$defs/nullable_artifact"},
+        "environment": {"$ref": "#/$defs/nullable_artifact"}, "capture_wav": {"$ref": "#/$defs/nullable_artifact"},
+        "capture_final": {"$ref": "#/$defs/nullable_artifact"}, "decoder_binary": {"$ref": "#/$defs/nullable_artifact"},
+        "decoder_log": {"$ref": "#/$defs/nullable_artifact"}, "decoded_payload": {"$ref": "#/$defs/nullable_artifact"},
+        "ber_report": {"$ref": "#/$defs/nullable_artifact"}, "audio_metrics": {"$ref": "#/$defs/nullable_artifact"},
+        "hf_transcript": {"$ref": "#/$defs/nullable_artifact"}
+      }
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"source_kind": {"const": "m110_clean"}}}, "then": {"properties": {"decode_execution": {"const": "offline"}, "qualification_class": {"enum": ["short_m110_clean", "intermediate_m110_clean", "one_hour_m110_clean"]}}}, "else": {"properties": {"decode_execution": {"const": "not_applicable"}, "decode": {"type": "null"}, "qualification_class": {"enum": ["tone_calibration", "integrity_signal"]}, "checks": {"properties": {"decode_acceptance": {"const": "not_applicable"}}}}}},
+    {
+      "if": {"properties": {"disposition": {"enum": ["pass", "fail"]}}},
+      "then": {
+        "properties": {
+          "checks": {"properties": {"source_identity": {"const": "pass"}, "fixture_integrity": {"const": "pass"}, "capture_integrity": {"const": "pass"}, "audio_acceptance": {"const": "pass"}, "evidence_integrity": {"const": "pass"}}},
+          "fixture": {"type": "object", "properties": {"state": {"const": "DONE"}, "run_id": {"type": "string"}, "expected_samples": {"type": "integer", "minimum": 1}, "error_count": {"const": 0}, "playback_hash_complete": {"const": true}, "hardware_drain_complete": {"const": true}, "position_exact": {"const": true}}},
+          "capture": {"type": "object", "properties": {"endpoint_verified": {"const": true}, "samples_written": {"minimum": 1}, "clipped_samples": {"const": 0}, "queue_overruns": {"const": 0}, "write_errors": {"const": 0}, "dropped_blocks": {"const": 0}, "out_of_order": {"const": 0}}},
+          "artifacts": {"properties": {"source_manifest": {"type": "object"}, "source_wav": {"type": "object"}, "sidecar": {"type": "object"}, "fixture_final": {"type": "object"}, "host_log": {"type": "object"}, "environment": {"type": "object"}, "capture_wav": {"type": "object"}, "capture_final": {"type": "object"}, "audio_metrics": {"type": "object"}}}
+        }
+      }
+    },
+    {"if": {"properties": {"disposition": {"enum": ["fail", "invalid", "operator-aborted"]}}}, "then": {"properties": {"reasons": {"minItems": 1}}}},
+    {"if": {"properties": {"disposition": {"const": "fail"}}}, "then": {"properties": {"source_kind": {"const": "m110_clean"}, "decode": {"type": "object"}, "checks": {"properties": {"decode_acceptance": {"const": "fail"}}}, "artifacts": {"properties": {"expected_payload": {"type": "object"}, "decoder_binary": {"type": "object"}, "decoder_log": {"type": "object"}, "decoded_payload": {"type": "object"}, "ber_report": {"type": "object"}}}}}},
+    {
+      "if": {"properties": {"disposition": {"const": "pass"}, "source_kind": {"const": "m110_clean"}}},
+      "then": {"properties": {
+        "checks": {"properties": {"decode_acceptance": {"const": "pass"}}},
+        "decode": {"type": "object", "properties": {"expected_bits": {"minimum": 1}, "decoded_bits": {"minimum": 1}, "compared_bits": {"minimum": 1}, "bit_errors": {"const": 0}, "missing_bits": {"const": 0}, "extra_bits": {"const": 0}, "transmissions": {"const": 1}, "mode_ok": {"const": true}, "eom_exact": {"const": true}, "exit_code": {"const": 0}}},
+        "artifacts": {"properties": {"expected_payload": {"type": "object"}, "decoder_binary": {"type": "object"}, "decoder_log": {"type": "object"}, "decoded_payload": {"type": "object"}, "ber_report": {"type": "object"}}}
+      }}
+    },
+    {
+      "if": {"properties": {"disposition": {"enum": ["pass", "fail"]}, "qualification_class": {"enum": ["intermediate_m110_clean", "one_hour_m110_clean"]}}},
+      "then": {"properties": {"calibration": {"properties": {"status": {"const": "locked"}}}, "checks": {"properties": {"drift_acceptance": {"const": "pass"}}}, "capture": {"properties": {"relative_ppm": {"type": "number"}, "correlation_residual_samples": {"type": "number"}}}}}
+    },
+    {"if": {"properties": {"disposition": {"enum": ["pass", "fail"]}, "qualification_class": {"const": "one_hour_m110_clean"}}}, "then": {"properties": {"decode": {"properties": {"payload_dwell_seconds": {"minimum": 3600}}}}}},
+    {"if": {"properties": {"disposition": {"enum": ["pass", "fail"]}, "arm": {"const": "B"}}}, "then": {"properties": {"artifacts": {"properties": {"hf_transcript": {"type": "object"}}}}}}
+  ],
+  "$defs": {
+    "uint64": {"type": "integer", "minimum": 0, "maximum": 18446744073709551615},
+    "nullable_uint64": {"type": ["integer", "null"], "minimum": 0, "maximum": 18446744073709551615},
+    "check": {"enum": ["pass", "fail", "not_observed", "not_applicable"]},
+    "artifact": {"type": "object", "additionalProperties": false, "required": ["path", "bytes", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "bytes": {"type": "integer", "minimum": 0}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}},
+    "nullable_artifact": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/artifact"}]}
+  }
+}

@@ -1,0 +1,3856 @@
+{
+  "schema_version": "wfg-materialized-files/1",
+  "generated_from": "explicit clean source checkouts matching dependencies.lock.json",
+  "files": [
+    {
+      "path": "third_party/CMSIS/Core/Include/cachel1_armv7.h",
+      "bytes": 12748,
+      "sha256": "83b5eddaaea069ca93391fe4d7f6f3880a0b6edf981b827bbebe247142fa3bbb"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/cmsis_armcc.h",
+      "bytes": 27999,
+      "sha256": "5bc0d7ed8e36e9bcb868c4042fff350c702eca305df4162fb00384789e35ee1c"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/cmsis_armclang.h",
+      "bytes": 48417,
+      "sha256": "d5da2b48204f0d0cf1ff38ffccb527e5706cd0a091ff0a331eb41d6596c33fe5"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/cmsis_armclang_ltm.h",
+      "bytes": 56021,
+      "sha256": "3e8ffb284f4f155de3ea93841cca853b41d5e812b53e52c64c3d4a67b7f1ec7c"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/cmsis_compiler.h",
+      "bytes": 9481,
+      "sha256": "b51963d271c1571ca3463654c76aa7ea50c4eac5d0a2710df10414ac64d9e0f8"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/cmsis_gcc.h",
+      "bytes": 63374,
+      "sha256": "43bfd1fe69fbbc2ca70aaf7d43cc3e20f16e0c7f66e1bdef9b51af6dc14b2617"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/cmsis_iccarm.h",
+      "bytes": 29069,
+      "sha256": "2d255c8429e507e52cb603f2970bed4cc4a6cdcc3eb7fc7997385abad7364837"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/CMSIS_Include_core_cm.cmake",
+      "bytes": 306,
+      "sha256": "d78dbff63450cb5295db2db7376f5c866b70dd2dd4ca4e17cf4cff67b35ac61f"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/cmsis_version.h",
+      "bytes": 1680,
+      "sha256": "184c19fd3ee73632edf35a0b4d49cd48be75fbf49e6ccb19d9db05fa83bea4b3"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_armv81mml.h",
+      "bytes": 276171,
+      "sha256": "aae4a88cd1e83859d234437cd562684144c13b57e0ddf29f8d66de4964c3fadf"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_armv8mbl.h",
+      "bytes": 115004,
+      "sha256": "458b1e6788079ded52adc7d06383701c865ca97b67c5e7a0a44884194f91a842"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_armv8mml.h",
+      "bytes": 182690,
+      "sha256": "9039940317a81e923282818f71ad30b6e5fc968199ebf94def15988bf7ca5081"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_cm0.h",
+      "bytes": 41643,
+      "sha256": "ac13cb645f108666a0e57c93467872660d6bc860a839f840dc870b7a5863b4bf"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_cm0plus.h",
+      "bytes": 49877,
+      "sha256": "a09fa9c6b8b21d1920bce15b98aa56182b027e9278cca0b154812bac2aea3cfa"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_cm1.h",
+      "bytes": 42626,
+      "sha256": "944bf0c4f940eef30a632cd99d5dcfe8270e8a8431eb98c0f081bcf4f61f728e"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_cm23.h",
+      "bytes": 121556,
+      "sha256": "77822e9738885394ec52fca6f617452b823a0b55e2664ee225e65576cf0e8f2d"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_cm3.h",
+      "bytes": 109529,
+      "sha256": "c9937781259a8897adf514445441c68570087d6a72a558d8a4afe75cdb62dbd2"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_cm33.h",
+      "bytes": 189524,
+      "sha256": "225c47c36230edaa314f1e7a45b38279f6ab4d58faeb132226db35f7007d58aa"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_cm35p.h",
+      "bytes": 189038,
+      "sha256": "79994acc4c74f2d8191727b7eb0600b2a6851204e4796b21e8dc74d072155464"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_cm4.h",
+      "bytes": 120975,
+      "sha256": "f5b63d52dd1557b15ca414cb59c264f595a7b5669db2a5878dffe22f4caedc8c"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_cm55.h",
+      "bytes": 280300,
+      "sha256": "8c0e5edf754458db00fc6b74ff0bc13d79b66eaa4ad28aa56643b1072e45b342"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_cm7.h",
+      "bytes": 138948,
+      "sha256": "e974d0a91752487d0154457cd422c37667328e9ddb7ba4fa2fed479a63577f63"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_sc000.h",
+      "bytes": 46562,
+      "sha256": "c81377a69a4ea8ecaead42194f2ce8ab59bd4ee7bd638e423f5b1f5ec283d154"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/core_sc300.h",
+      "bytes": 108524,
+      "sha256": "73dd461c12c7d3a693840df3084fd8f85122095c6f21fa3d779b0f3eceaebad5"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/mpu_armv7.h",
+      "bytes": 11731,
+      "sha256": "29206b52ee02290ed6f5a5415ebd4187de802cf176d9b3cb844390d8e5571372"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/mpu_armv8.h",
+      "bytes": 11370,
+      "sha256": "2c7d22a344cedcc1e35380d1f76f0e6c55da5e3101e6a41fd85497d1841fe8c9"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/pmu_armv8.h",
+      "bytes": 22786,
+      "sha256": "cea8c105c5f41ba831fe4d9e8e39758068cd4c414383348dc2835d6be447cca0"
+    },
+    {
+      "path": "third_party/CMSIS/Core/Include/tz_context.h",
+      "bytes": 2687,
+      "sha256": "45565c8cb04c653aabaf3cceddfc848b6a0de28c20d4f7e3d475a992c7eee788"
+    },
+    {
+      "path": "third_party/CMSIS/LICENSE.txt",
+      "bytes": 11357,
+      "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1"
+    },
+    {
+      "path": "third_party/fatfs/LICENSE.txt",
+      "bytes": 1913,
+      "sha256": "b896e32fb2cdb3fc8b3b6fd854706fca4ac55619fbb6d5eb2429cb05ee338966"
+    },
+    {
+      "path": "third_party/fatfs/source/diskio.c",
+      "bytes": 7693,
+      "sha256": "07743af9580d4954e8ac74065d97ef8fc3646c2785818a2950ffd22b39736a35"
+    },
+    {
+      "path": "third_party/fatfs/source/diskio.h",
+      "bytes": 3088,
+      "sha256": "eadfbd2a3ec4c8cdccd6f03900461bf28fa4b2ec424398b4c5e87c897c3a9a61"
+    },
+    {
+      "path": "third_party/fatfs/source/ff.c",
+      "bytes": 249900,
+      "sha256": "0bdfc13db7bb055022efe4f767f2a168c3dd1a92acf900e6c56cbae59f8be791"
+    },
+    {
+      "path": "third_party/fatfs/source/ff.h",
+      "bytes": 16022,
+      "sha256": "7bddebd3db5ced9f78d925ac9817bb4b6fc33709aa3800b408895805fffe5eee"
+    },
+    {
+      "path": "third_party/fatfs/source/fsl_sd_disk/fsl_sd_disk.c",
+      "bytes": 3431,
+      "sha256": "1edefb16405fdcfd5fa66d0baa0c30d90bf8ac2f2d9bdd29c3edbb471bca3de5"
+    },
+    {
+      "path": "third_party/fatfs/source/fsl_sd_disk/fsl_sd_disk.h",
+      "bytes": 2481,
+      "sha256": "898b0743551860468690ee77107c348f7d775c2dbbf42d6ec70556cb114e75fd"
+    },
+    {
+      "path": "third_party/fatfs/SW-Content-Register.txt",
+      "bytes": 307,
+      "sha256": "7616543073db5bd68e4bc4ce3a169c469e95651939f0f545ca8ee7a82f72f5a9"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/atomic.h",
+      "bytes": 13261,
+      "sha256": "84298919ac304d3f35f3fe0d8173447876e401339dff6ca3315d5e1177ebbc95"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/CMakeLists.txt",
+      "bytes": 505,
+      "sha256": "52741830c9909c41edcda8328f223226c8ce682990b83bfbd8c6c0c95f7be9b7"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/croutine.h",
+      "bytes": 29079,
+      "sha256": "adb9051cb9f0bcdcb8890b1a890e0a834de4e207dce30f91d3c4c507e71ff1f5"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/deprecated_definitions.h",
+      "bytes": 7800,
+      "sha256": "bdb0d23e2cfc6a71937d2181ff7ed4710bfc6ddadf8fa53310007834146fc2a1"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/event_groups.h",
+      "bytes": 35710,
+      "sha256": "1e0a8041aed40dc8706c9095e5d51253e23dd3f0692ec2ac2f6d1fd79da68972"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/FreeRTOS.h",
+      "bytes": 52272,
+      "sha256": "28b5daf53aff547fc087882f6d88ccd5dd7e81058863d3063ca3b2e598139d1a"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/list.h",
+      "bytes": 24377,
+      "sha256": "52cb175573be7b331855c61198de1d6469e7defd440d6ca8e6ed3cbb1d940fe6"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/message_buffer.h",
+      "bytes": 42366,
+      "sha256": "e768b781164f11a939bb7f7bd672c1fe71c7a433f5c45af8c2ea06961e1eaba7"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/mpu_prototypes.h",
+      "bytes": 25741,
+      "sha256": "ec1e3f3e287884191d87ab5a55086ee459dc86776c1ebaff937b0efe4366f2a1"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/mpu_syscall_numbers.h",
+      "bytes": 6029,
+      "sha256": "5dca4ae9336d59a3bb7817ad6e1bfc86a8d387b91d44288e42fcacffe186c21b"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/mpu_wrappers.h",
+      "bytes": 18305,
+      "sha256": "a1cb43fd51b02b9aa822f07ccc65b7d5df012d55b5ebc565c0f71b31575c6bfd"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/newlib-freertos.h",
+      "bytes": 2529,
+      "sha256": "cc2848745661757cdcf2a0e1aa0f477829c7ab00447cd00ecf231ca6dfd4d18c"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/picolibc-freertos.h",
+      "bytes": 4449,
+      "sha256": "47d6c61950ed238a3a71b0d3e2cc53fba9429ce151c9150171797af873cff6dc"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/portable.h",
+      "bytes": 11626,
+      "sha256": "42acb1e82583498e03ae96bc4e5ed4040829bb89734bf7f205c3883a20f26dc2"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/projdefs.h",
+      "bytes": 7082,
+      "sha256": "940ce00187d59e4fb22d8e38a63a5e5a342262db00eacf24f7571b071393f99a"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/queue.h",
+      "bytes": 69338,
+      "sha256": "35d8820a3a41a1bac0075d0b0f0ccc11762931b2725a5df6bf2099863b2e2e9e"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/semphr.h",
+      "bytes": 51374,
+      "sha256": "802a7f694b6e0eee4fafd294093faaa94dc5e0be9144104426d1a1a33fa6131e"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/stack_macros.h",
+      "bytes": 8704,
+      "sha256": "2a66781c5222d2d91441df680048b9c47df50566c3daf6c0452567476369ed89"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/StackMacros.h",
+      "bytes": 1608,
+      "sha256": "e402caf776106c151b52aad766c3172bd5b4a1f4ac21582f007a4d1c08a52a2e"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/stdint.readme",
+      "bytes": 2235,
+      "sha256": "e4a802c8ad749c3d03856d9f16053e2f0ee3f72cc0d9aae58c6598e2376859db"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/stream_buffer.h",
+      "bytes": 44144,
+      "sha256": "513a261db7fd3c338a771e10e5bb2893905203050543c2891630f1a5632476e6"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/task.h",
+      "bytes": 145479,
+      "sha256": "a7bb0d1cbd89027877076f69743207d9e4e586ab4a3ea13521a06ff6049d1dd2"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/include/timers.h",
+      "bytes": 65781,
+      "sha256": "016d7944e6769bca7d5db4adb28c8e024099a2958e125ea1c0626eead4403d95"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/LICENSE.md",
+      "bytes": 1055,
+      "sha256": "9eb6f69d48a1dd764e8a33f14a584f460d3cec653477c136a95dd6df9c249211"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/list.c",
+      "bytes": 10338,
+      "sha256": "0066ae7486f23453ce3b24875263e5d6ad78ceacfff6596059d3b9093a738f7a"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/portable/GCC/ARM_CM7/r0p1/port.c",
+      "bytes": 39738,
+      "sha256": "93d5a7a92f7e7eb0774a01fd7a92f9fbccc24ac58dc0cde36f04e41bc4a99830"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/portable/GCC/ARM_CM7/r0p1/portmacro.h",
+      "bytes": 10653,
+      "sha256": "c4819c73a6d8df9510dec553ae0d695524f27ea3bf2f595e25dfcce7a2f1b826"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/queue.c",
+      "bytes": 127663,
+      "sha256": "3feb04d19d53ccdbe9e423e2844b3ac0a5a8a5787f8efa9a35399f55bea51194"
+    },
+    {
+      "path": "third_party/FreeRTOS-Kernel/tasks.c",
+      "bytes": 227423,
+      "sha256": "68d78edc1453aa20c134f15f349af3aa3f5de9f52632a8f35c63cb7f689c9eff"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/board.c",
+      "bytes": 27155,
+      "sha256": "1acf383b7db550c37be697ba1959afdaec39ff79d0f3f3481eceebc6dde7c10f"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/board.h",
+      "bytes": 13037,
+      "sha256": "cc9c342d8b3a902867c1b676bce427dc64644e85355ee63a7cf5c8a7d7b6c519"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/clock_config.c",
+      "bytes": 67478,
+      "sha256": "3eb5bd9285d7eaa3affa5e0fe6518c2dd1f96acaf7c7f3dd453ac80d16434fc0"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/clock_config.h",
+      "bytes": 40131,
+      "sha256": "a6454a9a8a57d60cc90bff3642e060ed362f3fc1ed8f80c22c6bceb726af3bc6"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/dcd.c",
+      "bytes": 23887,
+      "sha256": "75e3f85b485f75f6dcb452e84794b800f927dba36130b7b12ae83fde816af8f7"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/dcd.h",
+      "bytes": 963,
+      "sha256": "3a5268f0ccdc02aa6df55b3fca87171df35161cca0c3e15971ac082cdefde7a3"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/evkmimxrt1170.png",
+      "bytes": 36453,
+      "sha256": "d467c2013232112393eb18e92668695c9dd0b7102eeab43c88155f2a121c9ca9"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/freemaster_examples/set.board.evkmimxrt1170.fmstr.yml",
+      "bytes": 693,
+      "sha256": "e13a6ee9f6c5a34a08549c13276cc15f56da7d2ba42f8553a57a7a87a70cadc8"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/freemaster_examples/set_board_evkmimxrt1170_fmstr.cmake",
+      "bytes": 23,
+      "sha256": "6e11cc97ad8b2d536d4b28feacf57d160aaf6badb9c28b719f8b251bf00d81f4"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/Kconfig",
+      "bytes": 335,
+      "sha256": "6e35f709ee4f147f7ebbb0a7aec60bb87ff6be74f7b46da6fe7a0bb9886d57c4"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/Kconfig.board",
+      "bytes": 390,
+      "sha256": "30626c402db35d9067b0090b869406a56378d1ef7a3156523aafcd3476fcbb6d"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/board.c",
+      "bytes": 27155,
+      "sha256": "1acf383b7db550c37be697ba1959afdaec39ff79d0f3f3481eceebc6dde7c10f"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/board.h",
+      "bytes": 13037,
+      "sha256": "cc9c342d8b3a902867c1b676bce427dc64644e85355ee63a7cf5c8a7d7b6c519"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/clock_config.c",
+      "bytes": 67478,
+      "sha256": "3eb5bd9285d7eaa3affa5e0fe6518c2dd1f96acaf7c7f3dd453ac80d16434fc0"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/clock_config.h",
+      "bytes": 40131,
+      "sha256": "a6454a9a8a57d60cc90bff3642e060ed362f3fc1ed8f80c22c6bceb726af3bc6"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/cm4/pin_mux.c",
+      "bytes": 4736,
+      "sha256": "b46b06b1abd3bc7231abd9283a3e1ab24f39ea55f2e78e6b09b43fb88ca3462f"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/cm4/pin_mux.h",
+      "bytes": 1463,
+      "sha256": "3aa66d673c535bac4d69d3c392f69b9b1eb5de535acea66a9de3c1d0478a078d"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/cm7/pin_mux.c",
+      "bytes": 4736,
+      "sha256": "5b283c063b136c28225d93a946fbe84f25aa20503c9fd4b39e492a3783eaa3ee"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/cm7/pin_mux.h",
+      "bytes": 1463,
+      "sha256": "3aa66d673c535bac4d69d3c392f69b9b1eb5de535acea66a9de3c1d0478a078d"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/project_template/dcd.c",
+      "bytes": 25421,
+      "sha256": "d13ac5bbf9b11c6fe22f41d5dbf9af5905c33745ed280ff88962e8305a4a941d"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/project_template/dcd.h",
+      "bytes": 963,
+      "sha256": "3a5268f0ccdc02aa6df55b3fca87171df35161cca0c3e15971ac082cdefde7a3"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/project_template/peripherals.c",
+      "bytes": 4103,
+      "sha256": "47afa9c2cd91899ba232403f436d8135cd95aa37faf56ce1ec20d2daec56a841"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/project_template/project_template/peripherals.h",
+      "bytes": 1622,
+      "sha256": "abde094d6f31e80fa7501efd16cc79182c5262220b731211ae7703fbf69ec716"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/set_board_evkmimxrt1170.cmake",
+      "bytes": 3502,
+      "sha256": "666179503eee425e0a63b3673ee79000f0c4977ef51664fc06c7c74be63fd586"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/wireless_config_template/sdmmc_config.c",
+      "bytes": 10875,
+      "sha256": "367e44f353c4e5d4cd3a7841ce049b48edfb429cc46f976ac4f07f0018bc913f"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/wireless_config_template/sdmmc_config.h",
+      "bytes": 4631,
+      "sha256": "974d15c27905281136761de3558b2951b4eb510f9d54bc1c56c2e4f46ce6ed24"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/wireless_config_template/wifi_bt_config.c",
+      "bytes": 5060,
+      "sha256": "29f831822f5c5d4a76a0c5f9f87f88a894750a42b6763bbe6ff29d9f19843654"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/wireless_config_template/wifi_bt_config.h",
+      "bytes": 986,
+      "sha256": "1c625a6f5bb1413e181aa6cc5f2633066d5ec3bdc4bb47662335623a2064d1db"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/xip/driver_xip_board.cmake",
+      "bytes": 359,
+      "sha256": "d45964af106904ee2df88542e52de64b19c1c782b921229c26dc2c4ac8af8b31"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/xip/driver_xip_board_evkmimxrt1170.cmake",
+      "bytes": 373,
+      "sha256": "2cb69c7b78c64792838d5d9f84afbc06ec12f1b26847c963ff29778c1c0034a4"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/xip/evkmimxrt1170_flexspi_nor_config.c",
+      "bytes": 3781,
+      "sha256": "a0983ebd509dd1b49d295ef230bb7b3a80573f154c44a6292dcb9738ae870e7a"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/xip/evkmimxrt1170_flexspi_nor_config.h",
+      "bytes": 13070,
+      "sha256": "335e7319f5b5f7587db0391d937ed31d9087b546587ec692b2d8d3c5605876f7"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/xip/Kconfig",
+      "bytes": 261,
+      "sha256": "27177516cddc7c37ecb683f0bc1708ff0bf943332781567e33cf45332ac02e2e"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/xmcd/driver_xmcd_evkmimxrt1170.cmake",
+      "bytes": 335,
+      "sha256": "c506622a1e897eb1998268196256c268ed6903c4b3169981fa8607ae51400f1f"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/xmcd/Kconfig",
+      "bytes": 241,
+      "sha256": "72dc667b589c348407bf4a69f520f31f8c77de8885af79f75534eb4e8bda42b3"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/xmcd/xmcd.c",
+      "bytes": 1153,
+      "sha256": "db4a2113731f386832e6bfde0007c4af956577ff55de2498bbc6ead5fc7050e0"
+    },
+    {
+      "path": "third_party/mcux-sdk/boards/evkmimxrt1170/xmcd/xmcd.h",
+      "bytes": 316,
+      "sha256": "926fdbb36d6cb36fa3defaca7e6cab5eaa7215d49254f22df693f0534212946d"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/ak4497/driver_ak4497.cmake",
+      "bytes": 346,
+      "sha256": "7544024e6210eceb0637518045edce2589ba23e1601defc915109e0d234c30d6"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/ak4497/fsl_ak4497.c",
+      "bytes": 15996,
+      "sha256": "fba127090cdb570041c797d864aa6b526174e8e38026918506d38fef48f04837"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/ak4497/fsl_ak4497.h",
+      "bytes": 15629,
+      "sha256": "2b60c8c53314ed4eed0766fa77a244c7c0e95a387d5f11d6b390313c3e20f402"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_ak4497_adapter.cmake",
+      "bytes": 424,
+      "sha256": "e6fa3720ec20a92f4a51b5869f43bb4457a84ec36d0a424a4834f5771b164fd0"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_codec_adapters.cmake",
+      "bytes": 345,
+      "sha256": "130f822622e57d69e50cb5f3f9ed0a29ea663d025bf409311b41b0a0f7771c24"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_cs42448_adapter.cmake",
+      "bytes": 452,
+      "sha256": "9f08c937fb3e09ec80019599fe95dfa319c0132970e907b4958278293ce6206b"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_cs42888_adapter.cmake",
+      "bytes": 430,
+      "sha256": "d41a0307fbc6440c61356b1a8dbb2b968c68ff4b11b00f0cd5243c0c91458229"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_da7212_adapter.cmake",
+      "bytes": 428,
+      "sha256": "d736d493813ab6d5ee37a251289a382856aeaaff27a2a731ecdc92b0cf5c90e1"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_pcm186x_adapter.cmake",
+      "bytes": 430,
+      "sha256": "a1350c43118eda5a2c70dc050bfaa1acdf22b8383bcef88dd60129352b1c483e"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_pcm512x_adapter.cmake",
+      "bytes": 430,
+      "sha256": "ec0a610b805e426b38f936766f631aa555d2301656eeffe003ea99b78ec88dda"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_tfa9896_adapter.cmake",
+      "bytes": 430,
+      "sha256": "4c1f930f96658771784dec392a380dff4dd13a76786ba73cce42b2a7eecb8712"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_tfa9xxx_adapter.cmake",
+      "bytes": 430,
+      "sha256": "cbe34a4daf894945548a8e86dc16da9ec567189041720bd91d8d591ab7a5d3ec"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_wm8524_adapter.cmake",
+      "bytes": 424,
+      "sha256": "5b7478674462c3ddf17b62811e64dd596810912361462033927ec15bdee3c291"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_wm8904_adapter.cmake",
+      "bytes": 424,
+      "sha256": "6442e5503e690f12562f20bf7400d852deac2f571f4e08547ad9fa67a7441c2e"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_wm8960_adapter.cmake",
+      "bytes": 424,
+      "sha256": "1e8d278446fead252bafa9ea8213ca69130ef657174d78bcb435b83ffb2297b6"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/component_wm8962_adapter.cmake",
+      "bytes": 446,
+      "sha256": "a1b11c9170fff96f6c82937196f19f64773badb1b52dfe09e148298aa6ebf9c3"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/cs42448/driver_cs42448.cmake",
+      "bytes": 822,
+      "sha256": "82b3ec2190fe13fbd53581ddbd4edf77215d52e0de4dfbdca182c69d4f138e74"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/cs42448/fsl_cs42448.c",
+      "bytes": 13021,
+      "sha256": "0be37d4a521e27b01efdc8d88a7282b8dcd16a8112622abe2f8b3155e37635ad"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/cs42448/fsl_cs42448.h",
+      "bytes": 14293,
+      "sha256": "067651b0adbfbdc52670061adf1de10e73cf5c07c6645acb4644d19fe1cf7cd8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/cs42888/driver_cs42888.cmake",
+      "bytes": 937,
+      "sha256": "ed23fe2b28e8c49eabd6dc53595246cb98abe969647a0dbeec5882718f3c8aa2"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/cs42888/fsl_cs42888.c",
+      "bytes": 13050,
+      "sha256": "5b71bac7fffe1b5216a00ff047b3e7cf2ba471c7614655bde2783d72b3ebabdb"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/cs42888/fsl_cs42888.h",
+      "bytes": 14205,
+      "sha256": "5de58b06c82b313fd41df478a2cc8ff069a81ef981cdbf624c652ebbaed58973"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/da7212/driver_dialog7212.cmake",
+      "bytes": 357,
+      "sha256": "f19cf89a1833c894334823a8b427c61750ab0c646bce988757b81ec969df5a2b"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/da7212/fsl_dialog7212.c",
+      "bytes": 21178,
+      "sha256": "aaff31099ebbe7c041b390ef73e1884157de07f13333cdb2c01f65422132b6c2"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/da7212/fsl_dialog7212.h",
+      "bytes": 65460,
+      "sha256": "c4355414d0ca4cd195993821cd20581c9d3693c5125fc1795d9af950a88eaabf"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/driver_codec.cmake",
+      "bytes": 881,
+      "sha256": "87a38074818c38eaaa3ce62aa3804c742b7b3c9a57b050913b912a02a072834a"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/fsl_codec_common.c",
+      "bytes": 8257,
+      "sha256": "b01b65f906a7b48e6c6fb1dfacabd229671010a91e911e1908cc775eea418f98"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/fsl_codec_common.h",
+      "bytes": 18460,
+      "sha256": "bdc1bd9a745f4679b0bb6aed537df25b1d347fddea60e977e93064ba9825e7b4"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_LPC51U68.cmake",
+      "bytes": 363,
+      "sha256": "15de0802caed90d8cfffaca1724ffcbab1df29102b296cf4e1375eeb108b9645"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_LPC54114_cm4.cmake",
+      "bytes": 363,
+      "sha256": "15de0802caed90d8cfffaca1724ffcbab1df29102b296cf4e1375eeb108b9645"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_LPC54628.cmake",
+      "bytes": 363,
+      "sha256": "15de0802caed90d8cfffaca1724ffcbab1df29102b296cf4e1375eeb108b9645"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_LPC54S018.cmake",
+      "bytes": 363,
+      "sha256": "15de0802caed90d8cfffaca1724ffcbab1df29102b296cf4e1375eeb108b9645"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_LPC54S018M.cmake",
+      "bytes": 363,
+      "sha256": "15de0802caed90d8cfffaca1724ffcbab1df29102b296cf4e1375eeb108b9645"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_LPC55S16.cmake",
+      "bytes": 363,
+      "sha256": "15de0802caed90d8cfffaca1724ffcbab1df29102b296cf4e1375eeb108b9645"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_LPC55S28.cmake",
+      "bytes": 363,
+      "sha256": "15de0802caed90d8cfffaca1724ffcbab1df29102b296cf4e1375eeb108b9645"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_LPC55S36.cmake",
+      "bytes": 442,
+      "sha256": "aa33f18e3db3a2d763fe99ad17413ca2999b0a8eaa6cd73949519154fc0bd499"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_LPC55S69_cm33_core0.cmake",
+      "bytes": 363,
+      "sha256": "15de0802caed90d8cfffaca1724ffcbab1df29102b296cf4e1375eeb108b9645"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MCIMX7U5.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMX8ML8.cmake",
+      "bytes": 355,
+      "sha256": "dabb8321a3afe0427625f95e7d6702e8c072d9aaaf08cba99bc7d31f28ba94b9"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMX8MM6.cmake",
+      "bytes": 355,
+      "sha256": "dabb8321a3afe0427625f95e7d6702e8c072d9aaaf08cba99bc7d31f28ba94b9"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMX8QM6_cm4_core0.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMX8QM6_cm4_core1.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMX8QX6.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1011.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1015.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1021.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1024.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1042.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1052.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1062.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1064.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1166_cm4.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1166_cm7.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1176_cm4.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT1176_cm7.cmake",
+      "bytes": 356,
+      "sha256": "e28faf2bd558927f949d63c320ac4461000e2d75639537236ef98e71e2fdacf8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT595S_cm33.cmake",
+      "bytes": 523,
+      "sha256": "8ca150bfe733a55f285bcb8a9b8b2d009e9b97de2cd826a18bb18c08bda34f37"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MIMXRT685S_cm33.cmake",
+      "bytes": 523,
+      "sha256": "8ca150bfe733a55f285bcb8a9b8b2d009e9b97de2cd826a18bb18c08bda34f37"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/component_codec_i2c_MK66F18.cmake",
+      "bytes": 354,
+      "sha256": "074de72090cf988b44a82396a31b8c506bae7ba4072a0d75557703a7dfad6246"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/fsl_codec_i2c.c",
+      "bytes": 3927,
+      "sha256": "e5ac79087409102ee776add0fe4b87157a3ae1b554f162041d7638a0a3055dcc"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/i2c/fsl_codec_i2c.h",
+      "bytes": 3511,
+      "sha256": "623970ad74954863e020bbc9df6ccb07a9fddb6b16478f8093edf68be1426ea2"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/pcm186x/driver_pcm186x.cmake",
+      "bytes": 1871,
+      "sha256": "8f6c6ca250c2467527313261f29e10a9b9df5e8049f75d9d2a6d93011a3cd9ab"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/pcm186x/fsl_pcm186x.c",
+      "bytes": 7326,
+      "sha256": "2b5adfeeb2aa2e99bd3b4d4d2dbbfaf050ffee49537158ef7d4cdce3310076ee"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/pcm186x/fsl_pcm186x.h",
+      "bytes": 6145,
+      "sha256": "805fc22828c9827284b7015cef0cee77d324533ebc49d44ef2acafcf61dbb2a1"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/pcm512x/driver_pcm512x.cmake",
+      "bytes": 1871,
+      "sha256": "cfd663bfd33b07cd9ec55385816549fde58030cd8fa22fb7cf057a2a80734c30"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/pcm512x/fsl_pcm512x.c",
+      "bytes": 13629,
+      "sha256": "e94f05bb737a6f4df0444bfa9bf7ea735c7750f9352e93cc7d3d3aa517022b0f"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/pcm512x/fsl_pcm512x.h",
+      "bytes": 9066,
+      "sha256": "74a196deebe95e64f807ef9793176b9650b108f87ac6aaddc80d240a8f6ff288"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/ak4497/fsl_codec_ak4497_adapter.c",
+      "bytes": 5721,
+      "sha256": "47f35fb1759a3c69624bbe2ef1f96fce554066ad4ce5584ed6b441d0ae7e154e"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/ak4497/fsl_codec_ak4497_adapter.h",
+      "bytes": 9330,
+      "sha256": "1fea4f2bf7b5ad0c3ae4dcf36ba6ce2182aa66fcc0a92124263274e57c496bcc"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/component_codec_ak4497_adapter.cmake",
+      "bytes": 423,
+      "sha256": "b9b803a26adceb8cbc2e7ca96b40e1a505c4fb0a0d1e6455fa7134c3c8216d26"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/component_codec_wm8524_adapter.cmake",
+      "bytes": 423,
+      "sha256": "af70eb8736d43eb2a45e87f6f3b796c59c56f2cf55edcc72ed239302f09376b0"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/cs42448/fsl_codec_cs42448_adapter.c",
+      "bytes": 8660,
+      "sha256": "2ec6344be96e72040439fa326cbb3b7c92ecf4b4491b7dab6083986f11c22335"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/cs42448/fsl_codec_cs42448_adapter.h",
+      "bytes": 9357,
+      "sha256": "aaa0dc579e09a344ce0756b2aa738e2bc0db9f10ee3cf73565bae9ac8dd1f03d"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/cs42888/component_cs42888_adapter.cmake",
+      "bytes": 363,
+      "sha256": "9c4791ba23c0779fe34275b0fa8a463e676c1e9c6d0b1175303cb1ee37920016"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/cs42888/fsl_codec_cs42888_adapter.c",
+      "bytes": 8662,
+      "sha256": "6e597a2b2e90d751b67adf1366909fada5d34ab200da1d047ec7ecda12b0f985"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/cs42888/fsl_codec_cs42888_adapter.h",
+      "bytes": 9357,
+      "sha256": "74a28a861d1df7893e68d79af988b5fbfc5ea566174931837685b53a2a456f1e"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/da7212/fsl_codec_da7212_adapter.c",
+      "bytes": 8230,
+      "sha256": "b21ca020886e2b4aab90a69f820ace3d0218ecbc69d1db85ec353cc1d6b37767"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/da7212/fsl_codec_da7212_adapter.h",
+      "bytes": 9334,
+      "sha256": "4bd574f8ffd1ca758e9e9e2491fb1f02c3c610bb621caf224ef79a5a8644c08c"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/fsl_codec_adapter.c",
+      "bytes": 27603,
+      "sha256": "baccb69238e3be3a8cfb5fcf68ef3c1cd0c302147fefcd294cd36d79c997bdaf"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/fsl_codec_adapter.h",
+      "bytes": 10954,
+      "sha256": "887e62090bac95e5b4090443640763d6c7592cdb167657163963cf9d9c1188ac"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/pcm186x/component_pcm186x_adapter.cmake",
+      "bytes": 363,
+      "sha256": "2f9d76e937ecfea89af41f28e415648f18fd6f440806553e5c8d78fd81fcfc4a"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/pcm186x/fsl_codec_adapter.c",
+      "bytes": 5599,
+      "sha256": "6e1d6d4e96e31f861c3b7faa1427221e9ed92f29fecb307f0adc36a002008e63"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/pcm186x/fsl_codec_adapter.h",
+      "bytes": 4622,
+      "sha256": "9160123cfc38a942ae8e9f162882e8ce526d14e63478f73d61448fc32e82e547"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/pcm186x/fsl_codec_pcm186x_adapter.c",
+      "bytes": 5687,
+      "sha256": "437e5c299304c43c5635458dc01afd8489df6d838a5fc629be7a899e39d2e711"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/pcm186x/fsl_codec_pcm186x_adapter.h",
+      "bytes": 9357,
+      "sha256": "6b66bf7c3c012f70a388f2a8f906f9fa37bc705f6d8c2675f4556500e91542bd"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/pcm512x/component_pcm512x_adapter.cmake",
+      "bytes": 363,
+      "sha256": "c5f08122f5e9e40e65151cc3aa4cedb4ac9cdc1b626adbc1156d7b7a5dcd4d96"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/pcm512x/fsl_codec_adapter.c",
+      "bytes": 5741,
+      "sha256": "b41d2a0ce660c7119e0e36d39862e07cd0cc3f9a3d7640af5b3acbab6854aa3b"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/pcm512x/fsl_codec_adapter.h",
+      "bytes": 4622,
+      "sha256": "ec038370e1ab201ad2dc0daa0390c71a0e10a89babeabe6ff5ee95ca819ba9d8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/pcm512x/fsl_codec_pcm512x_adapter.c",
+      "bytes": 5829,
+      "sha256": "d722030007a8bc03df534ed6ff7a936c6cf9bd1adeee888b28cbb43f2436d979"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/pcm512x/fsl_codec_pcm512x_adapter.h",
+      "bytes": 9357,
+      "sha256": "d50cd49ff0eaabd27cc3873535b4fd1744954e702fe1a7742703d6af7d95167f"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/sgtl5000/fsl_codec_sgtl_adapter.c",
+      "bytes": 11839,
+      "sha256": "f8274c1b24c37f5d49ae0431beaad87bb1dcd5cf6b68155cf1c499ffa007d419"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/sgtl5000/fsl_codec_sgtl_adapter.h",
+      "bytes": 9375,
+      "sha256": "a740376cc461c7da9edde633e539e96968eb7b3f1b613c010f91311a2ef08848"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/tfa9896/fsl_codec_tfa9896_adapter.c",
+      "bytes": 7878,
+      "sha256": "f1041c638e2993fd6b7380eee4ba0ff96da6d22b49033e09e385b4baf3bd783b"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/tfa9896/fsl_codec_tfa9896_adapter.h",
+      "bytes": 9207,
+      "sha256": "23dd362c46e30ab66ad1f3496f354162d8ac406c70f1f2621944f98ca868ff6f"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/tfa9xxx/fsl_codec_tfa9xxx_adapter.c",
+      "bytes": 6655,
+      "sha256": "798550d15a7c35833e2aa0570351fac22875eac2c2f51bdde7b64a5eea38fe91"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/tfa9xxx/fsl_codec_tfa9xxx_adapter.h",
+      "bytes": 9357,
+      "sha256": "4f46c1b0257a48c599e50d2b978a4c5a35524650a4f185757930e3ff0d870d72"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/wm8524/fsl_codec_wm8524_adapter.c",
+      "bytes": 5662,
+      "sha256": "fc09939c622795b43e689beb877c83a1d702e16cc43d784f901dc881cf00f4bf"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/wm8524/fsl_codec_wm8524_adapter.h",
+      "bytes": 9304,
+      "sha256": "4eb81a584d062cb6ef3d08f0f467a05cdb4f78b5dcf46dcce3ad10a52199965f"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/wm8904/component_wm8904_adapter.cmake",
+      "bytes": 360,
+      "sha256": "60b59d1eb3fb91298d39a2c04ef94e1856b8e865bc8315c45d98c1d557de8c11"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/wm8904/fsl_codec_wm8904_adapter.c",
+      "bytes": 11792,
+      "sha256": "894abefcbc1b3433bac6a1289d211b50f66175cb1ece516c1a0bc74359d9ea4a"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/wm8904/fsl_codec_wm8904_adapter.h",
+      "bytes": 9330,
+      "sha256": "ed378adcf6ca95bcbe483a9ed6b90a9ee0137c7f20da3bae668499f2af0ca84f"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/wm8960/component_wm8960_adapter.cmake",
+      "bytes": 360,
+      "sha256": "2f4ed150dbd6c010fb980a153fb93ac40e16cf3c14e905526034e4e10e9c7896"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/wm8960/fsl_codec_wm8960_adapter.c",
+      "bytes": 11410,
+      "sha256": "c21601aae119463dea22af5a86f725792d3012ba67643253cb7f2dce16d72be6"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/wm8960/fsl_codec_wm8960_adapter.h",
+      "bytes": 9302,
+      "sha256": "b1e60bfb961707e22ca9420016df850b89ebcf1b6a5ad206e7e1d6f71dc82ec0"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/wm8962/fsl_codec_wm8962_adapter.c",
+      "bytes": 11165,
+      "sha256": "0413455f033fc75b2485d81c5c7ebc814f2b97ed36920b4c17375c49c0f99a2a"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/port/wm8962/fsl_codec_wm8962_adapter.h",
+      "bytes": 9354,
+      "sha256": "dc67f0e34fa676cb80459b035eded41c7a85af8ebb1b48124418d811e60b55b4"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/sgtl5000/fsl_sgtl5000.c",
+      "bytes": 25958,
+      "sha256": "95f1ff7dec6a34466e5ff2b0bcab72670f8e527a97e34b113ae2bdc4d352ac98"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/sgtl5000/fsl_sgtl5000.h",
+      "bytes": 40698,
+      "sha256": "bd50bca7a0c1c06b2845b84e28918c7c2dc9aff3eab115b13788764bd38255bf"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9896/driver_tfa9896.cmake",
+      "bytes": 406,
+      "sha256": "8cc81855cfe8ef3b1fc42c626ce0374d1c4f315199df76556e392b760bb1b2b0"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9896/fsl_hal_registers.c",
+      "bytes": 54519,
+      "sha256": "a251b1732609fd008a301cac0f199c6eb6cb3c5429d9ce0af208af8cc442131d"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9896/fsl_tfa9896.c",
+      "bytes": 10583,
+      "sha256": "304b6e040afcdd1e02fb05f32a719fc3ae0cdb9370bfb8b3fd6bc4c92c21c637"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9896/fsl_tfa9896.h",
+      "bytes": 22931,
+      "sha256": "be4ed36d43f6696d284957e5a012019083612d79a060916e44822833c2f50270"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9896/fsl_tfa9896_buffer.h",
+      "bytes": 19761,
+      "sha256": "a92c68c3fe206f27b0d251f511565e46e509f9f32e4ad7e42dd70fc4d73741f1"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9896/MIMXRT595595-EVK_TFA9896_SW.pdf",
+      "bytes": 265049,
+      "sha256": "a8b95c1f04f212400d48d43f73ef7075ea2456029dc0e411f2711ecba87973af"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/driver_tfa9xxx.cmake",
+      "bytes": 732,
+      "sha256": "3aa80901d1c28d53b4bd6d2074b6eb9a31a453573f52d3793c5f668c3a907e14"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/fsl_tfa9xxx.c",
+      "bytes": 24627,
+      "sha256": "68ce019341de3b6110e6a98a1f751b60260d49ba9012d0cf10c06a8ffd0d72f1"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/fsl_tfa9xxx.h",
+      "bytes": 9780,
+      "sha256": "68d16fef42c9f2d345bc8c520ed1b248eb25f82f89a0dfd7e40255887cf1ff4d"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/fsl_tfa9xxx_IMX.c",
+      "bytes": 9342,
+      "sha256": "839cc3b10fc8358dae0037f8900c8130f03ed97bd8359119e77f67c3831887d0"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/README.md",
+      "bytes": 3720,
+      "sha256": "211a461d3a8fafbd4dd54a02056bd489221d89bd35e6331718bbc63c3f46e1d3"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/tfa_config_TFA9892N1.h",
+      "bytes": 62197,
+      "sha256": "374663f275f9420e016e16c11b1645cccaddfd04e0caa9441037d467d6764a21"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/tfa_config_TFA9894N1.h",
+      "bytes": 56405,
+      "sha256": "62d5755b141ad8d8be48d94762dd6b1c2364b90d549c817ebc6e398b584dc58f"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/tfa_config_TFA9894N2.h",
+      "bytes": 48717,
+      "sha256": "9e36171d718d3bcacd5c0bd396ebdd12fcb0fe060f40d32854dccb66a767f0cc"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/tfa_device_hal.c",
+      "bytes": 8148,
+      "sha256": "0f34d8b8a95b909b472701238b2e35a2fc90596398b36cecd03ddd81cb3f8e14"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/tfa_device_hal.h",
+      "bytes": 4801,
+      "sha256": "ec72fd428e679e384cedc9986fdde8d0a5c2b8be2d2dbb91e549c20ea4c2cb9f"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/config.h",
+      "bytes": 2262,
+      "sha256": "70a31bc86ebaaee63f1a6fa6e9e9f1dd2dcab8b23198402302a13f8c2620bfbb"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa2_container.c",
+      "bytes": 28314,
+      "sha256": "b508984151b683573ffa1ef1290e7018995541777eb69911a6d90f1c59bb195d"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa2_container.h",
+      "bytes": 14510,
+      "sha256": "40d42f59f1733ef9c6454122060caa6b79bf9c8819b4835522460f491528531c"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa2_dev.c",
+      "bytes": 71036,
+      "sha256": "e079c3c2bd5df31e53c43fe18878f27404846a4d3de18325c8efc021781faba1"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa2_dev.h",
+      "bytes": 26724,
+      "sha256": "788d294d23dec9192173147f58661b394fb999ac5a9593b87ae5c0ae63dcaf2d"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa2_dsp_fw.h",
+      "bytes": 5621,
+      "sha256": "6d9f117ebd4b72a5d9bb014e459268b9320cf859bddfdc9ec56c2ab1bd5cca3d"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa2_haptic.c",
+      "bytes": 31809,
+      "sha256": "74531b4f19bc80f777047cb02d4fee74a03b9d994be29257ccd150e0760aca26"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa2_haptic.h",
+      "bytes": 2162,
+      "sha256": "20a2521c793a353eb2fdb2f6247149210ae6edd07b9770081646900ae20bccfb"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa2_init.c",
+      "bytes": 30848,
+      "sha256": "6893b9e55e04db95eaa72f6adb7abdb2119dd4baa1a87535ad7d34c51e6f82d9"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa9xxx_parameters.h",
+      "bytes": 16429,
+      "sha256": "e27dc7b949621a39e9ec4549ca7a00f6a6666e868a7ca0dfbe954c3ef29abb45"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa_container_crc32.c",
+      "bytes": 5539,
+      "sha256": "baf461af1019f3c1c02e56d08e38c6df577dda366082671c55d8a87ffa7ef9a7"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/tfa9xxx/vas_tfa_drv/tfa_haptic_fw_defs.h",
+      "bytes": 2781,
+      "sha256": "aa5dd724defa56dae596abb111506d302ce33bd6d512587a1f09c6c862f83408"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8524/driver_wm8524.cmake",
+      "bytes": 331,
+      "sha256": "c6652f9a6aa297750330809013cc3b96aebe7878679448839256d1b72f7a96d0"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8524/fsl_wm8524.c",
+      "bytes": 2316,
+      "sha256": "c44259565272c446dc63dfcb9ac1b712a8be7db64a1bfe5c2ecbc3c31662fc05"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8524/fsl_wm8524.h",
+      "bytes": 2655,
+      "sha256": "901e10c145d5541fd21c21a089e5f31513eab66dcb3ea6faabd8367259293b0a"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8904/driver_wm8904.cmake",
+      "bytes": 542,
+      "sha256": "9e706290fe239e8263c9cce9862a9362027ff5317f271651a05d543b0d5fe083"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8904/fsl_wm8904.c",
+      "bytes": 45102,
+      "sha256": "fe77043f5d3d4bdf953a936e67f6fa54911a2e7a3e9011fb92bcc054edb7214d"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8904/fsl_wm8904.h",
+      "bytes": 20760,
+      "sha256": "9237fd7b1682fb10114c0db815af4b478342157c80df0b53bd7de20e7701b29c"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8960/driver_wm8960.cmake",
+      "bytes": 716,
+      "sha256": "bb93257bfb50eef040848fee74968eec965f0944b8076c2598d262cea49de9b9"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8960/fsl_wm8960.c",
+      "bytes": 35479,
+      "sha256": "ecdc2933820a0d2a5b6613cf8bbc05923bb3a5537eeea73db5db4022d239a5c0"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8960/fsl_wm8960.h",
+      "bytes": 19833,
+      "sha256": "8319420d01c050f7734f178d16ee75a5e498a9b6c819162688f2dec286fb213e"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8962/driver_wm8962.cmake",
+      "bytes": 530,
+      "sha256": "1b7fe0c9d76d644596ef341ffec5214511158e2e8fb0084e0cb45d5024679b6b"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8962/fsl_wm8962.c",
+      "bytes": 32377,
+      "sha256": "1b92f8391b9f750ef110ff06e9136000b8b982ed33e5c82f9ef5ee5b5491976c"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/codec/wm8962/fsl_wm8962.h",
+      "bytes": 21787,
+      "sha256": "b0cda06fac1ef62c1b9e4f614b34b36537e0afb139fbb19679175efcd5821c20"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/gpio/component_igpio_adapter.cmake",
+      "bytes": 357,
+      "sha256": "4a0f8b7b3ea81bab398f671b71163da112376841f00bec53ed3e50520fe4a037"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/gpio/fsl_adapter_gpio.h",
+      "bytes": 11091,
+      "sha256": "0eef261b397f0d2d48f7974759bfe0a85414e20922a06ba7e4e5c1a66e5d7ab8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/gpio/fsl_adapter_igpio.c",
+      "bytes": 13488,
+      "sha256": "da0c04cc3b4e6f4653b0b0c9b3ff64de7481a5b040eb391849e23b48ea398488"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/component_flexcomm_i2c_adapter.cmake",
+      "bytes": 385,
+      "sha256": "d2daa6cd4511f386e92d644d620e78fbd7345383e4bc86895089b8b4dc830ed6"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/component_i2c_adapter.cmake",
+      "bytes": 349,
+      "sha256": "83273a520236f85c25db38a116ef3eec883e6faa933ce7a36a5188eed0519b3e"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/component_i3c_adapter.cmake",
+      "bytes": 349,
+      "sha256": "df59b6ea89705c9d2816868fb96010cc28b6b95640a93fe0089d7fe4b8c38a83"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/component_ii2c_adapter.cmake",
+      "bytes": 376,
+      "sha256": "cc6599608de7b0b219558e55caa71f8b5fa22655e232c3018e4643657cee919b"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/component_lpi2c_adapter.cmake",
+      "bytes": 357,
+      "sha256": "6be68307badcc768efe0df018b31b08c413777431d02690187b848a2383f7fda"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/fsl_adapter_flexcomm_i2c.c",
+      "bytes": 13051,
+      "sha256": "4d19d18614a7fae85d36fac84f786b55c497ff689dd9aeb3145b47a589cd2ad8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/fsl_adapter_i2c.c",
+      "bytes": 12276,
+      "sha256": "4ba0b64a4ed910e53bbf7561cb17d6f4c1e5eb1f2e96b5830aac03faaac0b5ad"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/fsl_adapter_i2c.h",
+      "bytes": 23961,
+      "sha256": "42f133e5acf0814346cd78e89c057b26367324453c456b5f2fcd16a869dc7d6e"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/fsl_adapter_i3c.c",
+      "bytes": 12109,
+      "sha256": "36b85a89c14b4281eb1f13e4c62c5fe763fa91434f0676346a786c3acc989ac3"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/fsl_adapter_ii2c.c",
+      "bytes": 12249,
+      "sha256": "5fd65f9ab9f8f0267100d675b6c04fd2cc0113ea25994a3b40d779db5544ea98"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/fsl_adapter_lpc_i2c.c",
+      "bytes": 12680,
+      "sha256": "b322159daa5323e8665ff48b709620bc600c672800235e75ea9084a5a2ca9c91"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/fsl_adapter_lpi2c.c",
+      "bytes": 11816,
+      "sha256": "40bfa5977b8213071d00bc9eed6ee4031470555bcb9da057b6de193e188ef1e0"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/i2c/Kconfig",
+      "bytes": 1950,
+      "sha256": "55fedef5d258d10f317da948e70e959ff82b11075762e3647bafc2902d9b848b"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/lists/component_lists.cmake",
+      "bytes": 351,
+      "sha256": "2cf5813bc8035f290fe2bc54d9dc842d98edd7b533e25fa4c2a7e0e251f955f3"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/lists/fsl_component_generic_list.c",
+      "bytes": 14079,
+      "sha256": "06e541726350580c523f5e7e688797241406f846979ca002c8097b7a18879e8e"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/lists/fsl_component_generic_list.h",
+      "bytes": 7072,
+      "sha256": "2a40955aaf797f6c26ead2ef4311570fd112c3dd37fec16ff13a0b66a706da75"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/lists/Kconfig",
+      "bytes": 311,
+      "sha256": "d0d430fcd726ab0af38cfbe88a5b6df751f80117fde961d7608948a571c01d1f"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/osa/component_osa_free_rtos.cmake",
+      "bytes": 1254,
+      "sha256": "4d55faec45babbd7fa0bfe1a1025c3779c0ccbed0164c44f47619c8f0036b7e5"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/osa/fsl_os_abstraction.h",
+      "bytes": 40377,
+      "sha256": "78dfb35e9a43d99b101319c43304be26aabeb8cd89d785303ed0d0e984824e9c"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/osa/fsl_os_abstraction_config.h",
+      "bytes": 1010,
+      "sha256": "7c4dc6f9da72c97bcbe3c9c098c8a94800e574de85a04a0741f3b30ad84db126"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/osa/fsl_os_abstraction_free_rtos.c",
+      "bytes": 48636,
+      "sha256": "4a2b29772d58b1e1a3db9254c387ed4def6e80286ef41d44df9e8233a786584e"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/osa/fsl_os_abstraction_free_rtos.h",
+      "bytes": 4972,
+      "sha256": "6e4230a891ba02e702558f59c000bad455c612cd4cbbeb4350e23a4d9817da56"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/osa/set_component_osa.cmake",
+      "bytes": 4493,
+      "sha256": "877c7efd4b0b6bf810693115855bd594e53f97d8c4558813cf3ab4acd0d6a1a8"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/component_iuart_adapter.cmake",
+      "bytes": 370,
+      "sha256": "56702cb879148d414d42d6e0afc6fa3627f81e1b74cf99aff32dd2d094682dc9"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/component_lpuart_adapter.cmake",
+      "bytes": 351,
+      "sha256": "70dba1f0c2cf6e47e2938112efd1f8e43563f4074eb5d95ed7a9d6b1d7d6418d"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/component_miniusart_adapter.cmake",
+      "bytes": 367,
+      "sha256": "64201ac4cb4abc71682987f75bd7651ba2a8228435a799d49943c1cbb10872ab"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/component_uart_adapter.cmake",
+      "bytes": 343,
+      "sha256": "2cae9ed7826d2800698c3a9fbd83e3df57672be97ab41b755759deadb20e4c36"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/component_usart_adapter.cmake",
+      "bytes": 356,
+      "sha256": "263c967b83ea45c27e40d4a7652250d8e3deecb203a93e5a2e5a75016d6f52ab"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/fsl_adapter_iuart.c",
+      "bytes": 19974,
+      "sha256": "5f276a91557919d52632a0303d0d21fb9a0104a36fd5f93a411e01d23adc9fde"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/fsl_adapter_lpuart.c",
+      "bytes": 88866,
+      "sha256": "5c834852d130f599b4a103015e5dcc7b5467afb51ac9582d1629dc388210f778"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/fsl_adapter_miniusart.c",
+      "bytes": 19070,
+      "sha256": "59e3f042e38b839bc0d7e7651e77570b0e449c6ca0711a959d83bc70738bb764"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/fsl_adapter_uart.c",
+      "bytes": 21755,
+      "sha256": "1463cb10893461049a5f2873c6bf79d96155615885ea5d1817c52b0cf88ba4ea"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/fsl_adapter_uart.h",
+      "bytes": 32813,
+      "sha256": "3cac8328511ba48bf34ee63fabad95c837754fe54381766a8fbc3ace6234748a"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/fsl_adapter_usart.c",
+      "bytes": 33786,
+      "sha256": "ea99bbcf29bb504a220553401faf5d78e6049cbc59cab1b90acb163e8f51e3b3"
+    },
+    {
+      "path": "third_party/mcux-sdk/components/uart/Kconfig",
+      "bytes": 2842,
+      "sha256": "ac8971cd2551f926753a532def056384517fcacfff8eb5fe72fbff5564498bd6"
+    },
+    {
+      "path": "third_party/mcux-sdk/COPYING-BSD-3",
+      "bytes": 1479,
+      "sha256": "903d56aa5dd427d560106b22a196807bc49ed675ddedce3edaa0b8bb2881e9c2"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/all_lib_device.cmake",
+      "bytes": 61349,
+      "sha256": "daaff3649354e144c2fbae8080565cee5ef425e966612c49488a3c392aeaa46f"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/all_lib_device_MIMXRT1176_cm4.cmake",
+      "bytes": 17101,
+      "sha256": "69d12192d8599275c712e6b26ff3127eed4b1d6b9cba33acb3f97189817e42f4"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/all_lib_device_MIMXRT1176_cm7.cmake",
+      "bytes": 20727,
+      "sha256": "cf88fb055329dd99651005ba44c089a730c268c4f7498f473c639e3e24cee062"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/arm/MIMXRT117x_64MB_QuadSPI_4KB_SEC.FLM",
+      "bytes": 3209516,
+      "sha256": "e11461ac1edbd2980f1822ede3c1fac7717ddcbd618bd17e8e17e91ac819bc90"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/arm/MIMXRT117x_64MB_QuadSPI_4KB_SEC_Alias.FLM",
+      "bytes": 3217280,
+      "sha256": "7ce709a644f7e62591298e6c259f1da5c3046e0c6730236ffbb8abbeb8177c64"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/arm/MIMXRT117x_QuadSPI_4KB_SEC.FLM",
+      "bytes": 3242740,
+      "sha256": "1140fcd14f465382b37ba89e05e4d5e6c1219780834a99c1843e625af5634afc"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/arm/MIMXRT117x_QuadSPI_4KB_SEC_Alias.FLM",
+      "bytes": 3216140,
+      "sha256": "91de64f000abb2c6f08e6e0445e81127511614f588db8f9dc282bea340319286"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/device_CMSIS.cmake",
+      "bytes": 295,
+      "sha256": "c89aae0c5efdcd3ed8cc8b17fbd17f806f09b2552a5f7fc35e139c507551b08e"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/device_startup_MIMXRT1176_cm4.cmake",
+      "bytes": 333,
+      "sha256": "cccbf7101e6d539431370b9b015347fbb1ecf711a5125252b5d19d731b8482e4"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/device_startup_MIMXRT1176_cm7.cmake",
+      "bytes": 333,
+      "sha256": "fba711b47eae4733b4f267cfcdbd15fa31d5473cbeaa48e1a5671a0e77ee88ae"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/device_system_MIMXRT1176_cm4.cmake",
+      "bytes": 342,
+      "sha256": "5b724b700644e28233d0e045c2dbe5681d85cb9dbfe5931721aa89e5d0a58cec"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/device_system_MIMXRT1176_cm7.cmake",
+      "bytes": 342,
+      "sha256": "3af5cddea0c6117ea7fd7685381683150f92d8949f3d6ef7d1260cafb8c8616c"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/cm4/driver_cache_lmem.cmake",
+      "bytes": 338,
+      "sha256": "ffbcce18f7679630ddf4282771e181113baa8b01529ad6260ff68381116b6571"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/cm4/fsl_cache.c",
+      "bytes": 17898,
+      "sha256": "7d0efa9c03d9c750755051693b8c7ab79bbd723c83d1a7913551eb5b3f94da2d"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/cm4/fsl_cache.h",
+      "bytes": 11303,
+      "sha256": "f275af2b87ecba02f161150145d5b98f381c543997041af929df93725045209e"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/cm4/Kconfig",
+      "bytes": 237,
+      "sha256": "852c3e95faf6181521df0d2b8f9f957a7a2d291cca465ae1c4b221ff993f055e"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/cm7/driver_cache_armv7_m7.cmake",
+      "bytes": 337,
+      "sha256": "536e2813a14d9c2650de64eb94128b9a78d38339ae94ccc4cb1549b505f14b7e"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/cm7/fsl_cache.c",
+      "bytes": 23398,
+      "sha256": "b14204877a76b44ec1841d1ee369d23fbd410ecdf42c4948d1cff133b94b5b83"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/cm7/fsl_cache.h",
+      "bytes": 16995,
+      "sha256": "5e859ed5db1a7f33917f6e09333decad472b981ed8a85f1711e13a0b2f2965f3"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/cm7/Kconfig",
+      "bytes": 235,
+      "sha256": "bea8108bfe091502047344f81c220f7955098343ca5a9ab015093726f83a4eac"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_anatop_ai.cmake",
+      "bytes": 340,
+      "sha256": "b6f9018d0188ca589c9fa2ccf0bac7df03f31d197c49bc5e2e52d70456fbb908"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_clock.cmake",
+      "bytes": 327,
+      "sha256": "c23fc78f35e05bc34c56870abcb80312941059c5c61fe50c9a73b0d1c734a626"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_dcdc_soc.cmake",
+      "bytes": 333,
+      "sha256": "ce67bbb1b4351db3b730cc7d8a02c600c31df105126a21e70cc3143c4964fd8a"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_gpc_3.cmake",
+      "bytes": 324,
+      "sha256": "36eddbd93d60f55af2eefb926257dc7a3d3807e86f4e2501518d00dff4ff37e7"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_iomuxc.cmake",
+      "bytes": 288,
+      "sha256": "e9a0f1211bc2428693ee737ef4f4e7a0b9ed652e632ec4d9050571230fd5d859"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_memory.cmake",
+      "bytes": 288,
+      "sha256": "3581ba1b532533f3ad8ea46641fb752f9d76a60f5dc94f1997a9e3db5827acac"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_pgmc.cmake",
+      "bytes": 325,
+      "sha256": "693bc58874dd925d1d8ad57af4afe961ee23e245487226efb177d7fca1b73c6c"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_pmu_1.cmake",
+      "bytes": 327,
+      "sha256": "b5febbeccbe4d575e3327f7c5608eb37e8a4cbb1d1600fecb1dfdc5106b413dd"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_reset.cmake",
+      "bytes": 264,
+      "sha256": "18ab6474839d068a9e1fe623a07b5b730e7f3f15db24b0f0ebebcec95c51444c"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_romapi.cmake",
+      "bytes": 331,
+      "sha256": "1ac98edd8751a5188b7431a23375382187091dbb21d8b94e16c47936d08d90ac"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_soc_flexram_allocate.cmake",
+      "bytes": 369,
+      "sha256": "f8792c3b8fe6aaed49631d37612d50730bc5cd4146dd19b9458e18c289f51e09"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_soc_mipi_csi2rx.cmake",
+      "bytes": 358,
+      "sha256": "b8704f1a85cb701a38e8a89c6eff33f4f1f9164df7d64370c16d58ddb94cecc9"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/driver_soc_src.cmake",
+      "bytes": 334,
+      "sha256": "2de3cc9ef0ba14a7f9c8668e57f240cdc675eed3757aa6013ce49f8527ec443a"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_anatop_ai.c",
+      "bytes": 19511,
+      "sha256": "d733ab58e3c16c8395e879f8f75a0097e9bbc95093cda4154051c2f4193a5c90"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_anatop_ai.h",
+      "bytes": 22939,
+      "sha256": "db40056830737465d94e80234db1c309ff0f90ae6c81c67b09bce5f778509b3c"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_clock.c",
+      "bytes": 81653,
+      "sha256": "7e6db03a7ae74d2e7239675d22d47b2b01b66460f7f005aed2d805f09541b664"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_clock.h",
+      "bytes": 146391,
+      "sha256": "c0f99f09b0a5e13648ddd1a591902700e6c1889efaab81056877da298963929a"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_dcdc.c",
+      "bytes": 18028,
+      "sha256": "a9f7178bdd60ecb7e805fc857a3b6536c14dc9bf2778f689e918ccd07284b7fa"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_dcdc.h",
+      "bytes": 44895,
+      "sha256": "05e44b14e94a1efa3872c407f7f46f7f8369706608c97e88d1e0f0f6a1b95082"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_flexram_allocate.c",
+      "bytes": 3065,
+      "sha256": "2069fc2ee356aa69367a4d88c8c65459066e2a379adde57ad9f22cf64b2dc67e"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_flexram_allocate.h",
+      "bytes": 2569,
+      "sha256": "8958a91da5ac14d66ca7ea982e7c66d42dea2b103d0079ae4cc8f2686a070c16"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_gpc.c",
+      "bytes": 11936,
+      "sha256": "d32967789392a37282d68fc93858a4783f290713fe646e8aac1ddd17c8c54801"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_gpc.h",
+      "bytes": 27670,
+      "sha256": "59c20539e8cb2de5b77dc630473542876aa12d4f06cbc2a9dbc3a57c2400ebc1"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_iomuxc.h",
+      "bytes": 121029,
+      "sha256": "7d588de35a13f17be5dddf1d27453feddb70577282ea25ac95e4de9cb87caf06"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_lpi2c_freertos.c",
+      "bytes": 3477,
+      "sha256": "a37da1c679de1ad89b91e77dbe250f477fa9558a41ee7bc6c8888ac44e4ee436"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_lpi2c_freertos.h",
+      "bytes": 2903,
+      "sha256": "020a122dfe87641b1f9bbf5467feec5a0554722c0266a0e61bb13a7843fa90e5"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_lpspi_freertos.c",
+      "bytes": 3488,
+      "sha256": "3d73cbae55a9220db15f159481dec5cfe95e7d4f22bd6220be190a4c9d2ca513"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_lpspi_freertos.h",
+      "bytes": 3031,
+      "sha256": "23a384049bfc6d0f910f00d022126f35e6fa0e3dc8e006cb7b5836d095996f09"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_lpuart_freertos.c",
+      "bytes": 15798,
+      "sha256": "f187d90c43ce2aad00fd2423ba9abd1e1f3293539037fec872c4683f0fbbb67e"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_lpuart_freertos.h",
+      "bytes": 7313,
+      "sha256": "17cbdac3eb981bfa89a934978de3343dcbc74dfe214084fe01e0667caa0500e9"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_memory.h",
+      "bytes": 2497,
+      "sha256": "4d75dab05b924c3ce8e831e2b4496356688dcc1254895ff10985d326fef95242"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_nic301.h",
+      "bytes": 9278,
+      "sha256": "5ed7d9254081a76e10c9cafee838b7292bef3eee73c31207ae4c70f07abeeb1a"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_pgmc.c",
+      "bytes": 17045,
+      "sha256": "8c235923ce47a914468f9e00412f51022086d83320bda0fb2ca9ccea51c18c53"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_pgmc.h",
+      "bytes": 28970,
+      "sha256": "3ce551c159977d0f6ad8a2b8e4c462869abba211ae45de14eff3beb3aed5ff25"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_pmu.c",
+      "bytes": 39043,
+      "sha256": "5524fa5d567755531ff69e411670aa6551168a43f6a1543d4344df52d9c17e92"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_pmu.h",
+      "bytes": 37444,
+      "sha256": "48d87afe6ed3b01b7c9079369c5b899471324d8c84f2b524c014db1a9e77a098"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_romapi.c",
+      "bytes": 10846,
+      "sha256": "1e856f314ed08cc38e765ba3a1af008c42c064025d6cef65d941b65061929538"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_romapi.h",
+      "bytes": 32602,
+      "sha256": "a371c7eddafaa388475959590d2ba0002b38012d7513c5a582e1525db6b7a32f"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_soc_mipi_csi2rx.c",
+      "bytes": 2652,
+      "sha256": "c3021f0949d1484405d3d113be4a54d8226661ceb888a53bd05880023d98f3a5"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_soc_mipi_csi2rx.h",
+      "bytes": 1685,
+      "sha256": "701e4f28ec589e74e3bf818fd5fd2e2bc9bacb7fcc22736622b4d50ab5557d16"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_soc_mipi_dsi.h",
+      "bytes": 1114,
+      "sha256": "0f4a1fc143cfcb479f96c7fbf02ba2f8fb15c24c6a449fb9900cb85e0ae70c92"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_soc_src.c",
+      "bytes": 6325,
+      "sha256": "3fc5b4db428592777fd8769d67ef2b9cfd691e127a893a085370cfa67883f5ed"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/fsl_soc_src.h",
+      "bytes": 31614,
+      "sha256": "2f4bfa6a137eca2eddb4ce5a80614e8876d2fd50e86b4f8f9c794869ad4315a6"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/drivers/Kconfig",
+      "bytes": 2036,
+      "sha256": "560def42b345e120e11b2952f4bc0efdd0aad897f73163ca0232978055334007"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/fsl_device_registers.h",
+      "bytes": 1190,
+      "sha256": "990c04cea583fa2972ac645a1fb237e0e467fb38a6281ff4f835c16c1f9ff570"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm4_flexspi_nor.ld",
+      "bytes": 8453,
+      "sha256": "b7f2c6c5f07a3268388ed3f603acbab6b0dff757b3087fc1c0b865d85a03e94b"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm4_flexspi_nor_sdram.ld",
+      "bytes": 8918,
+      "sha256": "adf56233585fcaaf89fb63547c9431cd42f2c0bd84f2cb779c3d1d3c6766143a"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm4_ocram.ld",
+      "bytes": 7230,
+      "sha256": "60bd99312b0e914c4130b68c713adc5784955515193bbd675ffcc5efe8f5763a"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm4_ram.ld",
+      "bytes": 7307,
+      "sha256": "d8d4d93db61b848cb949e257c03fcbad2f309670c5be9c9506fc180b7120b4c2"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm4_sdram.ld",
+      "bytes": 6889,
+      "sha256": "b47034784e803288e8f2a909b64906c2c2bb0803e85e80841fa01b6eb3e1d8b7"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm4_sdram_txt.ld",
+      "bytes": 7264,
+      "sha256": "59c4ae051d0967acd7e649251a17f1b9472d5c55a66effacce5076b1a2c410b6"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm7_flexspi_nor.ld",
+      "bytes": 8704,
+      "sha256": "f85115289841cc4f5ed6dd1d0f739b20a6b06cbfe7163686e9c268188dde823a"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm7_flexspi_nor_sdram.ld",
+      "bytes": 8918,
+      "sha256": "3e529e27b7109cb73f9a84a931c652466625d0c99b5ba069eff9d54134421da2"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm7_ram.ld",
+      "bytes": 6354,
+      "sha256": "675900d836c5bc7ce5d123732b469f1b792b01a520b710c02cd646044edb0a81"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm7_sdram.ld",
+      "bytes": 6889,
+      "sha256": "ae9378fba0c82e4e510ff11381d5bccabf0e905f7879fce5c9289e8de1a47b74"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm7_sdram_txt.ld",
+      "bytes": 7264,
+      "sha256": "770ef28b819f689a4b3483294834fa3d7793652b5d27a792e6bd04cdf16f49a6"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/startup_MIMXRT1176_cm4.S",
+      "bytes": 59260,
+      "sha256": "fc34b04613da830b0d45025c2f8ce14397feee218cff133d81cfa4f3d1770193"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/gcc/startup_MIMXRT1176_cm7.S",
+      "bytes": 59269,
+      "sha256": "7fd66533e4d697de42abe5e63871323e3ccbfcfdb9b83dad4860c6a9d35813d4"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/Kconfig",
+      "bytes": 9016,
+      "sha256": "765f25e985bbf09c9648ad66a837439d3f9c2678a7780801285e7732fc98334f"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/mcuxpresso/boot_multicore_slave.c",
+      "bytes": 3396,
+      "sha256": "8dacdd8587d5e0426c16cd303796b57ac4764721ad86c6b4df7a3154bb1e866d"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/mcuxpresso/boot_multicore_slave.h",
+      "bytes": 1977,
+      "sha256": "8cf895ac287abb431585acebb84488cd3be1756a027eb8732701a8503a8f6339"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/mcuxpresso/startup_mimxrt1176_cm4.c",
+      "bytes": 68190,
+      "sha256": "82cb266561d9cec4978e359f0d7f90cccb4a750da1f32fe97a985ace8147a70b"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/mcuxpresso/startup_mimxrt1176_cm4.cpp",
+      "bytes": 68190,
+      "sha256": "82cb266561d9cec4978e359f0d7f90cccb4a750da1f32fe97a985ace8147a70b"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/mcuxpresso/startup_mimxrt1176_cm7.c",
+      "bytes": 67901,
+      "sha256": "a56bbecf697e12d3afc5ec2a94bac2af358cb646b9857e8f8d7bae95688a2c9d"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/mcuxpresso/startup_mimxrt1176_cm7.cpp",
+      "bytes": 67901,
+      "sha256": "a56bbecf697e12d3afc5ec2a94bac2af358cb646b9857e8f8d7bae95688a2c9d"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/MIMXRT1176_cm4.h",
+      "bytes": 5368171,
+      "sha256": "b56be71a92350b0750c6ab66b8c6d988dc2ad4b325d4c52d265d7eb357380df5"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/MIMXRT1176_cm4_features.h",
+      "bytes": 47413,
+      "sha256": "453287a8ff4b37033647dd886ed14679dd65ae1b4f287cc1de8b1b19c323d9b1"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/MIMXRT1176_cm7.h",
+      "bytes": 5327915,
+      "sha256": "d9256970a9ddaaa3e5732bd231f75703450a35cda600a4244ad726d31b547bc3"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/MIMXRT1176_cm7_features.h",
+      "bytes": 46957,
+      "sha256": "b91866ac882673dbf9b1fc8396443d5ac2d222449548ddc14a6f935be83e9682"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/project_template/board.c",
+      "bytes": 16433,
+      "sha256": "57216b1eefeed939748f9d131f1ba0f30ce737f63f370a0f5886ba89946896f8"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/project_template/board.h",
+      "bytes": 12779,
+      "sha256": "9858adaf9f62b8b3e5cc59d2c58bb18a36d9162a03d26d5a3a52503acdf701b0"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/project_template/clock_config.c",
+      "bytes": 67428,
+      "sha256": "8b4bb35244341ac63229d7e85f8791ae0cb8fe3cb57d79661188ffe0e92aff4c"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/project_template/clock_config.h",
+      "bytes": 40131,
+      "sha256": "a6454a9a8a57d60cc90bff3642e060ed362f3fc1ed8f80c22c6bceb726af3bc6"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/project_template/peripherals.c",
+      "bytes": 2234,
+      "sha256": "2680b42dfab832bc1214f1aa1a293df91b7bab014b02f98ce6a2a0326daf02cb"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/project_template/peripherals.h",
+      "bytes": 1330,
+      "sha256": "170f705fa8c3d4f8085a01cdafe3e55e0e66c5393d896bacd5085e69895a2bd5"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/project_template/pin_mux.c",
+      "bytes": 2182,
+      "sha256": "29fea7ac93670e1c9394e46da659d627a05bf5b6249bd1547ce1c1cf2878a559"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/project_template/pin_mux.h",
+      "bytes": 1487,
+      "sha256": "333acf8f3064a0c0d9367d4cc55102dd8ef500cafdc13743e1271b1e0ddaf884"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/set_device_MIMXRT1176.cmake",
+      "bytes": 153339,
+      "sha256": "e2de29d15e75cfe5544ae5d9be0d10a0420174ce813a7fb1644a9e90cae6ecde"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/system_MIMXRT1176_cm4.c",
+      "bytes": 6001,
+      "sha256": "927eaa78978779b80699e033149db8488a8f0306de4520f83c865ccaa17ff4c4"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/system_MIMXRT1176_cm4.h",
+      "bytes": 4267,
+      "sha256": "7deda9c130a826eac357dd34eed9e013ed304bdd91881a5a70cd249862354870"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/system_MIMXRT1176_cm7.c",
+      "bytes": 5238,
+      "sha256": "ca26877ab92769a5e6e81c5a344e782ee223713be6337dad2ebab4c91076c64d"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/system_MIMXRT1176_cm7.h",
+      "bytes": 4267,
+      "sha256": "6d8b754a77ab336f7903ffac9f20419907863236cc9ef7d39f0854c7e277875b"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/template/RTE_Device.h",
+      "bytes": 6950,
+      "sha256": "b88a363a3592c51c4b3fc849796f85374e56ea231e668a23af8fe50361dbe8c4"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/utilities/fsl_notifier.c",
+      "bytes": 9971,
+      "sha256": "65cfa10611baf4ac9fcf779fa993ed5789c4cd62183b2c8408f2fa1319208e3a"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/utilities/fsl_notifier.h",
+      "bytes": 11298,
+      "sha256": "35e9d94f0ce04aa278bfa1e22c6ca92a8bb163c80941a1e9be7375424ed44ac9"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/utilities/fsl_shell.c",
+      "bytes": 42192,
+      "sha256": "8a19993b9a42ea57c31d4c5feaf838db19612141302fdf5b83304865d1042f50"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/utilities/fsl_shell.h",
+      "bytes": 12687,
+      "sha256": "6680e167b140bb40899f85b143f3388a0a98171966bcf720505bd8cea6dd7da5"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/utilities/utility_shell.cmake",
+      "bytes": 363,
+      "sha256": "80a049f849f3a6c04503c286c7f1f0ab029ea9e5e403795876b954e58139553d"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/xip/driver_xip_device.cmake",
+      "bytes": 349,
+      "sha256": "f0bd62f885a9b5a9b903d86350e91c92b99369fbd24dd2939bb9bff4d7578e0a"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/xip/fsl_flexspi_nor_boot.c",
+      "bytes": 1687,
+      "sha256": "7f7187b3db01cc182e216dbafc73a325eb9af7aa093c0d55dcbfb8ca2796ea34"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/xip/fsl_flexspi_nor_boot.h",
+      "bytes": 4853,
+      "sha256": "e44c7de6dfd5f9d4ba2d1efd115841fa3990c038aec802689725c114b4e0a912"
+    },
+    {
+      "path": "third_party/mcux-sdk/devices/MIMXRT1176/xip/Kconfig",
+      "bytes": 237,
+      "sha256": "405c4191869e000b5d88ec067ab4511731494d281cab9da579d387ad9007736d"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/common/driver_common.cmake",
+      "bytes": 399,
+      "sha256": "1c2605f47b4c4915600153222ffee0747d45c1ad4677a38cad221771c98d5946"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/common/fsl_common.c",
+      "bytes": 2070,
+      "sha256": "e04744662bc72ec324c1faad8c7fb75fcac33a5507302067b1c108740b452b3b"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/common/fsl_common.h",
+      "bytes": 18270,
+      "sha256": "fd73aa56735db8fc6c53ede4db5992e0cedffefa6b19724e65aa7e428deae49f"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/common/fsl_common_arm.c",
+      "bytes": 8040,
+      "sha256": "e6645cb1df4fb5ce6a92a33ad87e974b0a81eba354189cc7f619c6715238ef1f"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/common/fsl_common_arm.h",
+      "bytes": 33908,
+      "sha256": "4a4795e28bdafe59a20db44f3faaefef92f5e64d55326ae7b08a7dc9cfc25704"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/common/fsl_common_dsp.c",
+      "bytes": 989,
+      "sha256": "9183a7297ad19be8c13c3bca09295188b102030c8a0811b444fc616e4f993291"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/common/fsl_common_dsp.h",
+      "bytes": 5376,
+      "sha256": "06b93ca1ec9f912ef304e9140a403672e4ead73a65efd30eb5fbfc00d8e338a4"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/common/Kconfig",
+      "bytes": 264,
+      "sha256": "2c23dd3626ac36295ff3b93f0eba7953f9d0b6129cbc7d19ea64f8d9dba6c0de"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/dmamux/driver_dmamux.cmake",
+      "bytes": 331,
+      "sha256": "5454031ff69ebeb4319648da7653fef1a6a6ebb463265342aa66dad90f9ef607"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/dmamux/fsl_dmamux.c",
+      "bytes": 2807,
+      "sha256": "fcfd9df1ec0f1c1b7e218482738dfd721b701c6f82b4356cc0928749c1894ef4"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/dmamux/fsl_dmamux.h",
+      "bytes": 5162,
+      "sha256": "2e5e30502efe65eefa47cc3ae2e1548e37eefbb47eb6ddfe00de122925f5ca69"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/dmamux/Kconfig",
+      "bytes": 299,
+      "sha256": "cc07e55b4da3275e87fb69a4f04ea1b48c80053fc24fd0436f0cf8a44d3394b3"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_K32L2A41A.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_K32L3A60_cm0plus.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_K32L3A60_cm4.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MCIMX7U5.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1011.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1015.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1021.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1024.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1042.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1052.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1062.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1064.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1166_cm4.cmake",
+      "bytes": 348,
+      "sha256": "3dd345c627f2f6efa8e674a6cf360efd6fc0dc0f380ed73105a6e382b8fcb60f"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1166_cm7.cmake",
+      "bytes": 348,
+      "sha256": "3dd345c627f2f6efa8e674a6cf360efd6fc0dc0f380ed73105a6e382b8fcb60f"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1176_cm4.cmake",
+      "bytes": 348,
+      "sha256": "3dd345c627f2f6efa8e674a6cf360efd6fc0dc0f380ed73105a6e382b8fcb60f"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MIMXRT1176_cm7.cmake",
+      "bytes": 348,
+      "sha256": "3dd345c627f2f6efa8e674a6cf360efd6fc0dc0f380ed73105a6e382b8fcb60f"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MK22F51212.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MK28FA15.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MK64F12.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MK66F18.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MKE15Z7.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MKE17Z7.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MKV11Z7.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/driver_edma_MKV31F51212.cmake",
+      "bytes": 325,
+      "sha256": "ed28edb33357a882c411f912a1af2a45857ec18b8855c265d9f242a5bb666759"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/fsl_edma.c",
+      "bytes": 95252,
+      "sha256": "906264438c0ba549d6a4dee913d2cedb626748ddd86b8d39ecb4b78e62ebbdcb"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/fsl_edma.h",
+      "bytes": 43187,
+      "sha256": "e67f605e1ba1460fb44940ce3e3c467d30a9b49437f4be649025acaed27a22a5"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/edma/Kconfig",
+      "bytes": 321,
+      "sha256": "b6bda04f430c8898e29faedaf973846cb30953d1b337327c2cfe318ee926d5a4"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/igpio/driver_igpio.cmake",
+      "bytes": 320,
+      "sha256": "2b4680974c1d00fe632ee208a8c163a10ae7cf9bee4d6251c51037ab595cfcff"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/igpio/fsl_gpio.c",
+      "bytes": 5505,
+      "sha256": "47ca119df2d069db8ae1b1d2d5bc5d0a5b0619363e7d82e66e762d072ed269d6"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/igpio/fsl_gpio.h",
+      "bytes": 9531,
+      "sha256": "622e391e8232f0e30da0a6b5e503379d363e59af58ec33cab0f37e0531dc7273"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/igpio/Kconfig",
+      "bytes": 285,
+      "sha256": "6c3bcc1b49394bd2d6d037640e65fcb35b447c187d2071c9398606acdf203667"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpi2c/driver_lpi2c.cmake",
+      "bytes": 328,
+      "sha256": "8990d9fe29ac4179d483685c7f56ed59e2456131567e0cb8511728529d024c6a"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpi2c/driver_lpi2c_edma.cmake",
+      "bytes": 718,
+      "sha256": "60fa4cd927a0acbb981498e22e2f716eeabd15d4740bf0fb1dbe7928c9fd37bf"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpi2c/driver_lpi2c_freertos.cmake",
+      "bytes": 789,
+      "sha256": "de85c4c11a83bd7e1b4a235f5256776eee99ea0a9d7ea099f2f57ee695cd4665"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpi2c/fsl_lpi2c.c",
+      "bytes": 99645,
+      "sha256": "83f21a204cc8d4702c36361c69d1c8e6b0b6b9aa2607830dc638d4ea3d24d613"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpi2c/fsl_lpi2c.h",
+      "bytes": 58096,
+      "sha256": "23cbd2eaef6507cebc682a31a0336f4c191fd300e5db4dddf817d44837993b32"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpi2c/fsl_lpi2c_edma.c",
+      "bytes": 25393,
+      "sha256": "a1c4c9fd923a7d0cc6a4fb3a53c1a3e861558aa69ee80764c6ca916902ef83e6"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpi2c/fsl_lpi2c_edma.h",
+      "bytes": 6503,
+      "sha256": "c28b293ffd3e7babce0afca6df3d696a2bbee079b80add60cb4f2ed8af0c5837"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpi2c/fsl_lpi2c_freertos.c",
+      "bytes": 3477,
+      "sha256": "a37da1c679de1ad89b91e77dbe250f477fa9558a41ee7bc6c8888ac44e4ee436"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpi2c/fsl_lpi2c_freertos.h",
+      "bytes": 2903,
+      "sha256": "f58f055c1975e95aa3c8c68e86d69c46a15df4f4704540d51e9c7978362201c6"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpi2c/Kconfig",
+      "bytes": 524,
+      "sha256": "a0e7bdc96da368fa3669430a145608e1ab362e01f86442c1d2b09a6ebdc4df6b"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/driver_lpuart.cmake",
+      "bytes": 331,
+      "sha256": "54bec140dd223508328974556ec45c61c85ba6b0069bff11913a2c236e09971a"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/driver_lpuart_dma.cmake",
+      "bytes": 363,
+      "sha256": "0a6a701362919ca6646652b58613192fc272ac8be023ac478b93e132a029485f"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/driver_lpuart_edma.cmake",
+      "bytes": 807,
+      "sha256": "4fa6ffbbf9a3d6017d3a87e2df6652bffaf566f02c3c03fbf31bf5da4a12262f"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/driver_lpuart_freertos.cmake",
+      "bytes": 894,
+      "sha256": "d9d8d20748027d17ff06028e20d392f139183e87d0bf05ee4b7f5d6200272078"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/fsl_lpuart.c",
+      "bytes": 92892,
+      "sha256": "90afe3833e4f4b8b10719217e935445e9e946c568356ae048715794e39656241"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/fsl_lpuart.h",
+      "bytes": 46365,
+      "sha256": "baebead973e9a3e4f03ca34e1a3a34fcf141b1a93369f2b67d59c208b954b921"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/fsl_lpuart_dma.c",
+      "bytes": 15996,
+      "sha256": "e07ac07d7a74d2444ec8da81a9e7c6b5818cda8307115b47b11ce7f8968f1575"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/fsl_lpuart_dma.h",
+      "bytes": 6427,
+      "sha256": "1d71c41105e890b948711a886352d07c0d5b83a0c5da963331338cb917a72a96"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/fsl_lpuart_edma.c",
+      "bytes": 17012,
+      "sha256": "5b928f468c2b23cc5c26b525921d8ea0c2a471bd579d842ab20c3a760186dbfb"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/fsl_lpuart_edma.h",
+      "bytes": 6626,
+      "sha256": "48c01055ebfc0ee6af1d26544c78352a3b602fbe58764f856ca9e9bd2c0006f1"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/fsl_lpuart_freertos.c",
+      "bytes": 15798,
+      "sha256": "f187d90c43ce2aad00fd2423ba9abd1e1f3293539037fec872c4683f0fbbb67e"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/fsl_lpuart_freertos.h",
+      "bytes": 7320,
+      "sha256": "272d88b94083c2eb0f752ea213407bc96b4159b3f12bf6b72cb0450f0dea2e65"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/lpuart/Kconfig",
+      "bytes": 770,
+      "sha256": "6d38dcc9b39dbefa8ad9753ca7118a46f2271b19565b3f86754bbaf6650e9f1d"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/mu/driver_mu.cmake",
+      "bytes": 319,
+      "sha256": "882e62472afa41cb0362090eb38d7dc10e9604f03d5a6fe1bf7c4aba33e11346"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/mu/fsl_mu.c",
+      "bytes": 14296,
+      "sha256": "f3e0ac68f38ff203bbecfcd32e6fc27589d49cae060e4da7ddf8310b9293d3fa"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/mu/fsl_mu.h",
+      "bytes": 25129,
+      "sha256": "c1539e86e37378ac2cf1f14b8ea905d4ab8e476195f00593439eede6fa68deb2"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/mu/Kconfig",
+      "bytes": 275,
+      "sha256": "052b5e27819dfa67b5c7b5e162a3daf1cafb22deb00e7c9eaefb820a9c666104"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/driver_sai.cmake",
+      "bytes": 322,
+      "sha256": "b0aa0a5453c61a7e44d7ede6c02cb96d7ef17ac36efc3f4892a0886cb11cafba"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/driver_sai_edma.cmake",
+      "bytes": 710,
+      "sha256": "69a235c6138844c5503c137a75dea787c2e5f03354606670fc2f81930c859ab5"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/driver_sai_sdma.cmake",
+      "bytes": 355,
+      "sha256": "2dcd7585ebb7a82cf5b268a508412e0aec687669388cc94667db5d22aef7bb48"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/fsl_sai.c",
+      "bytes": 110607,
+      "sha256": "68bee242606ce6bafe7d6c438e351389037fcad4b013433f990b314c19054665"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/fsl_sai.h",
+      "bytes": 50136,
+      "sha256": "65e089cf08ca6024830b8b594dbf950d5e47f5c655382b05c8a2b8d1a600af27"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/fsl_sai_dma.c",
+      "bytes": 17365,
+      "sha256": "a3ce4f2ac38162c17bc8270cf74e86ea234bc46b3f9678aaba5f1ee1291aa2b4"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/fsl_sai_dma.h",
+      "bytes": 6818,
+      "sha256": "5c4c78cba971329b860564fbb52dc056b1addd10b5a502ed75ba6295ab60f058"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/fsl_sai_edma.c",
+      "bytes": 42374,
+      "sha256": "86bd355fa07108030ad55e62f05528938201b146b0ffb210c2b361de144b08b8"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/fsl_sai_edma.h",
+      "bytes": 15561,
+      "sha256": "60e407a4e26934ddbd366dbe63ee96138b36871f8d5f30677dd1bf51646a3619"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/fsl_sai_sdma.c",
+      "bytes": 22450,
+      "sha256": "d8c218e369cbfc6205fbf8cc7824dd83abdbc3ae7511cf01bb8fef56fa6ccd08"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/fsl_sai_sdma.h",
+      "bytes": 7321,
+      "sha256": "a98ac3d4a78ff1701f14c2fcb30cb74f58e0254aa936a67c2656e8fe821728dc"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/sai/Kconfig",
+      "bytes": 725,
+      "sha256": "bd05a1c27190b067daa966465962c8619bf5e16545c96f99bf4a2fded16ba28d"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/usdhc/driver_usdhc.cmake",
+      "bytes": 718,
+      "sha256": "613f8ba6e2dd6e69c1376e3c72236387275563cafccac8db2b3564d3992d77e9"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/usdhc/fsl_usdhc.c",
+      "bytes": 91516,
+      "sha256": "dd5a5bf74e7886c3f5314086afebfe8bc27b728fe2d987919e7e004cb4d168b0"
+    },
+    {
+      "path": "third_party/mcux-sdk/drivers/usdhc/fsl_usdhc.h",
+      "bytes": 69266,
+      "sha256": "ab1c7c6dfabcd3447834ed8aa4bd702dbfb8a58e9267aedf2c34acc3978ee80e"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/assert/fsl_assert.c",
+      "bytes": 2394,
+      "sha256": "28995059a697a10906228cfb4cb0b1b68ad8f77d22a0218c092e05c536c21576"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/assert/fsl_assert.h",
+      "bytes": 1047,
+      "sha256": "d7221e5ac0d3bb556b6188c77da4073e77cd04718c5994370bb4af643ba0148b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/assert/Kconfig",
+      "bytes": 575,
+      "sha256": "426417e5a9b017e0dc221c26d9c09b7625218ac0b652eea6f0746b4218e11b23"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/assert/utility_assert.cmake",
+      "bytes": 309,
+      "sha256": "590ce42a0886ea9a894b24c5dd7c524e9341b1d412c0e7f2dad9bc7baf9a2b29"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/assert/utility_assert_lite.cmake",
+      "bytes": 324,
+      "sha256": "116fcfba19102082a62898f7a3aff721f74935fc02844f9bc360bb5486fd2a36"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/debug_console_lite/fsl_debug_console.c",
+      "bytes": 44814,
+      "sha256": "ea2bac259fe2125069cf72da809ee51bf75bb8806aef3bec0470a59aa58cf128"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/debug_console_lite/fsl_debug_console.h",
+      "bytes": 10171,
+      "sha256": "4c959a63953610af417383542fd63061d4ce88f01e90277bda6ac46d5144d899"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/debug_console_lite/utility_debug_console_lite.cmake",
+      "bytes": 1401,
+      "sha256": "3f7c891e8a1d45c256ee552e4898fceba2a7a5fa432c2f2ec99869a911b04e24"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/fsl_format.c",
+      "bytes": 1626,
+      "sha256": "ddb9f0ba23c5c22a69271037e80dd70cf3bb65dd964fe2d07a80a344cd1330da"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/fsl_format.h",
+      "bytes": 1636,
+      "sha256": "06e2836189f2e47552e9600f368a974288a95318b5cf6f2c3fb3f6fb9bfd70db"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/fsl_incbin.S",
+      "bytes": 862,
+      "sha256": "c31223186b98c91c6415792b0390df0017bb06110d2b4fec778cf11a1a8eeae0"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/fsl_memcpy.S",
+      "bytes": 7618,
+      "sha256": "0f87b6e36330bae8b254564819a1d276864970eaa936170debfb93539307a746"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/fsl_sbrk.c",
+      "bytes": 1192,
+      "sha256": "178a93e1af51a080911d657e72973dcada4ec8f251a146c128e7f909f1a03cdd"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/fsl_syscall_stub.c",
+      "bytes": 3236,
+      "sha256": "6d95fcb04cb68f84755aa6b86abe9b93a868d0b1839b2ca7d2fe98ff9a62551e"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/Kconfig",
+      "bytes": 688,
+      "sha256": "da064a6aaca378986ba9bc90c8c7a50da591fea1fa1acdc57f5ecd72df5a0eb3"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_K32L2A41A.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_K32L2B31A.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_K32L3A60_cm0plus.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_K32L3A60_cm4.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC51U68.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC54114_cm0plus.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC54114_cm4.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC54628.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC54S018.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC54S018M.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC5506CPXXXX.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC55S06.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC55S16.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC55S28.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC55S69_cm33_core0.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC55S69_cm33_core1.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC802.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC804.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC812.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC824.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_LPC845.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MCIMX7U5.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMX8ML8.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMX8MM6.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMX8MN6.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMX8MQ6.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMX8QM6_cm4_core0.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMX8QM6_cm4_core1.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMX8QX6.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1011.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1015.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1021.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1024.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1042.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1052.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1062.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1064.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1166_cm4.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1166_cm7.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1176_cm4.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT1176_cm7.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT595S_cm33.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MIMXRT685S_cm33.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MK22F51212.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MK28FA15.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MK64F12.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MK66F18.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKE02Z4.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKE04Z4.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKE06Z4.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKE15Z7.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKE16Z4.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKE17Z7.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKL27Z644.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKM34Z7.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKM34ZA5.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKM35Z7.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKV11Z7.cmake",
+      "bytes": 296,
+      "sha256": "037c421dcc50af298e9bee66af5b2ebceb41eac20e8248ff68efaeb38efd812b"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utilities_misc_utilities_MKV31F51212.cmake",
+      "bytes": 339,
+      "sha256": "6d3bad345cacd03003756979798c5a51bd49d1d67ddd6c18111aaea75d486100"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/misc_utilities/utility_incbin.cmake",
+      "bytes": 278,
+      "sha256": "2631ba2db55871d51572336763a6b135c7f78dda6b3ec969f53f8d85be02c154"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/str/fsl_str.c",
+      "bytes": 48101,
+      "sha256": "5ad399064f79f5498a5ab3a9fcbb0a74f4b1769c5576ddcd5e134ba34d39f6dd"
+    },
+    {
+      "path": "third_party/mcux-sdk/utilities/str/fsl_str.h",
+      "bytes": 4497,
+      "sha256": "7d8dfbf19a962af600454f87154811c5dc69fe31adfe6efda0cefc71abbf3e46"
+    },
+    {
+      "path": "third_party/sdmmc/common/fsl_sdmmc_common.c",
+      "bytes": 5562,
+      "sha256": "249bbf46d4d436d5b768873ac14e093a48761fc3e366aef457a926e92edd9631"
+    },
+    {
+      "path": "third_party/sdmmc/common/fsl_sdmmc_common.h",
+      "bytes": 15760,
+      "sha256": "0a20fbd9f1e989536ecf8114e3bb948d1aebe7557dc9201408d92c3b79702cea"
+    },
+    {
+      "path": "third_party/sdmmc/common/fsl_sdmmc_spec.h",
+      "bytes": 66877,
+      "sha256": "ed07de340a96525d2b63dd45bf5a2956f3758fd958c14bd1b1f38342fd012adf"
+    },
+    {
+      "path": "third_party/sdmmc/COPYING-BSD-3",
+      "bytes": 1915,
+      "sha256": "85fe643c33c6ea5d81a6c5db68cbb2fdcc811a63233febf367a2574eb1c5d9b3"
+    },
+    {
+      "path": "third_party/sdmmc/host/usdhc/fsl_sdmmc_host.h",
+      "bytes": 18856,
+      "sha256": "0b304e114d84d6dba1bc321abec7c6558f6fa0076654f21afb3bd59b3fe30ac2"
+    },
+    {
+      "path": "third_party/sdmmc/host/usdhc/non_blocking/fsl_sdmmc_host.c",
+      "bytes": 38793,
+      "sha256": "23d9d44c70626562bcb00589b8fad7ab2ce41d061b35ef8801e98182f5ccdc9a"
+    },
+    {
+      "path": "third_party/sdmmc/osa/fsl_sdmmc_osa.c",
+      "bytes": 7396,
+      "sha256": "656d132d5f26b539f1e31bd7f4abaf367be21e3e206cd415107f9a2ca788a7bf"
+    },
+    {
+      "path": "third_party/sdmmc/osa/fsl_sdmmc_osa.h",
+      "bytes": 4409,
+      "sha256": "fda1e7f23ba5d5f580a3df12ce9f512cd8bb8423703b94f9acf725a4472e78ff"
+    },
+    {
+      "path": "third_party/sdmmc/sd/fsl_sd.c",
+      "bytes": 77393,
+      "sha256": "a6aa3e2900ac39a46f1ab30582c6892754c1f5ebac071d003881fcd62c2444ba"
+    },
+    {
+      "path": "third_party/sdmmc/sd/fsl_sd.h",
+      "bytes": 12927,
+      "sha256": "b336b24f82a5e4d23cb97304653803777389b376148e7261a01177abeb004cc7"
+    },
+    {
+      "path": "third_party/tinyusb/LICENSE",
+      "bytes": 1115,
+      "sha256": "5ecdb9d32fa2087f21ef33a8ee2c20479b841732c02323ab6d523e853dcb6f8c"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/audio/audio.h",
+      "bytes": 66431,
+      "sha256": "e85fe18fbc1b1353f90cd8980fffe0d67ca56e85e2beb0204475de94c26001f6"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/audio/audio_device.c",
+      "bytes": 78197,
+      "sha256": "0827a53581b43959ca04d4da506d47da8a28e1cdc402c4dbcdba4e1ce2021b79"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/audio/audio_device.h",
+      "bytes": 20696,
+      "sha256": "c51bbff26b79a08545cb5727840006ab9468cc3bbc7575c155972c338abb6236"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/bth/bth_device.c",
+      "bytes": 12061,
+      "sha256": "4af7977a4f933ecc311b70213dffcdc9ed5595fc7bb58497881c5ac4127f41e7"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/bth/bth_device.h",
+      "bytes": 4956,
+      "sha256": "b98abaaf38e34bd05930a1fc205c9fe66aa163ee0fad89348880bab83528de47"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/cdc/cdc.h",
+      "bytes": 26608,
+      "sha256": "a40fb8c7e35ac6d1b727df30e3ff6638d193f61b318c0315207fcae968235fa2"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/cdc/cdc_device.c",
+      "bytes": 18734,
+      "sha256": "01a266394efc6f2dc9e7ce402221d65e12ab61b5d3b20bb1dbe6d053feb94fbc"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/cdc/cdc_device.h",
+      "bytes": 11569,
+      "sha256": "a5ba696ac367c1937bedb3180ca57ef039034ee16a2a9982dd8f1a030bbf1b4d"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/cdc/cdc_host.c",
+      "bytes": 95520,
+      "sha256": "772a512e0a6892f18672c1db113f7128bd01b5141d04dc5a60626d09dc4c14ee"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/cdc/cdc_host.h",
+      "bytes": 11472,
+      "sha256": "3b4d2fb0e06ecf2ee9358d2ce63ec978045cfa1f2a9cdfb12c9db427b818ffab"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/cdc/cdc_rndis.h",
+      "bytes": 20589,
+      "sha256": "e2630482c8e6dd2ca5bc9a40ac4464297ba65ae2afaf4fefadf33a370b99dd53"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/cdc/serial/ch34x.h",
+      "bytes": 3696,
+      "sha256": "3e638150efa316647f9aed2be6c3e042742b67c1e6ad89a3a6187d166d67ae0d"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/cdc/serial/cp210x.h",
+      "bytes": 4697,
+      "sha256": "8831e05d87a0487e0c628a6dabc7aaf97cf6a13da94dc25f57d579e2c3be0f0e"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/cdc/serial/ftdi_sio.h",
+      "bytes": 8405,
+      "sha256": "addecbcee98386f286449a991f4f1ebab2983e1531c69183a824786d4024f676"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/cdc/serial/pl2303.h",
+      "bytes": 6090,
+      "sha256": "abb1f196f5294e2bff231eb40ae64b9469485e05d873a86da5218674e04d3ca5"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/dfu/dfu.h",
+      "bytes": 3678,
+      "sha256": "07b5e29e93683a1668d914ee87a1b1a4feebfa71a22aebd8f52edabf2688ec18"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/dfu/dfu_device.c",
+      "bytes": 16436,
+      "sha256": "947746b33c97aa6bc44151463238dc38907143253185df1c268e78c09d36bd04"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/dfu/dfu_device.h",
+      "bytes": 4499,
+      "sha256": "d5c6e3cae290055984582d5c6df18658762658e6fc658b2cbfc28dd286a17bcc"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/dfu/dfu_rt_device.c",
+      "bytes": 4666,
+      "sha256": "378bbb45b8b835b60db796add541b783dfb14456d8813a6d077052f284c40232"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/dfu/dfu_rt_device.h",
+      "bytes": 2238,
+      "sha256": "77a63fcd79bffe611dfd2f2ba99482e4f7512950980f7277ca31dc6fe0102b58"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/hid/hid.h",
+      "bytes": 105491,
+      "sha256": "f366e674c70a33739ac1b2c2d0e40e928f7932f0219d38d168dc7c3974bc24ab"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/hid/hid_device.c",
+      "bytes": 15344,
+      "sha256": "f9fad536da3ffc5611640b9143cf99b7b50869b590d512ac2abbc50fa3158afe"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/hid/hid_device.h",
+      "bytes": 40004,
+      "sha256": "732dc6f3816128edd322693a2390f3647078477c782b6096e140e93b9f47fefb"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/hid/hid_host.c",
+      "bytes": 27781,
+      "sha256": "f2450abf07af2f17412c61b2041883418a20e9345da7676f524a719bf101a98c"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/hid/hid_host.h",
+      "bytes": 8579,
+      "sha256": "ae0569a63c80b6cffe6eef4fdaf52269d55986328f42273fd3a8e129c6e4bd98"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/midi/midi.h",
+      "bytes": 8114,
+      "sha256": "55bbe8b7ff3470ddda8019f3cb37c4646b42a7779ffbfde134d2e99803380d8c"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/midi/midi2_device.c",
+      "bytes": 27830,
+      "sha256": "45aa3a1979808273a773d4bd469159a0ceaae657fa61b2016b8806fe5407605f"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/midi/midi2_device.h",
+      "bytes": 7323,
+      "sha256": "ff46efb2e6d878e84450749636a802dc3f8e8641d68022da06ec88ca5303101e"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/midi/midi2_host.c",
+      "bytes": 22103,
+      "sha256": "dbbd43f6ca05765a328ba79e9dc8449cf1cfb8a2f050fdffcfd5643ba180ac38"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/midi/midi2_host.h",
+      "bytes": 4573,
+      "sha256": "c11d27d6e759c8d6fb52a08db3f97a63f9265866787b73f752239b8c82aa07b4"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/midi/midi_device.c",
+      "bytes": 20491,
+      "sha256": "06bed8d316239fd1ec3de5f27cfa885bbe4318eaf0ab624e2cb161586532ca54"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/midi/midi_device.h",
+      "bytes": 6095,
+      "sha256": "c9f388886dac8c0e4117ddbd8638d79f3449104b4091ecac87650c4824bf2055"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/midi/midi_host.c",
+      "bytes": 25999,
+      "sha256": "30d22645366a507ede38f74b3a01397baf6aa839ce9f739692b2c6bd0364d2d1"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/midi/midi_host.h",
+      "bytes": 8525,
+      "sha256": "ecff33d95ba5adeaea89874e3f4cb837ea10b674f836aae58c94a947eff843e5"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/midi/README_midi_host.md",
+      "bytes": 5939,
+      "sha256": "2545fa65aa5bc32fe399c01e3a8ccf929533a614163ab1f89c31ae0f3902bde3"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/msc/msc.h",
+      "bytes": 19249,
+      "sha256": "acaaea06871caaf84d3453a7359e1623ecd97f382abc314b9aa8472527e54801"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/msc/msc_device.c",
+      "bytes": 35994,
+      "sha256": "0f2e5446317087ceab88fdd2e153a94b9a83b0852ed5147930be0271c960ba82"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/msc/msc_device.h",
+      "bytes": 8317,
+      "sha256": "dc50ae9176eeb6ab565db7fa093ea49a12bc42b2177386da02e61193a688bff7"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/msc/msc_host.c",
+      "bytes": 17467,
+      "sha256": "c4f180fbe34eac92067cbdd0a34f953588360e94a87131c6aaa337707f3771ba"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/msc/msc_host.h",
+      "bytes": 6269,
+      "sha256": "3b61331d8225003e15ac504c5ec33e6035033105a3f9603b9fb93e23afa288d7"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/mtp/mtp.h",
+      "bytes": 43487,
+      "sha256": "49be43238c39c7027d6e55bcb07d9658fee2f6dc2db5b63ea25fbd1d4b678425"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/mtp/mtp_device.c",
+      "bytes": 23579,
+      "sha256": "a26e2aefb0f6059908ae740c4de706f9f22f57af6ba8881602bd45f72f0f8a7c"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/mtp/mtp_device.h",
+      "bytes": 7256,
+      "sha256": "a24332b6e25671152e80654306199d4a6cf573825329439bff8340ddfe6acd82"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/net/ecm_rndis_device.c",
+      "bytes": 16047,
+      "sha256": "4cbe3c15e1b43b3944d96ed1c21cdc0155895ba0ecd812cbea456be797c5c7f2"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/net/ncm.h",
+      "bytes": 6163,
+      "sha256": "8daf0e4eb79c0e1ec86c4446ccc4ae974f762cdf518f8c17f72ada90f1d06f9e"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/net/ncm_device.c",
+      "bytes": 42003,
+      "sha256": "d47eedbab5c66fddd1ff4ea6cbd99ba94ea005156061ed7add17be7ee7f40477"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/net/net_device.h",
+      "bytes": 5213,
+      "sha256": "68787b7b0c00bde94d58d19366b99ea610bad2f493999b26df8cc0d48a8870eb"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/printer/printer.h",
+      "bytes": 2330,
+      "sha256": "47a1b459562251c728301d910ca3d909d926284073f5a025dd6f502defcf61c4"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/printer/printer_device.c",
+      "bytes": 11130,
+      "sha256": "5491f064b5003e731f8897b325c3847b47171f649b7106316b83374e03179a7d"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/printer/printer_device.h",
+      "bytes": 5624,
+      "sha256": "6215868968b9a3780f21f8c8daeba6c2ff506a75dbb2efcfef884e558d8bb05c"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/usbtmc/usbtmc.h",
+      "bytes": 11010,
+      "sha256": "06df32c26856f236854f8b75db10294c0f193ecf36f5d6c4902761c43066fe6c"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/usbtmc/usbtmc_device.c",
+      "bytes": 33493,
+      "sha256": "e94e638fb4c6b14b61b516b25e7073d0b69682411edaea48a77ef72705745c00"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/usbtmc/usbtmc_device.h",
+      "bytes": 4879,
+      "sha256": "f5bdeb68eb91c2b30d93d9c886cde118f0a9b099553f07efd068918c0f21f9e7"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/vendor/vendor_device.c",
+      "bytes": 13302,
+      "sha256": "e4dd4170b37086676f5bd66627f1e27818e1ece80f859e55668ae2abdae68bdd"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/vendor/vendor_device.h",
+      "bytes": 7737,
+      "sha256": "db871589e99e62b5df91107ce16b4f3f7c59b3c858efd68ad535cb9724cbcf86"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/vendor/vendor_host.c",
+      "bytes": 5459,
+      "sha256": "502b5726eaff512f1bfeb2502ab3b935f94b41cb8317e3f4b7fbd499707834a7"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/vendor/vendor_host.h",
+      "bytes": 2662,
+      "sha256": "f3c946486293dee04afbb19f3380b66fce8767a6c1a38e0b23a17cff219111f3"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/video/video.h",
+      "bytes": 28722,
+      "sha256": "b8b1ecdf5ef152ce986bd904d4244c830bf6edc7a92ca419143f8ad7e40f4629"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/video/video_device.c",
+      "bytes": 56942,
+      "sha256": "eb607d219f271344eb6e93365d3a566f2a4b66ecc55aa8f28b542a0844c02cf1"
+    },
+    {
+      "path": "third_party/tinyusb/src/class/video/video_device.h",
+      "bytes": 5325,
+      "sha256": "05730ac7da1e00b0b0e4e0d34882aede00ff0cb80413da75ee3cc3daf2f9b8d5"
+    },
+    {
+      "path": "third_party/tinyusb/src/CMakeLists.txt",
+      "bytes": 2327,
+      "sha256": "e4381d138dfac8ddb21309fc101c11a5028583261209cbc272efeed98780eee8"
+    },
+    {
+      "path": "third_party/tinyusb/src/common/tusb_common.h",
+      "bytes": 16720,
+      "sha256": "418189b7c01772d9e6744113edb3b94946b1b4b2056d7b6c7768df3473518255"
+    },
+    {
+      "path": "third_party/tinyusb/src/common/tusb_compiler.h",
+      "bytes": 13551,
+      "sha256": "3c89ffc46ec3192c7d3ff6505a1bcfe0490af047547e9184d217571ff0437fe9"
+    },
+    {
+      "path": "third_party/tinyusb/src/common/tusb_debug.h",
+      "bytes": 5468,
+      "sha256": "b52cf1a6d122d13642c86203a42bb66503e605249bf6bc19661f6118fd59beba"
+    },
+    {
+      "path": "third_party/tinyusb/src/common/tusb_fifo.c",
+      "bytes": 29223,
+      "sha256": "dab2ae7009942ee915b53825a57cb3f2b616bc4e656217d19b261eda29df1913"
+    },
+    {
+      "path": "third_party/tinyusb/src/common/tusb_fifo.h",
+      "bytes": 14103,
+      "sha256": "64a6193980d84bc1471f447e11bfb4e47c381626dd9f8f908346d1419c8879f9"
+    },
+    {
+      "path": "third_party/tinyusb/src/common/tusb_mcu.h",
+      "bytes": 26675,
+      "sha256": "55f35ad7ac54f8194a2485308196fb23e6780100ce82932affe82335263f5ec5"
+    },
+    {
+      "path": "third_party/tinyusb/src/common/tusb_private.h",
+      "bytes": 7129,
+      "sha256": "d7f3206bfb5687bc345224d9cccb5b94e4f5e7d5153ffb7120fef3c9d6002049"
+    },
+    {
+      "path": "third_party/tinyusb/src/common/tusb_types.h",
+      "bytes": 23813,
+      "sha256": "d069aca5a58adf6f1c28278a4d0e2340df22e2e5a4f63fbf8dd38a8a88418044"
+    },
+    {
+      "path": "third_party/tinyusb/src/common/tusb_verify.h",
+      "bytes": 6013,
+      "sha256": "6ed0f3e8359aedef411c7c5193a837d8590b7845e31c6628892b7c6d32f4a7ac"
+    },
+    {
+      "path": "third_party/tinyusb/src/device/dcd.h",
+      "bytes": 9431,
+      "sha256": "dcf38447e1e6826ad0c9bb5392e38e0d7cb87a6f36d3c25923ae4b708c77aeee"
+    },
+    {
+      "path": "third_party/tinyusb/src/device/usbd.c",
+      "bytes": 60646,
+      "sha256": "4b7dbca2b2dd236b669389e008d088e2a87492d4b0de0914c7a8d5a767512e56"
+    },
+    {
+      "path": "third_party/tinyusb/src/device/usbd.h",
+      "bytes": 65160,
+      "sha256": "c845d3bc35d6877b76bddcd9b2f8ee08717a125e2ad5d32b224ec0e2bd50e2a4"
+    },
+    {
+      "path": "third_party/tinyusb/src/device/usbd_pvt.h",
+      "bytes": 5686,
+      "sha256": "8fc7badbddd8cae423577d4b496e7c8960565bcdbd1a7ea902dfade04896a98c"
+    },
+    {
+      "path": "third_party/tinyusb/src/host/hcd.h",
+      "bytes": 7767,
+      "sha256": "15bc53ce0ac2349661d9fc13241b2f9095ac6aa92ceb9892a960435b382221c6"
+    },
+    {
+      "path": "third_party/tinyusb/src/host/hub.c",
+      "bytes": 18440,
+      "sha256": "a74f388069f6309efcf0b4084bceb6edca9edc6e9ba5d9e78802440ff55b5a13"
+    },
+    {
+      "path": "third_party/tinyusb/src/host/hub.h",
+      "bytes": 9014,
+      "sha256": "d1bf08d6418a185f8e96690e68208cb61562e37480903bb5c0fe87a403463b50"
+    },
+    {
+      "path": "third_party/tinyusb/src/host/usbh.c",
+      "bytes": 81590,
+      "sha256": "c65e014a74aa5bf8bedf517e8f99c1d0c9a5f7ae312b04c7a9646d5da615e276"
+    },
+    {
+      "path": "third_party/tinyusb/src/host/usbh.h",
+      "bytes": 18095,
+      "sha256": "69a75137c96b3496215e29bee5d153bb526f93c4565639144bbe4d22a484b6a9"
+    },
+    {
+      "path": "third_party/tinyusb/src/host/usbh_pvt.h",
+      "bytes": 4513,
+      "sha256": "fe806b7a70c90fa183169d78cdd3bf162eb5762de1cb197190246a94e07c68ab"
+    },
+    {
+      "path": "third_party/tinyusb/src/osal/osal.h",
+      "bytes": 4227,
+      "sha256": "56f534486a8faf2f1f9188d7a9d8545bbd47109181b6c3db2348f55f9e05d743"
+    },
+    {
+      "path": "third_party/tinyusb/src/osal/osal_freertos.h",
+      "bytes": 9946,
+      "sha256": "8c86ce8f69dc004b83613439791d7652c5245e62ed54892dcb741de198799bec"
+    },
+    {
+      "path": "third_party/tinyusb/src/osal/osal_mynewt.h",
+      "bytes": 7967,
+      "sha256": "3b3bb5d7378e8da838ed2d1f24dceee3317a2d0e1acd034ac682f7e0cc428ff4"
+    },
+    {
+      "path": "third_party/tinyusb/src/osal/osal_none.h",
+      "bytes": 8253,
+      "sha256": "3b7326a1b3a20ea327123a99ee6435c12e13f4ed38adb0f2ca8a5208a7eb7b0f"
+    },
+    {
+      "path": "third_party/tinyusb/src/osal/osal_pico.h",
+      "bytes": 7008,
+      "sha256": "1f7b6f05ef970de6c599ff51e72e4ba59010d574697672ca1c04357e0285f42b"
+    },
+    {
+      "path": "third_party/tinyusb/src/osal/osal_rtthread.h",
+      "bytes": 6700,
+      "sha256": "a117c2af79612bbf51378830e2d2a9c288456448dea938b21eb186005222a769"
+    },
+    {
+      "path": "third_party/tinyusb/src/osal/osal_rtx4.h",
+      "bytes": 6715,
+      "sha256": "159abfdfcbd24da71533b5aaa84d7139fe847c7ba0e163b2a4e3d1c156c761fb"
+    },
+    {
+      "path": "third_party/tinyusb/src/osal/osal_threadx.h",
+      "bytes": 7304,
+      "sha256": "8bab3872d0bd2a0f28f3b519482e676cccb6071bee5848d52c2134e7199113c4"
+    },
+    {
+      "path": "third_party/tinyusb/src/osal/osal_zephyr.h",
+      "bytes": 5895,
+      "sha256": "496fb344b4745ca7216e32e885b0799bca24f04d1e74b1967cf116fffe79232d"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/analog/max3421/hcd_max3421.c",
+      "bytes": 34168,
+      "sha256": "17343d97b538f50b8a092791ef1488c28dc2f83f19e55c4bd0a2498bbc1f7c94"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/analog/max3421/hcd_max3421.h",
+      "bytes": 2627,
+      "sha256": "f8b854ca7ce8915e2fbca145348fe4da98df1c31a6ff96bab710ce4b3f12ba65"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/bridgetek/ft9xx/dcd_ft9xx.c",
+      "bytes": 39074,
+      "sha256": "b8e7149a6c9144fa703a1d4fd212dbe2c98b80cce4e2b50fa624e46aa1ad9374"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_fs/ci_fs_kinetis.h",
+      "bytes": 1738,
+      "sha256": "062d70b7f7a3eea87a52653ba68d24fee25a424ad4feeffa89272c810eb16d9e"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_fs/ci_fs_mcx.h",
+      "bytes": 1869,
+      "sha256": "4634af9934275b9a6e1d3eb05e103dce210e089961cc72e316d699e104a58014"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_fs/ci_fs_type.h",
+      "bytes": 5614,
+      "sha256": "d939e41d0b7111aa1ec43f4d5d7de1730591c61337c985bf4c43e5cb85b41fef"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_fs/dcd_ci_fs.c",
+      "bytes": 17614,
+      "sha256": "8513ca8c6dab69efd84dc348f892cfe598697339f6a2e2710038e432114f4d0f"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_hs/ci_hs_hpm.h",
+      "bytes": 2079,
+      "sha256": "10e78f737ad8c6fe3573ab0fb6758a70160497d94d27359c3472475a554e471d"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_hs/ci_hs_imxrt.h",
+      "bytes": 4475,
+      "sha256": "377a244cf2aa3b439f9ab21a7ee384c3e45630104bd5d7c037b1a9ddb47d8d21"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_hs/ci_hs_lpc18_43.h",
+      "bytes": 2114,
+      "sha256": "573e7d1b2d021d5139c199bf5d010dd43487159f8fb2635c26b21d4cbda6e7e2"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_hs/ci_hs_mcx.h",
+      "bytes": 2117,
+      "sha256": "4b9b4aa477afbc0623d484a162c3060ddbdcfa514456f3290e73e2d07691d580"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_hs/ci_hs_rw61x.h",
+      "bytes": 1957,
+      "sha256": "059e83033500009b8d6db29a90bd49cf4cdb33c9d7b0f307892292df4cccdc89"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_hs/ci_hs_type.h",
+      "bytes": 5820,
+      "sha256": "7a4f4dbff39843cf64bde8e1564b5c44b3dc7cfc85ef8ff5179f0861b1754835"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_hs/dcd_ci_hs.c",
+      "bytes": 26346,
+      "sha256": "7b0c5e267092e917ae7b247d00ea7d6349734c2d9fe647abb919e11ffed4e2c9"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/chipidea/ci_hs/hcd_ci_hs.c",
+      "bytes": 3838,
+      "sha256": "f62ba238130223b8ae478b17791e3541246f3513851720fbe826f80fca95234d"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/dialog/da146xx/dcd_da146xx.c",
+      "bytes": 40086,
+      "sha256": "5c0263a9c18386239ef7089b538a3b09c399fb6d8a68f733910900bb073c8c7d"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/ehci/ehci.c",
+      "bytes": 37061,
+      "sha256": "860781f50b810bbcff6db08bb9d59b1aabfac12be71c43c84f974eded12fcefd"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/ehci/ehci.h",
+      "bytes": 26059,
+      "sha256": "e5da60a2325ad3d3bab5fca917176bd3a40017abe01a8cd63ba849f097f62ba3"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/ehci/ehci_api.h",
+      "bytes": 1724,
+      "sha256": "ba6cac62487d39e8fc95744be4a306c353566ab77c328ebcb036c723ab5aca1d"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/mentor/musb/dcd_musb.c",
+      "bytes": 37988,
+      "sha256": "6e481a5cdeba0d913d240ec9b25b4135aa68745cfa0028f05dd4ea4ff0adc7bd"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/mentor/musb/hcd_musb.c",
+      "bytes": 28025,
+      "sha256": "fa0db78a4c3d60b16343bcd29aa0ed9ede5b9fbb01bbdfc0c51ca61eb651a49e"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/mentor/musb/musb_max32.h",
+      "bytes": 4989,
+      "sha256": "b7b21f51355a851e7772d090f47e41a9e79b1f4b80055174dfd85c111d4a852f"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/mentor/musb/musb_ti.h",
+      "bytes": 2908,
+      "sha256": "b78f94c988e2128330c6a0a9da56f1761cac225c0be17d2317af57886616ef26"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/mentor/musb/musb_type.h",
+      "bytes": 33514,
+      "sha256": "9e77c20ff04183ed457672cb2618e924cd39504ab1ac485d067db14af0faf6fd"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/microchip/pic/dcd_pic.c",
+      "bytes": 24750,
+      "sha256": "36555ac24b8a06e7daf21b029424a925382e7ab11c7a08428a4913f9dea7ca73"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/microchip/pic/README.md",
+      "bytes": 1733,
+      "sha256": "561f3a86f62afcdfbdcc795336ea47198720a285fbfd38396f686b4e86e32d95"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/microchip/pic32mz/dcd_pic32mz.c",
+      "bytes": 21200,
+      "sha256": "2ccef53929a5793f19a86f47147eb2bcbf6ce73b2d7ca211ba0a8477979bf762"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/microchip/pic32mz/usbhs_registers.h",
+      "bytes": 21488,
+      "sha256": "1379f0126b3e12bca0678eced1061c76faf9a408a9ac7979381f6d1a4b4c745e"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/microchip/samd/dcd_samd.c",
+      "bytes": 15076,
+      "sha256": "7eebfa49072d7ac1178d4d647fd7d41692583670648ddee0fb3cbc1de532840b"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/microchip/samd/hcd_samd.c",
+      "bytes": 26196,
+      "sha256": "690c46aed5b36a37381d7eb731cc608f7cfe3e3b236931e5c3d62276298a9fbf"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/microchip/samg/dcd_samg.c",
+      "bytes": 15070,
+      "sha256": "e63362a03db9df07f7e637c550ded5796a0e230dcec80c44990ecfc89caa22bc"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/microchip/samx7x/dcd_samx7x.c",
+      "bytes": 20904,
+      "sha256": "67b4686ecb0071694517624effdbe63bf2b1a00655dc60624ea98a8b97ec9a62"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/microchip/samx7x/samx7x_common.h",
+      "bytes": 236668,
+      "sha256": "0e71d74480f59b5701b386ed3c441c7f767611cf4a99281087318b1928c02184"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/mindmotion/mm32/dcd_mm32f327x_otg.c",
+      "bytes": 16031,
+      "sha256": "cc89c4a88dc3c9b433eb5c68bdcfc2cf57a57ec99a3c6c016d793edf505d0e08"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nordic/nrf5x/dcd_nrf5x.c",
+      "bytes": 37505,
+      "sha256": "8c4c5f178a7ec1a16b603de9be39a0648c929de70a0b1803d0f1b6b73cfdafca"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nuvoton/nuc120/dcd_nuc120.c",
+      "bytes": 15984,
+      "sha256": "b1f2a1abe7f5d9b81b1d161460f45e26a3f3064f322d835414cef222fe186eb6"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nuvoton/nuc121/dcd_nuc121.c",
+      "bytes": 17699,
+      "sha256": "9c9a300d3b62338bc41baf41ce764ce462af7804e28e7a2ed1115f8aad405240"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nuvoton/nuc505/dcd_nuc505.c",
+      "bytes": 24106,
+      "sha256": "8724ba0d6046d2dbb1e56dea4b3ceb61d548ef5b0527dc14e50f3064f7ffb08b"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nxp/khci/dcd_khci.c",
+      "bytes": 17987,
+      "sha256": "bd27b639204ea2f63c7868b1a9ace674eabd825f53a180c90481ec6d16801d8f"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nxp/khci/hcd_khci.c",
+      "bytes": 20028,
+      "sha256": "06f108a932c13738333aab6705f8b65a5d8254c1aad9d243e01d966a6260524a"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nxp/lpc17_40/dcd_lpc17_40.c",
+      "bytes": 18749,
+      "sha256": "aaf549ac016dd31c89fc750841eb0f1d68840bf49092b5492570697fd7a94702"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nxp/lpc17_40/dcd_lpc17_40.h",
+      "bytes": 5631,
+      "sha256": "a281f42103492519685c5ad3ea4c076dde94e7ac9a1651e2a5974f937c171992"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nxp/lpc_ip3511/dcd_lpc_ip3511.c",
+      "bytes": 22610,
+      "sha256": "f31fbe991270225ed0d8015d8fbd5a337c027a44de82947361762eedb93c829e"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nxp/lpc_ip3516/hcd_lpc_ip3516.c",
+      "bytes": 30115,
+      "sha256": "3aee4c2be061028403de43d215ec59700e7af1ad81949a282cdb8ea4d26180ff"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/nxp/lpc_ip3516/hcd_lpc_ip3516.h",
+      "bytes": 5199,
+      "sha256": "db20dc5491b0e758d4db1ee0d96fe258254c7aee1b763e637e359f55bd66c402"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/ohci/ohci.c",
+      "bytes": 25674,
+      "sha256": "b5da6dd4a7534377b75bc8d5d085baa964d3b524f16f1364e6bbac36b00f8888"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/ohci/ohci.h",
+      "bytes": 12868,
+      "sha256": "8a48ddf4c578e35be7241de75eb73830413dd82d4e2350ef951a5dc5473f5253"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/ohci/ohci_nxp.h",
+      "bytes": 2082,
+      "sha256": "7ec9d24da8beb883a03175f5aa9795084b459846e3c04803169c22d806434fe2"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/raspberrypi/pio_usb/dcd_pio_usb.c",
+      "bytes": 6690,
+      "sha256": "e9f504422499c341fca1066555892860de74e1e11b94dcfcee0f0daead3ed8c0"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/raspberrypi/pio_usb/hcd_pio_usb.c",
+      "bytes": 7549,
+      "sha256": "1a48512c7be4e02c027d7574ca5f383c620a7668a4a4e6d74e2727e082b6365b"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c",
+      "bytes": 21343,
+      "sha256": "e607ed1af819c37eb977af118caa914ab0c0373a098676e4a07791e2bc3f012d"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/raspberrypi/rp2040/hcd_rp2040.c",
+      "bytes": 25641,
+      "sha256": "cfe99774226145d61350593dc005cd3ce48c9d4811544b02ea6c514aa4fdb1f6"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c",
+      "bytes": 17717,
+      "sha256": "7e804f8810831fad6f87d7e5d17a93bcf393499cbd535971b4a503babe81348e"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.h",
+      "bytes": 6152,
+      "sha256": "6e272e7731e1f9357364627a2bc1e0cfb5653383e3b93ad6c12e6075def78abc"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/renesas/rusb2/dcd_rusb2.c",
+      "bytes": 28167,
+      "sha256": "694d39a44952f851dcdc8d2589a285995b7f7f507bc39201799b8daa93db6983"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/renesas/rusb2/hcd_rusb2.c",
+      "bytes": 26033,
+      "sha256": "6c19beda13e2d38c8032efd384efc2060e4b2d626bc95d490b8e486b9b14e573"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/renesas/rusb2/rusb2_common.c",
+      "bytes": 3901,
+      "sha256": "48307038580928448b22218c63c358e105a93b356196509d7c3c9645d60f1e0e"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/renesas/rusb2/rusb2_common.h",
+      "bytes": 2089,
+      "sha256": "2397db97cbfbe1d8108e120fcc860ce8132cc2eb89fdd83345a7a0f5d580d7a9"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/renesas/rusb2/rusb2_ra.h",
+      "bytes": 3434,
+      "sha256": "0b8694f8951aa357dc9c0fa7aeaf4afb058664a74974f26cea45e8ea1258781d"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/renesas/rusb2/rusb2_rx.h",
+      "bytes": 2717,
+      "sha256": "43ad78604662203cef48db5e771e99e79ca63e255c21cf2e029807b6c0d3a971"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/renesas/rusb2/rusb2_type.h",
+      "bytes": 100302,
+      "sha256": "3222380abc55b9d539452e6a3c3863fa9729f1e33c32d12d268bf1652f282113"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/sony/cxd56/dcd_cxd56.c",
+      "bytes": 11943,
+      "sha256": "08554ef1c22606cf576cfb665fde56a1b0fd130c369c759bc62118e1eb9d1a04"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/st/stm32_fsdev/dcd_stm32_fsdev.c",
+      "bytes": 31112,
+      "sha256": "37bb17a9d7f0744570ca4fbc90ec267e8da779636304601d59038a7613bf9b20"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/st/stm32_fsdev/fsdev_at32.h",
+      "bytes": 4084,
+      "sha256": "34ba26dad1ddb9b3dd9fdfb2638c0a2efdb8f0ea81a9c725e1d6b70c92ff3d67"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/st/stm32_fsdev/fsdev_ch32.h",
+      "bytes": 3372,
+      "sha256": "190da6b45712cb3d15994c5d29f4f8f0dab55689f40cea1a548c0a9653f17bd9"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/st/stm32_fsdev/fsdev_common.c",
+      "bytes": 4010,
+      "sha256": "27bbcb732ccef379b0f86fa0e23e5ba2953d467c0add1374958f1e9b23a42993"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/st/stm32_fsdev/fsdev_common.h",
+      "bytes": 17005,
+      "sha256": "7c9563b6ff46ae14560b40be59e9060ad8cb1ec8db94f4409bddaa4b7b1085a6"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/st/stm32_fsdev/fsdev_stm32.h",
+      "bytes": 12432,
+      "sha256": "fb03d0435589a0173884ef84f960ca0bb357e45f5f93a51068835c302d0847c5"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/st/stm32_fsdev/hcd_stm32_fsdev.c",
+      "bytes": 28165,
+      "sha256": "8000d17e24dd67b2d1c5d6f9310901359b02b6a65c85732e3990def6b5f603e4"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/st/typec/typec_stm32.c",
+      "bytes": 16802,
+      "sha256": "52911263357054ce56b9dcfbc855e9b3030732f7e0df6f26874d62715c986b35"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/sunxi/dcd_sunxi_musb.c",
+      "bytes": 38236,
+      "sha256": "33cb02ebd55fbe6ed4276e36bff785ef4b5ac15334a46a1a6441164f5207fc36"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/sunxi/musb_def.h",
+      "bytes": 28340,
+      "sha256": "8b499e480d4dc9340b6eca5da248367da085753461d660483bfda0a4db6b31d3"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c",
+      "bytes": 44916,
+      "sha256": "9a18ec6fdf79198fb95eca1ce4f09806f0281d8bacf2f65bc048306a2339ed0b"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_at32.h",
+      "bytes": 5179,
+      "sha256": "ede3a8116e0bd6a28f6862a4d2abb0c6603626b08c715671e89b84d43557ae39"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_bcm.h",
+      "bytes": 3115,
+      "sha256": "1e4f4d4be1866f11474b5a2daf969ac556775efe8811b03f97d0fa02af6fc7e0"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c",
+      "bytes": 10089,
+      "sha256": "161c50ef7e33e0f2400f09349098c3818e6cb9c93214ca79caa5dad6189e0413"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_common.h",
+      "bytes": 4352,
+      "sha256": "457b65d900a8e0c9562d8c48008d94d48bfb5cf567cf468d833c4cd7510f1250"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_efm32.h",
+      "bytes": 3207,
+      "sha256": "039de8639689f7e70fbdffd9c60116309fb4b6f1bca982f6f3dfa7ab7310d8c5"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_esp32.h",
+      "bytes": 7586,
+      "sha256": "dd6a839ac83cc558d6e7e6eff6916d06bec0c84f4456cb31efd09d2fea039bda"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_gd32.h",
+      "bytes": 3480,
+      "sha256": "09c3e028a779023385672d644f544105645b28307afdf7b4c405522817080ea8"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_info.md",
+      "bytes": 22562,
+      "sha256": "6bbf19d4100fead61144f7364a7e06504f40305fab6a66bd7eac7eecec47b670"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_info.py",
+      "bytes": 8223,
+      "sha256": "8ef1069ca26ad48a2fd843052c44a52969d90647f318969fc3751a483d493bbd"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_nrf.h",
+      "bytes": 5432,
+      "sha256": "3c662e6093a689f17bbf0fe918ab1677a03e64546fd818efd49516d282f90391"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_stm32.h",
+      "bytes": 15988,
+      "sha256": "68ef8da846996878e87cfa6ec9a38188f9d20978eead7393fe4ab71e8d6fd0e6"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_type.h",
+      "bytes": 157641,
+      "sha256": "905db536b05a019f08ad3a477f7a78ea958942dd1fa41af3b95b0915a4b30a80"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/dwc2_xmc.h",
+      "bytes": 3121,
+      "sha256": "e32a0b7b6b2ea765703d39640624fa9350e4469663707a031d425d95f046bfc8"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/synopsys/dwc2/hcd_dwc2.c",
+      "bytes": 57825,
+      "sha256": "6b3dce5ef30929d0892debcdb6b1ee686cb69d3293f9954c992bfd9e41510b81"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/template/dcd_template.c",
+      "bytes": 4590,
+      "sha256": "bc25e9f331c7b3c515bde0904af149e9e1da0a07f1e018daf1ba48481cf333d3"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/template/hcd_template.c",
+      "bytes": 5157,
+      "sha256": "41c3d9b6bae6eb74766d87d4d7473fcd33e96b3e55711933a50a061c63eaabb8"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/ti/msp430x5xx/dcd_msp430x5xx.c",
+      "bytes": 24381,
+      "sha256": "7efb86993734b8e6dbc434b09e5834af9b5b306db5434590852d23301d5440f0"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/valentyusb/eptri/dcd_eptri.c",
+      "bytes": 19329,
+      "sha256": "02bd56a60c6d04177772ef9c7b9f1cbeb64024f9798a3d79ff2cb8e71e9dba93"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/valentyusb/eptri/dcd_eptri.h",
+      "bytes": 1461,
+      "sha256": "518b1ca62b23461533a09d7a25b478319ad767d2c53eb31340905d3f54940055"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/wch/ch32_usbfs_reg.h",
+      "bytes": 12372,
+      "sha256": "f54b541ee1f38d447f0d2d3070a15ddc8b0a7340afb25ba67dce9e4b75694e3f"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/wch/ch32_usbhs_reg.h",
+      "bytes": 12290,
+      "sha256": "207f8b9678f5b1eb4ca1cba81b2a872a54c02c418d2b27efedf2f8dbfaeb7ba5"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/wch/dcd_ch32_usbfs.c",
+      "bytes": 22562,
+      "sha256": "f40bb8b3810b76fb4485cbfc619ffd159f9572cd64288f95ce62148196933713"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/wch/dcd_ch32_usbhs.c",
+      "bytes": 15837,
+      "sha256": "81eaf1a206a637f8e5879b25ef62a51e04571e218e6189f0dd947aa1bce7e57b"
+    },
+    {
+      "path": "third_party/tinyusb/src/portable/wch/hcd_ch32_usbfs.c",
+      "bytes": 23645,
+      "sha256": "0a36d5217d64bc73e34060952bcbd741ed65eb7a13330f02026a0b963eeb32ff"
+    },
+    {
+      "path": "third_party/tinyusb/src/tinyusb.mk",
+      "bytes": 862,
+      "sha256": "9d77094367c052cfa15f46e599cc5bdd0d90d18b8a598cbbe081e3f9a36092f6"
+    },
+    {
+      "path": "third_party/tinyusb/src/tusb.c",
+      "bytes": 17274,
+      "sha256": "c01900e80cd78bafe6c7e13baa4d217aa16965e533c1cb2dd8cb770f8c602469"
+    },
+    {
+      "path": "third_party/tinyusb/src/tusb.h",
+      "bytes": 5219,
+      "sha256": "8f621c8115d1053ee5a3ad7095db66010c59cf75414c18bc8bcabb312ca42c08"
+    },
+    {
+      "path": "third_party/tinyusb/src/tusb_option.h",
+      "bytes": 31362,
+      "sha256": "48277add5cac4b05f0a93c9c3c78a8cec1bfcade4c578191157254344e76ffb3"
+    },
+    {
+      "path": "third_party/tinyusb/src/typec/pd_types.h",
+      "bytes": 10200,
+      "sha256": "e02eabcafb5b845c389d9560787aa07bcff5fc35d4b8683f934e62990ab756b2"
+    },
+    {
+      "path": "third_party/tinyusb/src/typec/tcd.h",
+      "bytes": 4335,
+      "sha256": "a3206bd6faee30370d4fb2cb4d7eddbc66e0eab9dddf5acce1cd99631d53f2ce"
+    },
+    {
+      "path": "third_party/tinyusb/src/typec/usbc.c",
+      "bytes": 7628,
+      "sha256": "7d2eabf9ac72db73e30700ba8a9cd2d9b945f1b0a85156d57ba6470d1e548531"
+    },
+    {
+      "path": "third_party/tinyusb/src/typec/usbc.h",
+      "bytes": 3382,
+      "sha256": "cecb1ec532ce1fe7e57e58ea77d5f4f63bbad6d362a4e54f131081d828db7c34"
+    }
+  ]
+}
