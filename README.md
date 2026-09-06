@@ -196,6 +196,78 @@ location without Git metadata or prior build caches and repeats both host and
 RT1170 Debug/Release builds with network access unnecessary. The command and
 retained evidence are specified in [the local Phase 1 runbook](docs/phase1-implementation.md).
 
+## Phase 1 test-waveform and impairment corpus
+
+`host/signal_lab/` is the Phase 1 (Python) form of the waveform-agnostic
+impairment engine described in the phased prompt (`docs/Prompt — Phased M110B
+Test Waveform and Dynamic Interference Generator.md`). It processes 48 kHz mono PCM streams in 4096-frame blocks through ordered
+stages (CW tone, static crashes, fades, band-limited AWGN, sample
+deletion/duplication) driven by a portable scenario document and a seed; it
+never inspects the protocol that produced the samples. Its level, noise-band
+and seeding conventions are adopted from `tools/pcm_stress.py` (import
+`m110-025`) so the shared models reproduce that renderer bit-exactly. The
+three host scripts around it take the M110 producer and decoder as explicit
+runtime executables, exactly like the rest of this project:
+
+```powershell
+$tx  = '..\..\build\host-windows-release\tools\m110_tx_to_pcm.exe'
+$dec = '..\..\build\host-windows-release\tools\m110_app_decode.exe'
+python host/corpus_phase1.py --tx $tx --decoder $dec --stage all --jobs 4   # refs -> validate -> render -> score -> summary
+python host/corpus_phase1.py --stage verify                                  # re-render every scenario, compare PCM hashes
+python host/render_scenario.py --scenario my-case.json --output my-case.wav  # one scenario
+python host/m110_score.py --decoder $dec --engine siso <wav>...              # score arbitrary WAVs
+python -m unittest tests.test_signal_lab -v
+```
+
+From Git Bash the WinLibs `mingw64/bin` directory must precede Git's own on
+`PATH` before the M110 executables are run (see the parent repository's
+`docs/process/M110-improvement-handoff.md`).
+
+The corpus definition is [corpus/phase1-corpus.json](corpus/phase1-corpus.json);
+the rendered corpus lives under `test-vectors/simulated-interference/<MODE>/`
+with a JSON sidecar beside every WAV, per-file `*.siso.score.json` /
+`*.adaptive.score.json` results, and hash-bearing manifests plus score CSVs
+under `manifests/`. Only `payload/` and `manifests/` are tracked; everything
+else is regenerated bit-exactly from the spec. The Phase 1 results and the
+Phase 2 recommendation are in
+[docs/phase1-test-waveform-report.md](docs/phase1-test-waveform-report.md).
+
+## Phase 2 and 3: portable impairment engine and real-time RT1170 impairment
+
+`signal-lab/` is the portable C++23 form of the same engine: PCM16 in, ordered
+impairment stages (band-limited AWGN, CW, static crashes, fades, sample
+deletion/duplication), PCM16 out, with no heap, no exceptions and no C-library
+transcendentals so the host renderer and the RT1170 produce sample-identical
+streams (verified by the FNV-1a digests both report). The host library
+`wfg_signal_lab`, the renderer `signal_lab_render` and the test
+`wfg_signal_lab_tests` build with the host presets; the player firmware
+compiles the same sources (`signal-lab/sources.cmake`).
+
+```powershell
+build\host-release\host\render\signal_lab_render.exe --scenario case.json --source clean.wav --output impaired.wav --sidecar impaired.json --target-scenario PLAY.SCN
+```
+
+`--target-scenario` writes the scenario with the measured `reference_rms`
+injected; copy it to `G:\WG\PLAY.SCN` next to `PLAY.WAV`. The player image
+loads it when `PLAY` starts and impairs every 4 KiB SD chunk in the player
+task. The chain is producer-paced: SD read and engine feed a 65 536-frame
+(1.37 s) output FIFO in OCRAM2 (generator-local linker script
+`cmake/MIMXRT1176xxxxx_cm7_flexspi_nor_wfg.ld`), producing ahead of real time
+until the 800 ms high watermark and sleeping until the 500 ms wake watermark;
+only the 128-frame audio hook that drains the FIFO into SAI/eDMA has a hard
+deadline. `STATUS` reports the engine (`engine_state`, `engine_error`,
+`engine_frames_in/out`, `engine_clipped`, `engine_digest_hi/lo`,
+`engine_source_digest_hi/lo`, `engine_max_block_cycles`,
+`engine_events_applied/dropped`, `engine_arena_bytes`) and the FIFO/producer
+safety metrics (`ring_capacity_frames`, `ring_high/wake_watermark_frames`,
+`ring_critical_frames`, `ring_avg_frames`, `ring_min_pre_eof_frames`,
+`ring_critical_events`, `producer_rate_sps`, `producer_worst_block_cycles`,
+`producer_sleeps`, `max_sd_read_cycles`, `underruns`). Without a `PLAY.SCN`
+the player is the clean pass-through it was before. `host/capture-session.ps1` runs `waveform_capture`
+as a controlled session (READY, stop file, STOP, FINAL) for analog end-to-end
+checks. Results, digests and the exact procedure are in
+[docs/phase2-3-portable-engine-report.md](docs/phase2-3-portable-engine-report.md).
+
 ## Project records
 
 - [Phase 1 implementation and qualification contract](docs/phase1-implementation.md)

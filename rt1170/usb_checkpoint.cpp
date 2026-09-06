@@ -185,6 +185,29 @@ void queue_status() noexcept
     append_field("audio_tx_errors", codec.tx_errors());
     append_field("audio_max_backlog_blocks", codec.max_backlog_blocks());
     append_field("audio_max_block_cycles", codec.max_block_cycles());
+    append_field("engine_state", player.engine_state);
+    append_field("engine_error", player.engine_error);
+    append_field("engine_stages", player.engine_stages);
+    append_field("engine_frames_in", player.engine_frames_in);
+    append_field("engine_frames_out", player.engine_frames_out);
+    append_field("engine_clipped", player.engine_clipped);
+    append_field("engine_digest_hi", player.engine_digest_hi);
+    append_field("engine_digest_lo", player.engine_digest_lo);
+    append_field("engine_source_digest_hi", player.engine_source_digest_hi);
+    append_field("engine_source_digest_lo", player.engine_source_digest_lo);
+    append_field("engine_max_block_cycles", player.engine_max_block_cycles);
+    append_field("engine_events_applied", player.engine_events_applied);
+    append_field("engine_events_dropped", player.engine_events_dropped);
+    append_field("engine_arena_bytes", player.engine_arena_bytes);
+    append_field("ring_capacity_frames", player.ring_capacity_frames);
+    append_field("ring_high_watermark_frames", player.ring_high_watermark_frames);
+    append_field("ring_wake_watermark_frames", player.ring_wake_watermark_frames);
+    append_field("ring_critical_frames", player.ring_critical_frames);
+    append_field("ring_avg_frames", player.ring_avg_frames);
+    append_field("ring_critical_events", player.ring_critical_events);
+    append_field("producer_rate_sps", player.producer_rate_sps);
+    append_field("producer_worst_block_cycles", player.producer_worst_block_cycles);
+    append_field("producer_sleeps", player.producer_sleeps);
     finish_response();
 }
 

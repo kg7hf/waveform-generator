@@ -25,6 +25,62 @@
       "license_identifier": "unspecified",
       "dependencies": "Python standard library only",
       "notes": "First-party engineering analysis tool; it does not establish M110 formal conformance."
+    },
+    {
+      "path": "host/signal_lab/",
+      "purpose": "Waveform-agnostic PCM impairment engine (CW, static crashes, fades, sample slips, band-limited AWGN) with scenario/sidecar conventions.",
+      "license_identifier": "unspecified",
+      "dependencies": "Python standard library plus NumPy",
+      "notes": "First-party Phase 1 engineering tool; results are engineering evidence only, never formal M110 conformance."
+    },
+    {
+      "path": "host/m110_reference.py",
+      "purpose": "Renders perfect M110 reference WAVs with the explicit external transmitter and a PN-11 payload; writes reference sidecars.",
+      "license_identifier": "unspecified",
+      "dependencies": "Python standard library plus NumPy",
+      "notes": "First-party Phase 1 engineering tool; results are engineering evidence only, never formal M110 conformance."
+    },
+    {
+      "path": "host/m110_score.py",
+      "purpose": "Runs the explicit external m110_app_decode on corpus WAVs and records mode/EOM/BER/loss-of-lock/alignment results.",
+      "license_identifier": "unspecified",
+      "dependencies": "Python standard library",
+      "notes": "First-party Phase 1 engineering tool; results are engineering evidence only, never formal M110 conformance."
+    },
+    {
+      "path": "host/corpus_phase1.py",
+      "purpose": "Phase 1 corpus orchestrator: references, validation, impaired renders, scoring, manifests, exact-regeneration verify.",
+      "license_identifier": "unspecified",
+      "dependencies": "Python standard library plus NumPy",
+      "notes": "First-party Phase 1 engineering tool; results are engineering evidence only, never formal M110 conformance."
+    },
+    {
+      "path": "host/render_scenario.py",
+      "purpose": "Command-line entry for one signal_lab scenario render.",
+      "license_identifier": "unspecified",
+      "dependencies": "Python standard library plus NumPy",
+      "notes": "First-party Phase 1 engineering tool; results are engineering evidence only, never formal M110 conformance."
+    },
+    {
+      "path": "signal-lab/",
+      "purpose": "Portable C++23 waveform-agnostic impairment engine (deterministic math, PCG32, fixed-capacity JSON scenario reader, five stages, PCM16 engine with stream digests) shared by the host renderer and the RT1170 player.",
+      "license_identifier": "unspecified",
+      "dependencies": "C++23 standard library only (no libm transcendentals)",
+      "notes": "First-party Phase 2/3 engineering tool; results are engineering evidence only, never formal M110 conformance."
+    },
+    {
+      "path": "host/render/",
+      "purpose": "Host WAV-rendering backend for the signal-lab engine; writes the impaired WAV, a JSON sidecar and the target scenario with reference_rms injected.",
+      "license_identifier": "unspecified",
+      "dependencies": "C++23 standard library",
+      "notes": "First-party Phase 2/3 engineering tool; results are engineering evidence only, never formal M110 conformance."
+    },
+    {
+      "path": "host/capture-session.ps1",
+      "purpose": "Controlled waveform_capture session (READY, stop file, STOP, FINAL) for analog end-to-end checks.",
+      "license_identifier": "unspecified",
+      "dependencies": "PowerShell 7",
+      "notes": "First-party Phase 2/3 engineering tool; results are engineering evidence only, never formal M110 conformance."
     }
   ],
   "git_metadata_policy": "Historical donor commit is provenance only. Exported builds use a local source manifest; live Git metadata is optional.",
@@ -394,12 +450,13 @@
       "destination": "cmake/rt1170_flags.cmake",
       "license_identifier": "unspecified",
       "retained_notice_paths": [],
-      "local_sha256": "dbe7f1580e38d4287ab3fe6d3e6ed9ad6069972fb3b27fc94bdd56de252a9571",
-      "local_size_bytes": 2528,
+      "local_sha256": "164f22144c68307d5b0585d7aace047de0678d2b7570e0d2d539d1af23333bf7",
+      "local_size_bytes": 2668,
       "adaptations": [
-        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below."
+        "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below.",
+        "2026-09-06: links against the generator-local cmake/MIMXRT1176xxxxx_cm7_flexspi_nor_wfg.ld (import m110-026) instead of the vendor script."
       ],
-      "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+      "notes": "Materialized local bytes re-verified on 2026-09-06 after the linker-script change; no donor path is a build input."
     },
     {
       "id": "m110-024",
@@ -416,6 +473,39 @@
         "New deterministic 48-frame PCM16 tone checkpoint, using the donor tone program as a behavior reference."
       ],
       "notes": "Materialized local bytes verified on 2026-09-05; no donor path is a build input."
+    },
+    {
+      "id": "m110-025",
+      "status": "materialized",
+      "donor_path": "tools/pcm_stress.py",
+      "donor_sha256": "771c5eb74a013bb6f762835887dd510af23f6e14e27db9d65cafd12f9b836bf4",
+      "donor_size_bytes": 28069,
+      "destination": "host/signal_lab/awgn.py",
+      "license_identifier": "unspecified",
+      "retained_notice_paths": [],
+      "local_sha256": "40c22aa69c09b8ce633fd667f3dbc03797d0b690b2b4333b8702e9815199c8d2",
+      "local_size_bytes": 3874,
+      "adaptations": [
+        "Band-limited noise kernel (513-tap Blackman-windowed sinc 300-3300 Hz, L2-normalised, 8192-point overlap-save), the reference-interval RMS level convention, the raised-cosine fade shape, the CW tone/ramp model and the PCG64 SeedSequence([seed, family, index]) seeding were adopted from the donor so the shared models reproduce it bit-exactly (tests/test_signal_lab.py::test_matches_pcm_stress_for_shared_models).",
+        "Restructured as block-streaming Impairment stages (host/signal_lab/*.py) so the same shape ports to the Phase 2 C++ engine; static crashes (exponential-decay ringing) and sample deletion/duplication are new, not donor code."
+      ],
+      "notes": "Materialized on 2026-09-06 for the Phase 1 test-waveform generator; the donor is never imported at run time (standalone boundary)."
+    },
+    {
+      "id": "m110-026",
+      "status": "materialized",
+      "donor_path": "tools/waveform-generator/third_party/mcux-sdk/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm7_flexspi_nor.ld",
+      "donor_sha256": "f85115289841cc4f5ed6dd1d0f739b20a6b06cbfe7163686e9c268188dde823a",
+      "donor_size_bytes": 8704,
+      "destination": "cmake/MIMXRT1176xxxxx_cm7_flexspi_nor_wfg.ld",
+      "license_identifier": "BSD-3-Clause (NXP MCUXpresso SDK)",
+      "retained_notice_paths": [],
+      "local_sha256": "cf856f331ac5694742127e173275d2ea0ac921d9bc8b5ef97ecf863e7dfb70c7",
+      "local_size_bytes": 9278,
+      "adaptations": [
+        "Adds a NOLOAD .ocram output section placed in m_data2 (OCRAM2) for the post-impairment output FIFO; everything else is the locked vendor script byte-for-byte."
+      ],
+      "notes": "Materialized on 2026-09-06 for the watermark-paced output FIFO (Phase 3 revision); the vendor script is the donor, not a build input."
     }
   ]
 }

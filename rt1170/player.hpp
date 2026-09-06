@@ -63,6 +63,43 @@ struct PlayerSnapshot
     std::uint32_t underruns;
     std::uint32_t first_underrun_frame;
     std::uint32_t max_sd_read_cycles;
+    // Phase 3 impairment engine (2:/WG/PLAY.SCN): 0 = no scenario (clean pass-through),
+    // 1 = active, 2 = scenario rejected (playback continues clean, see engine_error).
+    std::uint32_t engine_state;
+    std::uint32_t engine_error;
+    std::uint32_t engine_stages;
+    std::uint32_t engine_frames_in;
+    std::uint32_t engine_frames_out;
+    std::uint32_t engine_clipped;
+    std::uint32_t engine_digest_hi;
+    std::uint32_t engine_digest_lo;
+    std::uint32_t engine_source_digest_hi;
+    std::uint32_t engine_source_digest_lo;
+    std::uint32_t engine_max_block_cycles;
+    std::uint32_t engine_events_applied;
+    std::uint32_t engine_events_dropped;
+    std::uint32_t engine_arena_bytes;
+    // Post-impairment output FIFO (OCRAM) and the producer that fills it.
+    std::uint32_t ring_capacity_frames;
+    std::uint32_t ring_high_watermark_frames;
+    std::uint32_t ring_wake_watermark_frames;
+    std::uint32_t ring_critical_frames;
+    std::uint32_t ring_avg_frames;
+    std::uint32_t ring_critical_events;
+    std::uint32_t producer_rate_sps;
+    std::uint32_t producer_worst_block_cycles;
+    std::uint32_t producer_sleeps;
+};
+
+enum class EngineError : std::uint32_t
+{
+    none = 0U,
+    scenario_open = 1U,
+    scenario_read = 2U,
+    scenario_parse = 3U,
+    missing_reference_rms = 4U,
+    configure_failed = 5U,
+    scenario_too_large = 6U,
 };
 
 /*

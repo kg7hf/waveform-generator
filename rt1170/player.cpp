@@ -4,6 +4,8 @@
 #include "platform/board.hpp"
 #include "platform/waveform_msc.h"
 #include "platform/wm8960_codec.hpp"
+#include "signal_lab/mixer.hpp"
+#include "signal_lab/scenario.hpp"
 
 extern "C"
 {
@@ -25,17 +27,31 @@ namespace
 
 constexpr char drive_path[] = "2:/";
 constexpr char playback_path[] = "2:/WG/PLAY.WAV";
-constexpr std::uint32_t player_task_stack_words = 1536U;
+constexpr char scenario_path[] = "2:/WG/PLAY.SCN";
+constexpr std::uint32_t scenario_capacity = 8192U;
+// The impairment engine runs in this task; its deterministic math and the FatFs
+// scenario read need more headroom than the original 1536-word P1.2 stack.
+constexpr std::uint32_t player_task_stack_words = 4096U;
 constexpr UBaseType_t player_task_priority = 4U;
 constexpr std::uint32_t codec_frames_per_block = 128U;
-constexpr std::uint32_t ring_capacity_frames = 32768U;
+// Post-impairment output FIFO in OCRAM2: the only large buffer in the chain and the
+// hard real-time boundary. The producer (SD read -> impairment engine) runs ahead of
+// real time until the high watermark, sleeps until the wake watermark, and is never
+// deadline-bound per block; only the audio hook draining this ring has a deadline.
+constexpr std::uint32_t ring_capacity_frames = 65536U;                      // 1365 ms
 constexpr std::uint32_t ring_mask = ring_capacity_frames - 1U;
-constexpr std::uint32_t prefill_frames = ring_capacity_frames / 2U;
-constexpr std::uint32_t read_buffer_bytes = 8192U;
+constexpr std::uint32_t ring_high_watermark_frames = 38400U;                // 800 ms: stop producing
+constexpr std::uint32_t ring_wake_watermark_frames = 24000U;                // 500 ms: resume producing
+constexpr std::uint32_t ring_critical_frames = 4800U;                       // 100 ms: count as a near-miss
+// One SD chunk = one engine block (signal_lab::engine_block_frames PCM16 frames).
+constexpr std::uint32_t read_buffer_bytes = 2U * signal_lab::engine_block_frames;
 constexpr std::uint32_t eof_drain_frames = 3U * codec_frames_per_block;
 
 static_assert((ring_capacity_frames & ring_mask) == 0U);
 static_assert((read_buffer_bytes % sizeof(std::int16_t)) == 0U);
+static_assert(ring_high_watermark_frames + 2U * signal_lab::engine_capacity_frames <= ring_capacity_frames,
+              "a full engine block must always fit above the high watermark");
+static_assert(ring_wake_watermark_frames < ring_high_watermark_frames && ring_critical_frames < ring_wake_watermark_frames);
 
 struct RuntimeCounters
 {
@@ -59,10 +75,46 @@ struct RuntimeCounters
     volatile std::uint32_t underruns{};
     volatile std::uint32_t first_underrun_frame{};
     volatile std::uint32_t max_sd_read_cycles{};
+    // Output-FIFO depth statistics sampled by the audio hook, and producer pacing.
+    volatile std::uint64_t ring_fill_sum{};
+    volatile std::uint32_t ring_fill_samples{};
+    volatile std::uint32_t ring_critical_events{};
+    volatile bool ring_below_critical{};
+    volatile std::uint64_t producer_active_cycles{};
+    volatile std::uint32_t producer_frames{};
+    volatile std::uint32_t producer_worst_block_cycles{};
+    volatile std::uint32_t producer_sleeps{};
 };
 
-alignas(32) std::array<std::int16_t, ring_capacity_frames> sample_ring{};
+struct EngineCounters
+{
+    volatile std::uint32_t state{};
+    volatile std::uint32_t error{};
+    volatile std::uint32_t stages{};
+    volatile std::uint32_t frames_in{};
+    volatile std::uint32_t frames_out{};
+    volatile std::uint32_t clipped{};
+    volatile std::uint32_t digest_hi{};
+    volatile std::uint32_t digest_lo{};
+    volatile std::uint32_t source_digest_hi{};
+    volatile std::uint32_t source_digest_lo{};
+    volatile std::uint32_t max_block_cycles{};
+    volatile std::uint32_t events_applied{};
+    volatile std::uint32_t events_dropped{};
+    volatile std::uint32_t arena_bytes{};
+};
+
+// The output FIFO lives in OCRAM2 (.ocram, NOLOAD; cmake/MIMXRT1176xxxxx_cm7_flexspi_nor_wfg.ld).
+// Only the CPU touches it (producer writes, audio hook reads), so cacheability is harmless.
+__attribute__((section(".ocram.output_ring"))) alignas(32) std::int16_t sample_ring[ring_capacity_frames];
 alignas(32) std::array<std::uint8_t, read_buffer_bytes> read_buffer{};
+// Phase 3 impairment engine state: static, sized at compile time, never touched by the audio hook.
+signal_lab::Engine engine{};
+signal_lab::Scenario scenario{};
+alignas(32) std::array<std::int16_t, signal_lab::engine_capacity_frames> engine_output{};
+std::array<char, scenario_capacity> scenario_text{};
+EngineCounters engine_counters{};
+bool engine_active{};
 StaticTask_t player_task_control{};
 StackType_t player_task_stack[player_task_stack_words]{};
 TaskHandle_t player_task_handle{};
@@ -271,6 +323,25 @@ void player_audio_hook(void*, const std::uint32_t*, std::uint32_t* playback,
     {
         counters.ring_min_pre_eof_frames = fill_after;
     }
+    // Depth statistics: one sample per audio block gives the average depth and
+    // counts each excursion below the critical level (before EOF) as one event.
+    counters.ring_fill_sum = counters.ring_fill_sum + fill_after;
+    counters.ring_fill_samples = counters.ring_fill_samples + 1U;
+    if (!eof_enqueued)
+    {
+        if (fill_after < ring_critical_frames)
+        {
+            if (!counters.ring_below_critical)
+            {
+                counters.ring_below_critical = true;
+                counters.ring_critical_events = counters.ring_critical_events + 1U;
+            }
+        }
+        else
+        {
+            counters.ring_below_critical = false;
+        }
+    }
     if (copied < frames)
     {
         counters.eof_silence_frames = counters.eof_silence_frames +
@@ -342,7 +413,7 @@ std::uint32_t push_samples(const std::uint8_t* source,
         return 0U;
     }
 
-    std::memcpy(sample_ring.data() + ring_offset, source,
+    std::memcpy(sample_ring + ring_offset, source,
                 frames * sizeof(std::int16_t));
     __DMB();
     taskENTER_CRITICAL();
@@ -379,6 +450,94 @@ bool read_payload_chunk(std::uint32_t bytes_remaining,
     }
     bytes_staged = actual;
     return true;
+}
+
+void set_engine_error(EngineError error) noexcept
+{
+    taskENTER_CRITICAL();
+    engine_counters.state = 2U;
+    engine_counters.error = static_cast<std::uint32_t>(error);
+    taskEXIT_CRITICAL();
+}
+
+void publish_engine_counters(std::uint32_t block_cycles) noexcept
+{
+    const signal_lab::EngineStats& stats = engine.stats();
+    taskENTER_CRITICAL();
+    engine_counters.frames_in = static_cast<std::uint32_t>(stats.frames_in);
+    engine_counters.frames_out = static_cast<std::uint32_t>(stats.frames_out);
+    engine_counters.clipped = static_cast<std::uint32_t>(stats.clipped_samples);
+    engine_counters.digest_hi = static_cast<std::uint32_t>(stats.output_digest >> 32U);
+    engine_counters.digest_lo = static_cast<std::uint32_t>(stats.output_digest & 0xFFFFFFFFU);
+    engine_counters.source_digest_hi = static_cast<std::uint32_t>(stats.source_digest >> 32U);
+    engine_counters.source_digest_lo = static_cast<std::uint32_t>(stats.source_digest & 0xFFFFFFFFU);
+    engine_counters.events_applied = stats.events_applied;
+    engine_counters.events_dropped = stats.events_dropped;
+    if (block_cycles > engine_counters.max_block_cycles)
+    {
+        engine_counters.max_block_cycles = block_cycles;
+    }
+    taskEXIT_CRITICAL();
+}
+
+// Load 2:/WG/PLAY.SCN if present and configure the engine for this WAV. A missing
+// scenario means clean pass-through; a rejected one is reported through STATUS
+// (engine_state=2, engine_error) and playback continues unimpaired so the card
+// never becomes unplayable because of a bad document.
+FIL scenario_file{}; // static: a FIL carries a sector buffer and must not live on the task stack
+
+void load_scenario(std::uint32_t file_frames) noexcept
+{
+    engine_active = false;
+    const FRESULT opened = f_open(&scenario_file, scenario_path, FA_READ);
+    if (opened == FR_NO_FILE || opened == FR_NO_PATH)
+    {
+        return;
+    }
+    if (opened != FR_OK)
+    {
+        set_engine_error(EngineError::scenario_open);
+        return;
+    }
+    const FSIZE_t size = f_size(&scenario_file);
+    if (size >= scenario_text.size())
+    {
+        (void)f_close(&scenario_file);
+        set_engine_error(EngineError::scenario_too_large);
+        return;
+    }
+    UINT bytes_read{};
+    const FRESULT read = f_read(&scenario_file, scenario_text.data(), static_cast<UINT>(size), &bytes_read);
+    (void)f_close(&scenario_file);
+    if (read != FR_OK || bytes_read != static_cast<UINT>(size))
+    {
+        set_engine_error(EngineError::scenario_read);
+        return;
+    }
+    scenario_text[bytes_read] = '\0';
+    const char* error = nullptr;
+    if (!signal_lab::parse_scenario(scenario_text.data(), bytes_read, scenario, &error))
+    {
+        set_engine_error(EngineError::scenario_parse);
+        return;
+    }
+    if (!scenario.has_reference_rms)
+    {
+        set_engine_error(EngineError::missing_reference_rms);
+        return;
+    }
+    if (!engine.configure(scenario, scenario.reference_rms, file_frames, &error))
+    {
+        set_engine_error(EngineError::configure_failed);
+        return;
+    }
+    taskENTER_CRITICAL();
+    engine_counters.state = 1U;
+    engine_counters.error = 0U;
+    engine_counters.stages = engine.stats().stage_count;
+    engine_counters.arena_bytes = static_cast<std::uint32_t>(engine.stats().arena_bytes_used);
+    taskEXIT_CRITICAL();
+    engine_active = true;
 }
 
 void stop_codec_after_fault() noexcept
@@ -438,32 +597,17 @@ void player_task_entry(void*) noexcept
         suspend_player_task();
     }
 
+    load_scenario(payload.bytes / sizeof(std::int16_t));
+
     set_state(PlayerState::buffering);
     std::uint32_t bytes_remaining = payload.bytes;
-    std::uint32_t bytes_staged{};
-    std::uint32_t staged_offset{};
     bool codec_started{};
 
+    // Producer: SD chunk -> impairment engine -> output FIFO. Runs ahead of real
+    // time until the high watermark, then sleeps until the wake watermark. A block
+    // is never deadline-bound; only the audio hook draining the FIFO is.
     while (!faulted)
     {
-        if (bytes_staged != 0U)
-        {
-            const auto pushed = push_samples(read_buffer.data() + staged_offset,
-                                             bytes_staged);
-            if (pushed == 0U)
-            {
-                vTaskDelay(1U);
-                continue;
-            }
-            staged_offset += pushed;
-            bytes_staged -= pushed;
-            if (!codec_started && ring_fill() >= prefill_frames)
-            {
-                codec_started = start_codec();
-            }
-            continue;
-        }
-
         if (bytes_remaining == 0U)
         {
             __DMB();
@@ -476,12 +620,65 @@ void player_task_entry(void*) noexcept
             break;
         }
 
+        const auto fill = ring_fill();
+        if (fill >= ring_high_watermark_frames)
+        {
+            if (!codec_started)
+            {
+                codec_started = start_codec();
+            }
+            taskENTER_CRITICAL();
+            counters.producer_sleeps = counters.producer_sleeps + 1U;
+            taskEXIT_CRITICAL();
+            // Sleep until the consumer has drained to the wake watermark (48 frames/ms).
+            const auto surplus = fill - ring_wake_watermark_frames;
+            vTaskDelay(pdMS_TO_TICKS(surplus / 48U > 0U ? surplus / 48U : 1U));
+            continue;
+        }
+
+        const auto block_begin = m110::platform_cycle_counter();
+        std::uint32_t bytes_staged{};
         if (!read_payload_chunk(bytes_remaining, bytes_staged))
         {
             break;
         }
-        staged_offset = 0U;
         bytes_remaining -= bytes_staged;
+        const std::uint8_t* staged_source = read_buffer.data();
+        if (engine_active)
+        {
+            // Impair this chunk in place of the clean bytes. The engine may lengthen or
+            // shorten the chunk (sample slips); the push below handles any size.
+            const auto* clean = reinterpret_cast<const std::int16_t*>(read_buffer.data());
+            const auto frames = static_cast<std::size_t>(bytes_staged / sizeof(std::int16_t));
+            const auto engine_begin = m110::platform_cycle_counter();
+            const std::size_t produced = engine.process(clean, frames, engine_output.data(), engine_output.size());
+            publish_engine_counters(m110::platform_cycle_counter() - engine_begin);
+            staged_source = reinterpret_cast<const std::uint8_t*>(engine_output.data());
+            bytes_staged = static_cast<std::uint32_t>(produced * sizeof(std::int16_t));
+        }
+        // Below the high watermark a whole block always fits (static_assert above),
+        // so this loop only spins on a ring wrap boundary.
+        std::uint32_t staged_offset{};
+        while (bytes_staged != 0U && !faulted)
+        {
+            const auto pushed = push_samples(staged_source + staged_offset, bytes_staged);
+            if (pushed == 0U)
+            {
+                vTaskDelay(1U);
+                continue;
+            }
+            staged_offset += pushed;
+            bytes_staged -= pushed;
+        }
+        const auto block_cycles = m110::platform_cycle_counter() - block_begin;
+        taskENTER_CRITICAL();
+        counters.producer_active_cycles = counters.producer_active_cycles + block_cycles;
+        counters.producer_frames = counters.producer_frames + staged_offset / sizeof(std::int16_t);
+        if (block_cycles > counters.producer_worst_block_cycles)
+        {
+            counters.producer_worst_block_cycles = block_cycles;
+        }
+        taskEXIT_CRITICAL();
     }
 
     if (faulted)
@@ -597,6 +794,35 @@ PlayerSnapshot player_snapshot() noexcept
         .underruns = counters.underruns,
         .first_underrun_frame = counters.first_underrun_frame,
         .max_sd_read_cycles = counters.max_sd_read_cycles,
+        .engine_state = engine_counters.state,
+        .engine_error = engine_counters.error,
+        .engine_stages = engine_counters.stages,
+        .engine_frames_in = engine_counters.frames_in,
+        .engine_frames_out = engine_counters.frames_out,
+        .engine_clipped = engine_counters.clipped,
+        .engine_digest_hi = engine_counters.digest_hi,
+        .engine_digest_lo = engine_counters.digest_lo,
+        .engine_source_digest_hi = engine_counters.source_digest_hi,
+        .engine_source_digest_lo = engine_counters.source_digest_lo,
+        .engine_max_block_cycles = engine_counters.max_block_cycles,
+        .engine_events_applied = engine_counters.events_applied,
+        .engine_events_dropped = engine_counters.events_dropped,
+        .engine_arena_bytes = engine_counters.arena_bytes,
+        .ring_capacity_frames = ring_capacity_frames,
+        .ring_high_watermark_frames = ring_high_watermark_frames,
+        .ring_wake_watermark_frames = ring_wake_watermark_frames,
+        .ring_critical_frames = ring_critical_frames,
+        .ring_avg_frames = counters.ring_fill_samples != 0U
+                               ? static_cast<std::uint32_t>(counters.ring_fill_sum / counters.ring_fill_samples)
+                               : 0U,
+        .ring_critical_events = counters.ring_critical_events,
+        .producer_rate_sps = counters.producer_active_cycles != 0U
+                                 ? static_cast<std::uint32_t>((static_cast<std::uint64_t>(counters.producer_frames) *
+                                                               m110::platform_cycle_counter_frequency_hz()) /
+                                                              counters.producer_active_cycles)
+                                 : 0U,
+        .producer_worst_block_cycles = counters.producer_worst_block_cycles,
+        .producer_sleeps = counters.producer_sleeps,
     };
     taskEXIT_CRITICAL();
     return snapshot;

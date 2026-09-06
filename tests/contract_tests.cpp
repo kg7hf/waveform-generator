@@ -192,7 +192,9 @@ int main()
 
     static_assert(waveform_generator::status_response_worst_case_bytes() <=
                   waveform_generator::cdc_response_capacity);
-    static_assert(waveform_generator::status_response_worst_case_bytes() == 1465U);
+    // 1465 bytes for the P1.2 field set, 413 bytes for the fourteen Phase 3 engine_* fields,
+    // 294 bytes for the nine output-FIFO / producer fields.
+    static_assert(waveform_generator::status_response_worst_case_bytes() == 2172U);
 
     constexpr std::array<std::uint8_t, 6> inputs{0U, 1U, 2U, 50U, 70U, 100U};
     constexpr std::array<std::uint8_t, 6> expected{0x00U, 0x30U, 0x31U,

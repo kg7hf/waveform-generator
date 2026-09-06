@@ -125,8 +125,15 @@ elseif(WFG_FIRMWARE_IMAGE STREQUAL "player")
     list(APPEND wfg_local_c_sources
         platform/waveform_sd.c
         platform/waveform_msc.c)
+    # Phase 3: the portable impairment engine runs in the player task between the
+    # SD read and the ring push. Same sources and float rules as the host renderer.
+    include("${WFG_ROOT}/signal-lab/sources.cmake")
+    set_source_files_properties(${WFG_SIGNAL_LAB_SOURCES} PROPERTIES
+        COMPILE_OPTIONS "${WFG_SIGNAL_LAB_COMPILE_OPTIONS}")
+    target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE "${WFG_SIGNAL_LAB_INCLUDE}")
     target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
         player.cpp
+        ${WFG_SIGNAL_LAB_SOURCES}
         platform/waveform_sd.c
         platform/waveform_msc.c
         "${SdkRootDirPath}/drivers/usdhc/fsl_usdhc.c"

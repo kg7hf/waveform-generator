@@ -5,7 +5,7 @@
 namespace waveform_generator
 {
 
-inline constexpr std::size_t cdc_response_capacity = 1536U;
+inline constexpr std::size_t cdc_response_capacity = 2560U;
 inline constexpr std::size_t max_uint32_decimal_chars = 10U;
 
 constexpr std::size_t literal_length(const char* value) noexcept
@@ -79,6 +79,29 @@ inline constexpr const char* status_field_names[] = {
     "audio_tx_errors",
     "audio_max_backlog_blocks",
     "audio_max_block_cycles",
+    "engine_state",
+    "engine_error",
+    "engine_stages",
+    "engine_frames_in",
+    "engine_frames_out",
+    "engine_clipped",
+    "engine_digest_hi",
+    "engine_digest_lo",
+    "engine_source_digest_hi",
+    "engine_source_digest_lo",
+    "engine_max_block_cycles",
+    "engine_events_applied",
+    "engine_events_dropped",
+    "engine_arena_bytes",
+    "ring_capacity_frames",
+    "ring_high_watermark_frames",
+    "ring_wake_watermark_frames",
+    "ring_critical_frames",
+    "ring_avg_frames",
+    "ring_critical_events",
+    "producer_rate_sps",
+    "producer_worst_block_cycles",
+    "producer_sleeps",
 };
 
 constexpr std::size_t status_response_worst_case_bytes() noexcept

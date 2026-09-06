@@ -3,10 +3,12 @@
 # implied by this scaffold; the dedicated SDRAM placement belongs to P1.3.
 
 function(wfg_configure_rt1170_target target_name)
+    # Generator-local copy of the vendor script plus a NOLOAD .ocram section in
+    # m_data2 for the post-impairment output FIFO (docs/source-imports.json m110-026).
     set(wfg_linker_script
-        "${SdkRootDirPath}/devices/MIMXRT1176/gcc/MIMXRT1176xxxxx_cm7_flexspi_nor.ld")
+        "${WFG_ROOT}/cmake/MIMXRT1176xxxxx_cm7_flexspi_nor_wfg.ld")
     if(NOT EXISTS "${wfg_linker_script}")
-        message(FATAL_ERROR "Missing local RT1170 linker script; materialize locked dependencies first")
+        message(FATAL_ERROR "Missing generator-local RT1170 linker script ${wfg_linker_script}")
     endif()
 
     target_compile_options(${target_name} PRIVATE
