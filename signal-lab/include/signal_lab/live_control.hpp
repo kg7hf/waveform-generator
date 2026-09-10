@@ -112,10 +112,16 @@ public:
     // CW sweeps adjust parameters without implicitly enabling the CW component.
     [[nodiscard]] ControlResult enqueue_sweep(const ControlSweep& sweep) noexcept;
 
-    // PCM16 in place, 0..engine_capacity_frames (2304) frames. Invalid calls consume
+    // PCM16 legacy adapter, 0..engine_capacity_frames (2304) frames. Invalid calls consume
     // nothing. Processing allocates no memory and is independent of block size.
     // Signal path: source * live fade + live CW bank + live static -> PCM16 saturation.
     [[nodiscard]] bool process(std::int16_t* pcm, std::size_t frames, const char** error = nullptr) noexcept;
+
+    // Production normalized-float path. The block remains float so static and
+    // live processing do not introduce an intermediate quantizer. Statistics
+    // and digest describe the final packed-PCM24 boundary.
+    [[nodiscard]] bool process(float* pcm, std::size_t frames,
+                               const char** error = nullptr) noexcept;
 
     [[nodiscard]] bool configured() const noexcept { return configured_; }
     [[nodiscard]] std::uint64_t frame() const noexcept { return stats_.frames; }

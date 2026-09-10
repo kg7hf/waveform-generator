@@ -8,6 +8,7 @@
 // file, so the printed output digest is the value the player must report.
 
 #include "common/wav.hpp"
+#include "common/pcm24.hpp"
 #include "live_replay.hpp"
 #include "signal_lab/det_math.hpp"
 #include "signal_lab/json.hpp"
@@ -73,14 +74,14 @@ bool reader_callback(void* context, std::uint32_t offset, std::uint8_t* destinat
     return true;
 }
 
-bool write_wav(const std::string& path, const std::vector<std::int16_t>& pcm)
+bool write_wav(const std::string& path, const std::vector<float>& pcm)
 {
     std::FILE* file = std::fopen(path.c_str(), "wb");
     if (file == nullptr)
     {
         return false;
     }
-    const auto data_size = static_cast<std::uint32_t>(pcm.size() * sizeof(std::int16_t));
+    const auto data_size = static_cast<std::uint32_t>(pcm.size() * 3U);
     const std::uint32_t riff_size = 36U + data_size;
     unsigned char header[44]{};
     auto put32 = [&](std::size_t at, std::uint32_t value) {
@@ -100,17 +101,18 @@ bool write_wav(const std::string& path, const std::vector<std::int16_t>& pcm)
     put16(20, 1U);
     put16(22, 1U);
     put32(24, 48000U);
-    put32(28, 96000U);
-    put16(32, 2U);
-    put16(34, 16U);
+    put32(28, 144000U);
+    put16(32, 3U);
+    put16(34, 24U);
     std::memcpy(header + 36, "data", 4);
     put32(40, data_size);
     bool ok = std::fwrite(header, 1U, sizeof(header), file) == sizeof(header);
-    for (const std::int16_t sample : pcm)
+    for (const float sample : pcm)
     {
-        const auto bits = static_cast<std::uint16_t>(sample);
-        const unsigned char two[2] = {static_cast<unsigned char>(bits & 0xFFU), static_cast<unsigned char>(bits >> 8U)};
-        ok = ok && std::fwrite(two, 1U, 2U, file) == 2U;
+        unsigned char packed[3]{};
+        waveform_generator::audio::write_pcm24_le(
+            packed, signal_lab::det::quantize_pcm24(sample));
+        ok = ok && std::fwrite(packed, 1U, sizeof(packed), file) == sizeof(packed);
     }
     return std::fclose(file) == 0 && ok;
 }
@@ -403,17 +405,35 @@ int main(int argc, char** argv)
     }
     const waveform_generator::WavReader reader{&wav_bytes, static_cast<std::uint32_t>(wav_bytes.size()), &reader_callback};
     waveform_generator::WavPayload payload{};
-    if (waveform_generator::validate_pcm16_mono_48k_wav(reader, payload) != waveform_generator::WavValidationError::none)
+    bool source_is_pcm24 = waveform_generator::validate_pcm24_mono_48k_wav(reader, payload) ==
+                           waveform_generator::WavValidationError::none;
+    if (!source_is_pcm24)
     {
-        std::fprintf(stderr, "source must be a 48 kHz mono PCM16 WAV with one fmt and one data chunk\n");
-        return 2;
+        payload = {};
+        if (waveform_generator::validate_pcm16_mono_48k_wav(reader, payload) !=
+            waveform_generator::WavValidationError::none)
+        {
+            std::fprintf(stderr, "source must be a 48 kHz mono PCM24 or legacy PCM16 WAV with one fmt and one data chunk\n");
+            return 2;
+        }
     }
-    const std::size_t total_frames = payload.bytes / 2U;
-    std::vector<std::int16_t> source(total_frames);
+    const std::size_t source_bytes_per_frame = source_is_pcm24 ? 3U : 2U;
+    const std::size_t total_frames = payload.bytes / source_bytes_per_frame;
+    std::vector<float> source(total_frames);
     for (std::size_t index = 0U; index < total_frames; ++index)
     {
-        const unsigned char* at = wav_bytes.data() + payload.offset + 2U * index;
-        source[index] = static_cast<std::int16_t>(static_cast<std::uint16_t>(at[0] | (at[1] << 8U)));
+        const unsigned char* at = wav_bytes.data() + payload.offset + source_bytes_per_frame * index;
+        if (source_is_pcm24)
+        {
+            source[index] = waveform_generator::audio::pcm24_to_float(
+                waveform_generator::audio::read_pcm24_le(at));
+        }
+        else
+        {
+            const auto value = static_cast<std::int16_t>(
+                static_cast<std::uint16_t>(at[0] | (at[1] << 8U)));
+            source[index] = static_cast<float>(value) / 32768.0F;
+        }
     }
 
     double reference_rms = 0.0;
@@ -435,11 +455,11 @@ int main(int argc, char** argv)
         std::size_t end = total_frames;
         if (scenario.reference_auto)
         {
-            while (start < end && source[start] == 0)
+            while (start < end && source[start] == 0.0F)
             {
                 ++start;
             }
-            while (end > start && source[end - 1U] == 0)
+            while (end > start && source[end - 1U] == 0.0F)
             {
                 --end;
             }
@@ -463,7 +483,7 @@ int main(int argc, char** argv)
         double energy = 0.0;
         for (std::size_t index = start; index < end; ++index)
         {
-            const double x = static_cast<double>(source[index]) / 32768.0;
+            const double x = static_cast<double>(source[index]);
             energy += x * x;
         }
         reference_rms = std::sqrt(energy / static_cast<double>(end - start));
@@ -480,9 +500,9 @@ int main(int argc, char** argv)
         return 2;
     }
 
-    std::vector<std::int16_t> output;
+    std::vector<float> output;
     output.reserve(total_frames + 4096U);
-    std::int16_t block[signal_lab::engine_capacity_frames];
+    float block[signal_lab::engine_capacity_frames];
     std::size_t next_live_event = 0U;
     const auto queue_live_events = [&]() {
         while (next_live_event < replay.events.size() && live.pending_count() < signal_lab::live_pending_capacity)
@@ -595,7 +615,7 @@ int main(int argc, char** argv)
             std::fprintf(stderr, "cannot write %s\n", options.sidecar.c_str());
             return 2;
         }
-        std::fprintf(file, "{\n \"schema\": \"signal-lab.render/1\",\n \"generator\": \"signal-lab-cpp/0.1.1\",\n");
+        std::fprintf(file, "{\n \"schema\": \"signal-lab.render/1\",\n \"generator\": \"signal-lab-cpp/0.2.0\",\n \"output_encoding\": \"pcm_s24le\",\n");
         std::fprintf(file, " \"test_id\": %s,\n \"scenario_path\": %s,\n \"source_path\": %s,\n \"output_path\": %s,\n", test_id_json(scenario_document).c_str(),
                      json_string(options.scenario).c_str(), json_string(options.source).c_str(), json_string(options.output).c_str());
         std::fprintf(file, " \"seed\": %llu,\n \"source_gain_db\": %.17g,\n \"reference_rms\": %.17g,\n \"reference_rms_dbfs\": %.6f,\n \"scaled_reference_rms_dbfs\": %.6f,\n",

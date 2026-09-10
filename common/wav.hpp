@@ -21,6 +21,8 @@ struct WavPayload
 {
     std::uint32_t offset{};
     std::uint32_t bytes{};
+    std::uint16_t bits_per_sample{};
+    std::uint16_t bytes_per_frame{};
 };
 
 struct WavReader
@@ -64,8 +66,9 @@ inline bool wav_read_exact(const WavReader& reader, std::uint32_t offset,
     return reader.read(reader.context, offset, destination, bytes);
 }
 
-inline WavValidationError validate_pcm16_mono_48k_wav(
-    const WavReader& reader, WavPayload& payload) noexcept
+inline WavValidationError validate_pcm_mono_48k_wav(
+    const WavReader& reader, WavPayload& payload,
+    std::uint16_t required_bits_per_sample) noexcept
 {
     std::uint8_t riff_header[12U]{};
     std::uint8_t chunk_header[8U]{};
@@ -179,14 +182,34 @@ inline WavValidationError validate_pcm16_mono_48k_wav(
     {
         return WavValidationError::missing_data;
     }
-    if (audio_format != 1U || channels != 1U || sample_rate != 48000U ||
-        byte_rate != 96000U || block_align != 2U || bits_per_sample != 16U ||
-        (payload.bytes % sizeof(std::int16_t)) != 0U)
+    const std::uint16_t required_bytes_per_frame =
+        static_cast<std::uint16_t>(required_bits_per_sample / 8U);
+    if ((required_bits_per_sample != 16U && required_bits_per_sample != 24U) ||
+        audio_format != 1U || channels != 1U || sample_rate != 48000U ||
+        byte_rate != 48000U * required_bytes_per_frame ||
+        block_align != required_bytes_per_frame ||
+        bits_per_sample != required_bits_per_sample ||
+        (payload.bytes % required_bytes_per_frame) != 0U)
     {
         return WavValidationError::unsupported_format;
     }
 
+    payload.bits_per_sample = bits_per_sample;
+    payload.bytes_per_frame = block_align;
+
     return WavValidationError::none;
+}
+
+inline WavValidationError validate_pcm16_mono_48k_wav(
+    const WavReader& reader, WavPayload& payload) noexcept
+{
+    return validate_pcm_mono_48k_wav(reader, payload, 16U);
+}
+
+inline WavValidationError validate_pcm24_mono_48k_wav(
+    const WavReader& reader, WavPayload& payload) noexcept
+{
+    return validate_pcm_mono_48k_wav(reader, payload, 24U);
 }
 
 } // namespace waveform_generator

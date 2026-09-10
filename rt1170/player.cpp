@@ -2,6 +2,7 @@
 #include "tx_artifact.hpp"
 
 #include "common/wav.hpp"
+#include "common/pcm24.hpp"
 #include "common/live_command.hpp"
 #include "platform/board.hpp"
 #include "platform/waveform_msc.h"
@@ -41,17 +42,17 @@ constexpr std::uint32_t codec_frames_per_block = 128U;
 // hard real-time boundary. The producer (SD read -> impairment engine) runs ahead of
 // real time until the high watermark, sleeps until the wake watermark, and is never
 // deadline-bound per block; only the audio hook draining this ring has a deadline.
-constexpr std::uint32_t ring_capacity_frames = 65536U;                      // 1365 ms
+constexpr std::uint32_t ring_capacity_frames = 32768U;                      // 683 ms
 constexpr std::uint32_t ring_mask = ring_capacity_frames - 1U;
-constexpr std::uint32_t ring_high_watermark_frames = 38400U;                // 800 ms: stop producing
-constexpr std::uint32_t ring_wake_watermark_frames = 24000U;                // 500 ms: resume producing
+constexpr std::uint32_t ring_high_watermark_frames = 24000U;                // 500 ms: stop producing
+constexpr std::uint32_t ring_wake_watermark_frames = 14400U;                // 300 ms: resume producing
 constexpr std::uint32_t ring_critical_frames = 4800U;                       // 100 ms: count as a near-miss
-// One SD chunk = one engine block (signal_lab::engine_block_frames PCM16 frames).
-constexpr std::uint32_t read_buffer_bytes = 2U * signal_lab::engine_block_frames;
+// One SD chunk = one engine block of packed little-endian PCM24 frames.
+constexpr std::uint32_t read_buffer_bytes = 3U * signal_lab::engine_block_frames;
 constexpr std::uint32_t eof_drain_frames = 3U * codec_frames_per_block;
 
 static_assert((ring_capacity_frames & ring_mask) == 0U);
-static_assert((read_buffer_bytes % sizeof(std::int16_t)) == 0U);
+static_assert((read_buffer_bytes % waveform_generator::audio::pcm24_bytes_per_sample) == 0U);
 static_assert(ring_high_watermark_frames + 2U * signal_lab::engine_capacity_frames <= ring_capacity_frames,
               "a full engine block must always fit above the high watermark");
 static_assert(ring_wake_watermark_frames < ring_high_watermark_frames && ring_critical_frames < ring_wake_watermark_frames);
@@ -109,12 +110,13 @@ struct EngineCounters
 
 // The output FIFO lives in OCRAM2 (.ocram, NOLOAD; cmake/MIMXRT1176xxxxx_cm7_flexspi_nor_wfg.ld).
 // Only the CPU touches it (producer writes, audio hook reads), so cacheability is harmless.
-__attribute__((section(".ocram.output_ring"))) alignas(32) std::int16_t sample_ring[ring_capacity_frames];
+__attribute__((section(".ocram.output_ring"))) alignas(32) waveform_generator::audio::Pcm24Sample sample_ring[ring_capacity_frames];
 alignas(32) std::array<std::uint8_t, read_buffer_bytes> read_buffer{};
 // Phase 3 impairment engine state: static, sized at compile time, never touched by the audio hook.
 signal_lab::Engine engine{};
 signal_lab::Scenario scenario{};
-alignas(32) std::array<std::int16_t, signal_lab::engine_capacity_frames> engine_output{};
+alignas(32) std::array<float, signal_lab::engine_capacity_frames> engine_input{};
+alignas(32) std::array<float, signal_lab::engine_capacity_frames> engine_output{};
 std::array<char, scenario_capacity> scenario_text{};
 EngineCounters engine_counters{};
 bool engine_active{};
@@ -239,7 +241,7 @@ bool parse_wav(WavPayload& payload) noexcept
         .read = &read_wav_bytes,
     };
 
-    const auto result = validate_pcm16_mono_48k_wav(reader, payload);
+    const auto result = validate_pcm24_mono_48k_wav(reader, payload);
     switch (result)
     {
     case WavValidationError::none:
@@ -263,7 +265,7 @@ bool parse_wav(WavPayload& payload) noexcept
 
     taskENTER_CRITICAL();
     counters.data_bytes = payload.bytes;
-    counters.file_frames_total = payload.bytes / sizeof(std::int16_t);
+    counters.file_frames_total = payload.bytes / audio::pcm24_bytes_per_sample;
     taskEXIT_CRITICAL();
     return true;
 }
@@ -332,9 +334,9 @@ void player_audio_hook(void*, const std::uint32_t*, std::uint32_t* playback,
 
     for (std::uint32_t frame = 0U; frame < copied; ++frame)
     {
-        const auto sample = static_cast<std::int32_t>(
-            sample_ring[(read_start + frame) & ring_mask]);
-        const auto word = static_cast<std::uint32_t>(sample) << 16U;
+        const auto sample = sample_ring[(read_start + frame) & ring_mask];
+        // WM8960 uses 24 valid MSBs in each configured 32-bit I2S slot.
+        const auto word = static_cast<std::uint32_t>(sample) << 8U;
         playback[2U * frame] = word;
         playback[2U * frame + 1U] = word;
     }
@@ -418,8 +420,7 @@ bool start_codec() noexcept
     return true;
 }
 
-std::uint32_t push_samples(const std::uint8_t* source,
-                           std::uint32_t source_bytes) noexcept
+std::uint32_t push_samples(const float* source, std::uint32_t source_frames) noexcept
 {
     const auto write_start = ring_write_total;
     const auto read_snapshot = ring_read_total;
@@ -429,7 +430,7 @@ std::uint32_t push_samples(const std::uint8_t* source,
         return 0U;
     }
 
-    auto frames = source_bytes / sizeof(std::int16_t);
+    auto frames = source_frames;
     const auto free_frames = ring_capacity_frames - used;
     if (frames > free_frames)
     {
@@ -446,8 +447,10 @@ std::uint32_t push_samples(const std::uint8_t* source,
         return 0U;
     }
 
-    std::memcpy(sample_ring + ring_offset, source,
-                frames * sizeof(std::int16_t));
+    for (std::uint32_t frame = 0U; frame < frames; ++frame)
+    {
+        sample_ring[ring_offset + frame] = signal_lab::det::quantize_pcm24(source[frame]);
+    }
     __DMB();
     taskENTER_CRITICAL();
     ring_write_total = write_start + frames;
@@ -458,7 +461,7 @@ std::uint32_t push_samples(const std::uint8_t* source,
         counters.ring_max_frames = fill_after;
     }
     taskEXIT_CRITICAL();
-    return frames * sizeof(std::int16_t);
+    return frames;
 }
 
 bool read_payload_chunk(std::uint32_t bytes_remaining,
@@ -693,8 +696,10 @@ void service_player_command() noexcept
 // Scenario reference_rms and explicit REFERENCE override this measurement.
 double measure_reference(const WavPayload& payload) noexcept
 {
-    std::uint32_t remaining = payload.bytes < 96000U ? payload.bytes : 96000U;
-    const std::uint32_t frames = remaining / 2;
+    constexpr std::uint32_t one_second_bytes =
+        48000U * waveform_generator::audio::pcm24_bytes_per_sample;
+    std::uint32_t remaining = payload.bytes < one_second_bytes ? payload.bytes : one_second_bytes;
+    const std::uint32_t frames = remaining / waveform_generator::audio::pcm24_bytes_per_sample;
     double energy = 0;
     while (remaining && !stop_requested && !faulted)
     {
@@ -706,10 +711,11 @@ double measure_reference(const WavPayload& payload) noexcept
             latch_fault(PlayerError::sd_read);
             return 0;
         }
-        const auto* samples = reinterpret_cast<const std::int16_t*>(read_buffer.data());
-        for (UINT i = 0; i < actual / 2; ++i)
+        for (UINT i = 0; i < actual / waveform_generator::audio::pcm24_bytes_per_sample; ++i)
         {
-            const double value = static_cast<double>(samples[i]) / 32768.0;
+            const double value = waveform_generator::audio::pcm24_to_float(
+                waveform_generator::audio::read_pcm24_le(
+                    read_buffer.data() + i * waveform_generator::audio::pcm24_bytes_per_sample));
             energy += value * value;
         }
         remaining -= actual;
@@ -748,11 +754,11 @@ void run_player() noexcept
             if (!faulted) latch_fault(PlayerError::seek);
             break;
         }
-        load_scenario(payload.bytes / 2);
+        load_scenario(payload.bytes / waveform_generator::audio::pcm24_bytes_per_sample);
         const double reference = reference_override > 0 ? reference_override * (engine_active ? signal_lab::det::db_to_amplitude(scenario.source_gain_db) : 1.0)
                                : engine_active ? engine.scaled_reference_rms() : measure_reference(payload);
         if (faulted || stop_requested) break;
-        live_reference_valid = std::isfinite(reference) && reference > 0 && reference <= 32768;
+        live_reference_valid = std::isfinite(reference) && reference > 0 && reference <= 1.0;
         if (!live_reference_valid && presets) { latch_fault(PlayerError::live_control); break; }
         if (!live_controller.reset(live_seed, live_reference_valid ? reference : 1.0))
         {
@@ -788,11 +794,19 @@ void run_player() noexcept
             std::uint32_t bytes_staged{};
             if (!read_payload_chunk(bytes_remaining, bytes_staged)) break;
             bytes_remaining -= bytes_staged;
-            const auto frames = static_cast<std::size_t>(bytes_staged / 2);
+            const auto frames = static_cast<std::size_t>(
+                bytes_staged / waveform_generator::audio::pcm24_bytes_per_sample);
+            for (std::size_t frame = 0U; frame < frames; ++frame)
+            {
+                engine_input[frame] = waveform_generator::audio::pcm24_to_float(
+                    waveform_generator::audio::read_pcm24_le(
+                        read_buffer.data() + frame * waveform_generator::audio::pcm24_bytes_per_sample));
+            }
+            std::size_t produced = frames;
             if (engine_active)
             {
                 const auto begin = m110::platform_cycle_counter();
-                const auto produced = engine.process(reinterpret_cast<const std::int16_t*>(read_buffer.data()), frames, engine_output.data(), engine_output.size());
+                produced = engine.process(engine_input.data(), frames, engine_output.data(), engine_output.size());
                 publish_engine_counters(m110::platform_cycle_counter() - begin);
                 if (engine.process_error() != signal_lab::ProcessError::none)
                 {
@@ -801,28 +815,27 @@ void run_player() noexcept
                     latch_fault(PlayerError::impairment);
                     break;
                 }
-                bytes_staged = static_cast<std::uint32_t>(produced * 2);
             }
-            else std::memcpy(engine_output.data(), read_buffer.data(), bytes_staged);
-            if (!live_controller.process(engine_output.data(), bytes_staged / 2))
+            else std::copy_n(engine_input.data(), frames, engine_output.data());
+            if (!live_controller.process(engine_output.data(), produced))
             {
                 latch_fault(PlayerError::live_control);
                 break;
             }
             publish_live();
-            const auto* staged_source = reinterpret_cast<const std::uint8_t*>(engine_output.data());
             std::uint32_t staged_offset{};
-            while (bytes_staged && !faulted && !stop_requested)
+            auto staged_frames = static_cast<std::uint32_t>(produced);
+            while (staged_frames && !faulted && !stop_requested)
             {
-                const auto pushed = push_samples(staged_source + staged_offset, bytes_staged);
+                const auto pushed = push_samples(engine_output.data() + staged_offset, staged_frames);
                 if (!pushed) { vTaskDelay(1); continue; }
                 staged_offset += pushed;
-                bytes_staged -= pushed;
+                staged_frames -= pushed;
             }
             const auto cycles = m110::platform_cycle_counter() - block_begin;
             taskENTER_CRITICAL();
             counters.producer_active_cycles = counters.producer_active_cycles + cycles;
-            counters.producer_frames = counters.producer_frames + staged_offset / 2;
+            counters.producer_frames = counters.producer_frames + staged_offset;
             if (cycles > counters.producer_worst_block_cycles) counters.producer_worst_block_cycles = cycles;
             taskEXIT_CRITICAL();
         }

@@ -98,13 +98,16 @@ void artifact_tests()
     check(job.state() == native_m110::JobState::complete, "WAV job completed");
     auto expected = oracle(mode, payload);
     expected.resize(expected.size() + 7U, 0);
-    check(sink.bytes.size() == 44U + expected.size() * 2U, "WAV length");
+    check(sink.bytes.size() == 44U + expected.size() * 3U, "PCM24 WAV length");
     for (std::size_t i = 0U; i < expected.size(); ++i)
     {
-        const auto value = static_cast<std::uint16_t>(expected[i]);
-        if (sink.bytes[44U + 2U * i] != static_cast<std::uint8_t>(value) || sink.bytes[45U + 2U * i] != static_cast<std::uint8_t>(value >> 8U))
+        const auto value = waveform_generator::audio::read_pcm24_le(sink.bytes.data() + 44U + 3U * i);
+        const double scaled = static_cast<double>(value) * 32767.0 /
+                              waveform_generator::audio::pcm24_scale;
+        const auto legacy = static_cast<std::int16_t>(scaled + (scaled < 0.0 ? -0.5 : 0.5));
+        if (legacy != expected[i])
         {
-            check(false, "WAV PCM equals donor plus exact trailing silence"); break;
+            check(false, "PCM24 WAV preserves donor waveform plus exact trailing silence"); break;
         }
     }
     const auto hashes = job.hashes();

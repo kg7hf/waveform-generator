@@ -47,6 +47,7 @@ public:
     [[nodiscard]] m110::Status configure(std::string_view profile, ByteSource& payload, std::size_t payload_bytes) noexcept override;
     void stop() noexcept override;
     [[nodiscard]] std::size_t read(std::int16_t* frames, std::size_t capacity) noexcept override;
+    [[nodiscard]] std::size_t read_float(float* frames, std::size_t capacity) noexcept override;
     [[nodiscard]] std::uint64_t total_frames() const noexcept override { return total_frames_; }
     [[nodiscard]] m110::Status status() const noexcept override { return status_; }
     [[nodiscard]] const m110::BodyTransmissionPlan& plan() const noexcept { return plan_; }

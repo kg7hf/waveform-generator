@@ -143,12 +143,13 @@ def main() -> int:
         assert recipe.get("schema_version") == "fixture-recipe/1", name
         assert recipe.get("status") == "recipe_not_generated", name
         fmt = recipe["format"]
+        expected_bits = 24 if name == "fixtures/tone-10s.json" else 16
         assert fmt == {
             "container": "RIFF/WAVE",
-            "encoding": "pcm_s16le",
+            "encoding": f"pcm_s{expected_bits}le",
             "sample_rate_hz": 48000,
             "channels": 1,
-            "bits_per_sample": 16,
+            "bits_per_sample": expected_bits,
         }, name
         assert not ({"wav", "pcm", "sidecar", "wav_sha256"} & recipe.keys()), name
         assert recipe["qualification"]["evidence_scope"] == "engineering_only", name
@@ -157,8 +158,8 @@ def main() -> int:
     tone = recipes["fixtures/tone-10s.json"]
     tone_prep = tone["preparation"]
     assert tone_prep["samples"] == 480000
-    assert tone_prep["period_repetitions"] * len(tone_prep["pcm16_period"]) == 480000
-    assert tone["format"]["sample_rate_hz"] / len(tone_prep["pcm16_period"]) == 1000
+    assert tone_prep["period_repetitions"] * len(tone_prep["pcm24_period"]) == 480000
+    assert tone["format"]["sample_rate_hz"] / len(tone_prep["pcm24_period"]) == 1000
     expected_period = [round(4096 * math.sin(2 * math.pi * index / 48))
                        for index in range(48)]
     assert tone_prep["pcm16_period"] == expected_period

@@ -4,7 +4,7 @@
 #include "waveform-source/wav_generator.hpp"
 namespace native_m110
 {
-inline constexpr const char* generator_version = "wfg-native-m110/0.1.0";
+inline constexpr const char* generator_version = "wfg-native-m110/0.2.0";
 using ByteSink = waveform_source::ByteSink;
 using JobState = waveform_source::JobState;
 using ArtifactHashes = waveform_source::ArtifactHashes;

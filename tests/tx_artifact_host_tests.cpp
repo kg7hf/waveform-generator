@@ -97,15 +97,15 @@ void verify_artifact(const char* output, const char* manifest, const char* paylo
     check(exists(output) && exists(manifest) && exists(payload), "complete WAV, payload, and manifest are retained");
     if (!exists(output) || !exists(manifest) || !exists(payload)) return;
     const auto& wav = bytes(output);
-    check(wav.size() == 44U + snapshot.total_frames * 2U && wav.size() >= 96044U, "WAV contains declared PCM and one-second tail");
-    if (wav.size() < 96044U) return;
+    check(wav.size() == 44U + snapshot.total_frames * 3U && wav.size() >= 144044U, "WAV contains declared PCM24 and one-second tail");
+    if (wav.size() < 144044U) return;
     check(std::memcmp(wav.data(), "RIFF", 4U) == 0 && std::memcmp(wav.data() + 8U, "WAVEfmt ", 8U) == 0 &&
           std::memcmp(wav.data() + 36U, "data", 4U) == 0 && little32(wav, 4U) == wav.size() - 8U &&
           little32(wav, 24U) == 48000U && little32(wav, 40U) == wav.size() - 44U,
-          "published WAV header matches mono PCM16 48 kHz artifact length");
-    check(wav[20U] == 1U && wav[22U] == 1U && wav[34U] == 16U, "WAV uses mono linear PCM16");
-    check(std::all_of(wav.end() - 96000, wav.end(), [](std::uint8_t value) { return value == 0U; }), "published WAV has exactly the required silent tail region");
-    check(std::any_of(wav.begin() + 44, wav.end() - 96000, [](std::uint8_t value) { return value != 0U; }), "generated M110 waveform contains nonzero signal");
+          "published WAV header matches mono PCM24 48 kHz artifact length");
+    check(wav[20U] == 1U && wav[22U] == 1U && wav[34U] == 24U, "WAV uses mono linear PCM24");
+    check(std::all_of(wav.end() - 144000, wav.end(), [](std::uint8_t value) { return value == 0U; }), "published WAV has exactly the required silent tail region");
+    check(std::any_of(wav.begin() + 44, wav.end() - 144000, [](std::uint8_t value) { return value != 0U; }), "generated M110 waveform contains nonzero signal");
     const auto& source = bytes(payload);
     const auto& encoded = bytes(manifest);
     const std::string metadata(encoded.begin(), encoded.end());

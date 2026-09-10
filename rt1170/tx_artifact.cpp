@@ -157,7 +157,7 @@ bool publish_artifact() noexcept
     const int count = std::snprintf(metadata, sizeof(metadata),
         "{\n\"schema\":\"waveform-artifact/1\",\"encoder\":\"%s\",\"generator\":\"%s\","
         "\"source_manifest_sha256\":\"%s\",\"profile\":\"%s\",\"sample_rate_hz\":48000,"
-        "\"channels\":1,\"bits_per_sample\":16,\"frames\":%llu,\"trailing_silence_frames\":48000,"
+        "\"channels\":1,\"bits_per_sample\":24,\"frames\":%llu,\"trailing_silence_frames\":48000,"
         "\"payload\":{\"path\":\"%s\",\"bytes\":%lu,\"sha256\":\"%s\"},"
         "\"wav\":{\"path\":\"%s\",\"sha256\":\"%s\",\"pcm_sha256\":\"%s\"},\"complete\":true}\n",
         descriptor->id, descriptor->version, WFG_SOURCE_MANIFEST_SHA256, selected_profile,

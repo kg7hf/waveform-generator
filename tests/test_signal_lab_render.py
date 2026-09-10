@@ -105,10 +105,13 @@ class RendererTests(unittest.TestCase):
         output, sidecar, _, _, _ = self.render(
             {"source_gain_db": 20, "clip_policy": "saturate", "impairments": []})
         with wave.open(str(output), "rb") as reader:
-            pcm = struct.unpack(f"<{reader.getnframes()}h", reader.readframes(reader.getnframes()))
+            self.assertEqual(reader.getsampwidth(), 3)
+            packed = reader.readframes(reader.getnframes())
+            pcm = [int.from_bytes(packed[index:index + 3], "little", signed=True)
+                   for index in range(0, len(packed), 3)]
         metadata = json.loads(sidecar.read_text())
-        peak = max(abs(sample) for sample in pcm) / 32768.0
-        rms = math.sqrt(sum((sample / 32768.0) ** 2 for sample in pcm) / len(pcm))
+        peak = max(abs(sample) for sample in pcm) / 8388608.0
+        rms = math.sqrt(sum((sample / 8388608.0) ** 2 for sample in pcm) / len(pcm))
         self.assertGreater(metadata["clipped_samples"], 0)
         self.assertAlmostEqual(metadata["peak_dbfs"], 20 * math.log10(peak), delta=1e-6)
         self.assertAlmostEqual(metadata["rms_dbfs"], 20 * math.log10(rms), delta=1e-6)

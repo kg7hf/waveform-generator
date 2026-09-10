@@ -1,7 +1,7 @@
 #pragma once
 
-// The engine: PCM16 in -> gain -> ordered impairment stages -> saturate -> PCM16 out.
-// One static object per platform; no allocation, no exceptions, block-size independent.
+// The engine: normalized float in -> gain -> ordered impairment stages -> clip
+// -> normalized float out. PCM16 remains as an explicit legacy adapter.
 
 #include "signal_lab/det_math.hpp"
 #include "signal_lab/impairment.hpp"
@@ -26,10 +26,10 @@ struct EngineStats
     std::uint64_t frames_out{};
     std::uint64_t clipped_samples{};
     std::uint64_t first_clipped_frame{0xFFFFFFFFFFFFFFFFULL};
-    float peak{};                 // Absolute peak of emitted, quantized PCM / 32768.
-    double output_energy{};       // Sum of squares of emitted, quantized PCM / 32768.
-    std::uint64_t output_digest{};   // FNV-1a 64 over the emitted PCM16 stream
-    std::uint64_t source_digest{};   // FNV-1a 64 over the consumed PCM16 stream
+    float peak{};                 // Absolute peak in normalized full-scale units.
+    double output_energy{};       // Sum of squares in normalized full-scale units.
+    std::uint64_t output_digest{};   // FNV-1a 64 over the emitted canonical PCM stream
+    std::uint64_t source_digest{};   // FNV-1a 64 over the consumed canonical PCM stream
     std::uint32_t stage_count{};
     std::uint32_t events_scheduled{};
     std::uint32_t events_applied{};
@@ -57,6 +57,12 @@ public:
     // On failure returns zero and latches process_error() until reconfiguration. A
     // rejected block consumes its input but commits no output samples or output stats.
     [[nodiscard]] std::size_t process(const std::int16_t* input, std::size_t frames, std::int16_t* output, std::size_t output_capacity) noexcept;
+
+    // Production path. Inputs and outputs are normalized [-1, 1), and remain
+    // float between the source, static engine, and live controller. Statistics
+    // and digests describe the eventual signed PCM24 quantization.
+    [[nodiscard]] std::size_t process(const float* input, std::size_t frames,
+                                      float* output, std::size_t output_capacity) noexcept;
 
     [[nodiscard]] ProcessError process_error() const noexcept
     {
@@ -92,6 +98,7 @@ private:
     float work_[engine_capacity_frames]{};
     float scratch_[engine_capacity_frames]{};
     double input_scale_{1.0 / 32768.0};
+    double source_gain_{1.0};
     double scaled_reference_{};
     std::uint64_t cursor_{};
     bool configured_{};

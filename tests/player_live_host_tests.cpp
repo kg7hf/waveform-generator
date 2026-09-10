@@ -44,7 +44,7 @@ void check(bool condition, const char* message)
 
 std::vector<std::uint8_t> wav(std::size_t frames, std::int16_t sample)
 {
-    std::vector<std::uint8_t> result(44U + frames * 2U);
+    std::vector<std::uint8_t> result(44U + frames * 3U);
     const auto put16 = [&](std::size_t at, std::uint16_t value) {
         result[at] = static_cast<std::uint8_t>(value);
         result[at + 1U] = static_cast<std::uint8_t>(value >> 8U);
@@ -56,10 +56,17 @@ std::vector<std::uint8_t> wav(std::size_t frames, std::int16_t sample)
     put32(4U, static_cast<std::uint32_t>(result.size() - 8U));
     std::memcpy(result.data() + 8U, "WAVEfmt ", 8U);
     put32(16U, 16U); put16(20U, 1U); put16(22U, 1U);
-    put32(24U, 48000U); put32(28U, 96000U); put16(32U, 2U); put16(34U, 16U);
+    put32(24U, 48000U); put32(28U, 144000U); put16(32U, 3U); put16(34U, 24U);
     std::memcpy(result.data() + 36U, "data", 4U);
-    put32(40U, static_cast<std::uint32_t>(frames * 2U));
-    for (std::size_t index = 0U; index < frames; ++index) put16(44U + 2U * index, static_cast<std::uint16_t>(sample));
+    put32(40U, static_cast<std::uint32_t>(frames * 3U));
+    const auto pcm24 = static_cast<std::uint32_t>(static_cast<std::int32_t>(sample) * 256);
+    for (std::size_t index = 0U; index < frames; ++index)
+    {
+        const auto at = 44U + 3U * index;
+        result[at] = static_cast<std::uint8_t>(pcm24);
+        result[at + 1U] = static_cast<std::uint8_t>(pcm24 >> 8U);
+        result[at + 2U] = static_cast<std::uint8_t>(pcm24 >> 16U);
+    }
     return result;
 }
 
@@ -115,7 +122,7 @@ void test_owner_lifecycle()
     check(status.state == static_cast<std::uint32_t>(waveform_generator::PlayerState::done) && status.file_frames_submitted == 50000U &&
               status.pcm_drained == 1U && status.underruns == 0U, "clean run drains every frame without underrun");
     check(live.live_frame == 50000U && live.reference_rms == 1000.0 / 32768.0, "automatic reference measures first second and rewinds source");
-    std::vector<std::int16_t> expected(50000U, 1000);
+    std::vector<float> expected(50000U, 1000.0F / 32768.0F);
     signal_lab::det::StreamDigest digest;
     digest.update(expected.data(), expected.size());
     check(live.live_digest == digest.value(), "firmware live digest covers all clean source samples");

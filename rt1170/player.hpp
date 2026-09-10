@@ -113,7 +113,7 @@ enum class EngineError : std::uint32_t
 /*
  * Start the P1.2 engineering slice in an idle state. After the USB owner grants
  * local/FatFs ownership, request_player_play() opens 2:/WG/PLAY.WAV, accepts
- * PCM16/48 kHz/mono, prebuffers, then plays it once. Submitted frames are
+ * packed PCM24/48 kHz/mono, prebuffers, then plays it once. Submitted frames are
  * copied into the SAI/eDMA buffer from the audio callback; done is not entered
  * until a bounded post-EOF silence drain has completed. This temporary control
  * surface predates WFG/1 and does not produce a qualified artifact.

@@ -71,7 +71,8 @@ int main()
     DifferentEncoder encoder;
     Sink sink;
     waveform_source::WavGenerator writer;
-    check(writer.begin(encoder, "test:steps", payload, 3U, sink, 3U).is_ok(), "generic configure");
+    check(writer.begin(encoder, "test:steps", payload, 3U, sink, 3U,
+                       waveform_source::WavEncoding::pcm16_legacy).is_ok(), "generic configure");
     check(sink.bytes.size() == 44U && writer.total_frames() == 8U, "generic known WAV geometry");
     while (writer.state() == waveform_source::JobState::running) { (void)writer.step(3U); }
     check(writer.state() == waveform_source::JobState::complete, "different encoder completes without native adapter");

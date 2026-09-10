@@ -9,6 +9,8 @@
 // add/multiply/divide/sqrt, which round identically on every conforming
 // target when floating-point contraction is disabled (-ffp-contract=off).
 
+#include "common/pcm24.hpp"
+
 #include <cstddef>
 #include <cstdint>
 
@@ -41,6 +43,10 @@ inline constexpr double ln10 = 2.302585092994045684017991454684364208;
 // Seconds -> whole frames, half-to-even (matches signal_lab.stream.seconds_to_frames).
 [[nodiscard]] std::uint64_t seconds_to_frames(double seconds, std::uint32_t sample_rate_hz) noexcept;
 
+// Quantize a normalized sample to signed packed-PCM24 code space. The returned
+// value is right-aligned in int32_t; container packing is a boundary concern.
+[[nodiscard]] waveform_generator::audio::Pcm24Sample quantize_pcm24(float sample) noexcept;
+
 // PCG32 (XSH-RR) with the (seed, family, index) keying used by the scenarios.
 class Pcg32
 {
@@ -68,12 +74,14 @@ private:
     std::uint64_t increment_{0xDA3E39CB94B95BDBULL};
 };
 
-// FNV-1a 64-bit running digest over little-endian int16 samples.
+// FNV-1a 64-bit running digest. The legacy overload hashes little-endian
+// PCM16. The normalized-float overload quantizes to canonical packed PCM24.
 class StreamDigest
 {
 public:
     void reset() noexcept;
     void update(const std::int16_t* samples, std::size_t count) noexcept;
+    void update(const float* samples, std::size_t count) noexcept;
     [[nodiscard]] std::uint64_t value() const noexcept
     {
         return hash_;

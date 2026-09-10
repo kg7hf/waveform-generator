@@ -195,12 +195,12 @@ bool Source::render_next() noexcept
     return true;
 }
 
-std::size_t Source::read(std::int16_t* frames, std::size_t capacity) noexcept
+std::size_t Source::read_float(float* frames, std::size_t capacity) noexcept
 {
     if (!configured_ || !status_.is_ok() || capacity == 0U) { return 0U; }
     if (frames == nullptr)
     {
-        status_ = {m110::StatusCode::invalid_argument, "native PCM destination is null"};
+        status_ = {m110::StatusCode::invalid_argument, "native float destination is null"};
         return 0U;
     }
     std::size_t produced = 0U;
@@ -211,7 +211,7 @@ std::size_t Source::read(std::int16_t* frames, std::size_t capacity) noexcept
             if (rendered_symbols_ == plan_.transmitted_symbols)
             {
                 const auto zeros = std::min<std::size_t>(capacity - produced, silence_remaining_);
-                std::fill_n(frames + produced, zeros, std::int16_t{});
+                std::fill_n(frames + produced, zeros, 0.0F);
                 silence_remaining_ -= static_cast<std::uint32_t>(zeros);
                 produced += zeros;
                 break;
@@ -219,11 +219,32 @@ std::size_t Source::read(std::int16_t* frames, std::size_t capacity) noexcept
             if (!render_next()) { break; }
         }
         const auto count = std::min(capacity - produced, audio_count_ - audio_cursor_);
+        std::copy_n(audio_.data() + audio_cursor_, count, frames + produced);
+        audio_cursor_ += count;
+        produced += count;
+    }
+    return produced;
+}
+
+std::size_t Source::read(std::int16_t* frames, std::size_t capacity) noexcept
+{
+    if (!configured_ || !status_.is_ok() || capacity == 0U) { return 0U; }
+    if (frames == nullptr)
+    {
+        status_ = {m110::StatusCode::invalid_argument, "native PCM16 destination is null"};
+        return 0U;
+    }
+    std::array<float, 64U> source{};
+    std::size_t produced = 0U;
+    while (produced < capacity)
+    {
+        const auto count = read_float(source.data(), std::min(source.size(), capacity - produced));
+        if (count == 0U) { break; }
         for (std::size_t index = 0U; index < count; ++index)
         {
-            // Match tx_to_pcm's float scaling and lround (ties away from zero).
-            const auto scaled = std::clamp(audio_[audio_cursor_++] * 32767.0F, -32768.0F, 32767.0F);
-            frames[produced++] = static_cast<std::int16_t>(static_cast<double>(scaled) + (scaled < 0.0F ? -0.5 : 0.5));
+            const auto scaled = std::clamp(source[index] * 32767.0F, -32768.0F, 32767.0F);
+            frames[produced++] = static_cast<std::int16_t>(
+                static_cast<double>(scaled) + (scaled < 0.0F ? -0.5 : 0.5));
         }
     }
     return produced;

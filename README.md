@@ -1,8 +1,241 @@
 # M110 RT1170 waveform generator
 
+This is the start-here guide for the waveform-generator project. It explains
+what the project is, how to build and operate it, where each technical module
+lives, and which evidence a successful run does and does not establish.
+
+## Documentation levels
+
+The documentation is written for four different reading depths. Every module
+guide under [`docs/modules/`](docs/modules/README.md) uses the same structure.
+
+| View | Read it when | What it answers |
+|---|---|---|
+| 50,000-foot view | You are deciding whether this project fits a task | What goes in, what comes out, and where the boundaries are |
+| How to use it | You need to build, render, stage, play, capture, or replay | Commands, APIs, files, and safe operating sequence |
+| Scientist and maintainer view | You need reproducibility, equations, limits, or code changes | Numerical conventions, ownership, state, bounded resources, diagnostics, and failure behavior |
+| 5th-grader view | You need an intuition before the details | A concrete analogy with a small toy example |
+
+## 50,000-foot view
+
+The project makes controlled 48 kHz mono test audio and sends it through either
+a host file pipeline or an NXP MIMXRT1170-EVK with a WM8960 codec. A clean source
+can be a retained WAV or a waveform produced by a registered encoder. Ordered
+channel impairments and interfering signals can then be mixed into the source.
+The resulting stream can be written to another WAV, replayed through the codec,
+captured from a PC audio input, and scored by an external decoder.
+
+```mermaid
+flowchart LR
+  A[Payload bytes or clean WAV] --> B[Waveform source]
+  B --> C[Static scenario engine]
+  C --> D[Live interference controller]
+  D --> E{Output}
+  E --> F[Host WAV and sidecar]
+  E --> G[RT1170 FIFO]
+  G --> H[WM8960 analog output]
+  H --> I[PC capture and analysis]
+  F --> J[External decoder and score]
+  I --> J
+```
+
+The impairment engine is waveform-agnostic. It sees PCM samples, not modem
+symbols. M110B is currently the only registered native encoder, but playback,
+mixing, capture, and replay do not depend on M110B internals.
+
+This is an engineering fixture. A deterministic render, successful firmware
+build, USB acknowledgment, analog capture, or decoder pass is evidence for that
+specific path. None of those results alone establishes formal modem conformance.
+
+## How to use it
+
+### Build configurations
+
+All commands run from this repository root. CMake 3.27 or newer is required.
+
+| Preset family | Purpose | Typical command |
+|---|---|---|
+| `host-debug`, `host-release` | Host libraries, renderers, capture tool, encoder utility, and tests | `cmake --preset host-release` then `cmake --build --preset host-release --parallel` |
+| `host-capture-debug`, `host-capture-release` | Build only `waveform_capture` in the matching host tree | `cmake --build --preset host-capture-release --parallel` |
+| `rt1170-debug`, `rt1170-release` | Stopped RT1170 scaffold and board/runtime checkpoint | `cmake --preset rt1170-release` then `cmake --build --preset rt1170-release --parallel` |
+| `rt1170-tone-*` | Resident deterministic codec-tone checkpoint | `cmake --preset rt1170-tone-release` then build the same preset |
+| `rt1170-player-*` | Writable CDC plus MSC SD player, encoder, impairment, and live control | `cmake --preset rt1170-player-release` then build the same preset |
+| `rt1170-player-readonly-*` | Read-only MSC/FatFs inspection player; artifact writes excluded | `cmake --preset rt1170-player-readonly-release` then build the same preset |
+| `rt1170-sdcard-*` | SD socket and power-control diagnostic image | `cmake --preset rt1170-sdcard-release` then build the same preset |
+| `rt1170-sdcard-identify-*` | Read-only card-identification diagnostic image | `cmake --preset rt1170-sdcard-identify-release` then build the same preset |
+
+Host tests are explicit:
+
+```powershell
+ctest --preset host-release --output-on-failure
+```
+
+The Arm presets require the pinned Arm GNU toolchain path declared in
+`CMakePresets.json`. Dependency materialization is a separate setup operation;
+normal configure and build do not fetch from the network.
+
+### Primary command-line interfaces
+
+| Tool | Main options or subcommands | Purpose |
+|---|---|---|
+| `host/render_scenario.py` | `--scenario`, `--output`, `--base-dir`, `--overwrite` | Python reference rendering to WAV plus sidecar |
+| `signal_lab_render.exe` | `--scenario`, `--source`, `--output`, `--sidecar`, `--target-scenario`, `--reference-rms`, `--block`, `--live-events` | Portable C++ scenario and live-replay rendering |
+| `host/corpus_phase1.py` | `--spec`, `--root`, `--tx`, `--decoder`, `--engines`, `--stage`, `--only-modes`, `--jobs`, `--overwrite` | Reference, render, score, summary, and verification orchestration |
+| `host/m110_score.py` | `--decoder`, `--engine`, `--expect-file`, `--jobs`, `--extra`, `--summary` | Decode and score one or more WAVs |
+| `wfg_m110_tx.exe` | rate, interleave, output, message or `--file` | Create a clean M110B WAV or PCM file on the host |
+| `host/stage_wav.py` | `inspect`, `make-tone`, `stage` | Validate and stage `/WG/PLAY.WAV` on an explicit card root |
+| `host/live_control.py` | global identity/journal options plus `command`, `interactive`, `export`, `replay` | Operate and reproduce `WFG-LIVE/1` sessions |
+| `host/tx_upload.py` | `--port`, `--expected-serial`, `--output`, `--mode`, payload source, `--record`, timeout options | Upload a payload or request SD-resident generation through DD008 |
+| `waveform_capture.exe` | backend, device identity, channel, output, duration, controlled-stop options | Record the physical analog path to mono float WAV |
+| `host/analyze_capture.py` | capture, `--output-json`, optional source/correlation and run thresholds | Measure capture integrity and optional source correlation |
+
+The complete option reference and copy-ready commands are in
+[Command-line Tools](docs/modules/command-line-tools.md).
+
+### Example 1: render an impaired WAV offline
+
+```powershell
+python host/render_scenario.py `
+  --scenario examples/field-light.json `
+  --output build/runs/field-light.wav `
+  --overwrite
+
+build\host-release\host\render\signal_lab_render.exe `
+  --scenario examples/field-light.json `
+  --source clean.wav `
+  --output build/runs/field-light-portable.wav `
+  --sidecar build/runs/field-light-portable.json `
+  --target-scenario build/runs/PLAY.SCN
+```
+
+The Python and portable paths are separate implementations of the same scenario
+contract. Compare their PCM hashes when claiming deterministic equivalence.
+
+### Example 2: create a clean M110B waveform
+
+```powershell
+build\host-release\host\tx\wfg_m110_tx.exe 600 long build\runs\hello.wav "HELLO"
+build\host-release\host\tx\wfg_m110_tx.exe 1200 short build\runs\payload.wav --file payload.bin
+```
+
+### Example 3: stage, play, and capture through RT1170
+
+Resolve the current CDC serial and SD volume from device identity. The values
+below are placeholders, not remembered defaults.
+
+```powershell
+$port = 'COM42'
+$serial = 'REPLACE_WITH_OBSERVED_USB_SERIAL'
+$card = 'R:\'
+
+python host/stage_wav.py stage build\runs\hello.wav --card-root $card
+
+# Flush and dismount $card in Windows before this ownership transfer.
+python host/live_control.py --port $port --expected-serial $serial `
+  --record build\runs\load.jsonl --host-volume-dismounted `
+  command "MEDIA LOCAL" "LOAD:PLAY.WAV"
+
+python host/live_control.py --port $port --expected-serial $serial `
+  --record build\runs\play.jsonl `
+  command "CW 0 FREQ 900" "CW 0 CI 12" "CW 0 ON" "PLAY"
+
+.\host\capture-session.ps1 `
+  -Output build\runs\capture.wav `
+  -DeviceName "Microphone (Realtek(R) Audio)" `
+  -StopFile build\runs\capture.stop `
+  -JsonlPath build\runs\capture.jsonl
+```
+
+Never let Windows MSC and firmware FatFs own the card simultaneously. Never use
+a historical COM number or volume letter without resolving the current device.
+
+### Example 4: export and replay a live-control schedule
+
+```powershell
+python host/live_control.py export build\runs\play.jsonl build\runs\play.replay.json
+
+python host/live_control.py --port $port --expected-serial $serial `
+  --record build\runs\replay.jsonl replay build\runs\play.replay.json
+
+build\host-release\host\render\signal_lab_render.exe `
+  --source clean.wav `
+  --output build\runs\replayed-offline.wav `
+  --live-events build\runs\play.replay.json
+```
+
+Replay positions are acknowledged output-frame positions. They are not host
+wall-clock timestamps and do not prove the instant at which an analog DAC sample
+became audible.
+
+## Scientist and maintainer view
+
+The project has four important contracts:
+
+| Contract | Rule |
+|---|---|
+| Sample contract | Normalized float inside waveform and impairment paths; generated/source WAV is mono packed PCM24 at 48 kHz; captured host WAV is mono IEEE float at 48 kHz |
+| Level contract | Internal full scale is `[-1, 1)`; C/I and SNR are relative to the declared clean-source reference RMS |
+| Determinism contract | Scenario order, seed, source bytes, reference level, block-independent algorithms, float flags, and final PCM digest identify a render |
+| Ownership contract | One owner mutates player/media/control state; host MSC and local FatFs ownership never overlap |
+
+Static scenario processing is:
+
+```text
+PCM24 source -> normalize -> source gain -> ordered stages -> clip policy -> PCM24
+```
+
+Live processing follows the static engine and uses the emitted output-frame
+coordinate:
+
+```text
+static output * live fade + four-slot CW bank + live static -> one saturation boundary
+```
+
+The C++ engine is bounded: 2048 input frames, 256 frames of expansion slack,
+eight stages, 32 explicit events per bounded event list, and a 32 KiB placement
+arena. The RT1170 player decouples SD/engine work from the codec deadline with a
+65,536-frame output FIFO. These are design limits, not suggestions; changes need
+tests at multiple caller block sizes and target memory accounting.
+
+Build identity is independent of Git metadata. Configure writes a path-independent
+first-party source manifest and combines it with dependency-lock and source-import
+ledger hashes. Evidence should retain the source/scenario/payload hashes, exact
+tool and firmware identity, commands, acknowledgments, counters, and capture files.
+
+## 5th-grader view
+
+Think of the project as a careful sound-effects laboratory. First it makes a
+clean recording. Then it can turn knobs that add hiss, whistles, crashes, fades,
+or tiny timing jumps. It writes down exactly when each knob moved. The computer
+can save the result to a file, or the RT1170 board can play it through a real
+headphone jack while another cable records it.
+
+The strict rules are like sharing one notebook and one SD card. Only one person
+may write at a time, every experiment gets a label and seed, and a successful
+speaker test does not automatically mean a complete radio passed its standard.
+
+## Technical module map
+
+| Technical module | Primary code | Explainer |
+|---|---|---|
+| Static impairment engine | `signal-lab/`, `host/signal_lab/` | [Signal Lab Engine](docs/modules/signal-lab-engine.md) |
+| Dynamic controls and deterministic replay | `common/live_*`, `signal-lab/src/live_control.cpp`, `host/live_control.py`, `host/render/live_replay.*` | [Live Control and Replay](docs/modules/live-control-and-replay.md) |
+| Generic source and WAV generation | `waveform-source/` | [Waveform Source and Encoders](docs/modules/waveform-source-and-encoders.md) |
+| Native M110B source | `native-m110/` | [Native M110B Waveform](docs/modules/native-m110-waveform.md) |
+| Embedded player and codec pipeline | `rt1170/player.*`, `rt1170/platform/`, `rt1170/os/` | [RT1170 Player and Audio](docs/modules/rt1170-player-and-audio.md) |
+| CDC, DD008, MSC, ownership, and artifacts | `common/`, `rt1170/usb*`, `rt1170/tx_*` | [Protocols, Media, and Artifacts](docs/modules/protocols-media-and-artifacts.md) |
+| Physical audio capture and measurements | `host/capture/`, `host/analyze_capture.py` | [Host Capture and Analysis](docs/modules/host-capture-and-analysis.md) |
+| Corpus production and decoder scoring | `host/corpus_phase1.py`, `host/render_scenario.py`, `host/m110_score.py`, `corpus/` | [Corpus Rendering and Scoring](docs/modules/corpus-rendering-and-scoring.md) |
+| Presets, manifests, dependencies, and audits | `CMakeLists.txt`, `CMakePresets.json`, `cmake/`, `scripts/`, `schema/` | [Build Contracts and Provenance](docs/modules/build-contracts-and-provenance.md) |
+| User-facing commands | `host/` entry points and host executables | [Command-line Tools](docs/modules/command-line-tools.md) |
+
+Start with the [module documentation index](docs/modules/README.md). Phase reports
+under `docs/` remain the chronological engineering record; module guides describe
+the stable architecture and should be updated when a technical contract changes.
+
 This directory is the standalone project root for the original
 MIMXRT1170-EVK CM7 waveform-generator fixture. Its firmware replays retained
-48 kHz mono PCM16 WAV files through the EVK WM8960 codec. The PC remains the
+48 kHz mono packed-PCM24 WAV files through the EVK WM8960 codec. The PC remains the
 device-under-test host and owns analog capture, M110 receive decoding, BER, and
 the retained run record. Live CW, static and fade controls are recorded at exact
 sample positions for replay. An independent encoder utility can create a clean
@@ -232,7 +465,7 @@ The default tests stay inside this repository. Historical comparisons against
 the parent checkout are optional and require `WFG_PARENT_REFERENCE_TESTS=1`.
 The first Python AWGN stage retains the legacy noise stream; additional AWGN
 stages use distinct instance streams. Output peak/RMS describe the emitted
-PCM16 samples, including saturation. Corpus score reuse checks the current WAV
+PCM24 samples, including saturation. Legacy PCM16 corpus score reuse checks the current WAV
 hash, and verification fails if any planned sidecar is missing.
 
 From Git Bash the WinLibs `mingw64/bin` directory must precede Git's own on
@@ -250,9 +483,10 @@ Phase 2 recommendation are in
 
 ## Phase 2 and 3: portable impairment engine and real-time RT1170 impairment
 
-`signal-lab/` is the portable C++23 form of the same engine: PCM16 in, ordered
+`signal-lab/` is the portable C++23 form of the same engine: normalized float in, ordered
 impairment stages (band-limited AWGN, CW, static crashes, fades, sample
-deletion/duplication), PCM16 out, with no heap, no exceptions and no C-library
+deletion/duplication), normalized float out with one PCM24 boundary quantizer,
+with no heap, no exceptions and no C-library
 transcendentals so the host renderer and the RT1170 produce sample-identical
 streams (verified by the FNV-1a digests both report). The host library
 `wfg_signal_lab`, the renderer `signal_lab_render` and the test

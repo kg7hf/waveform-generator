@@ -55,6 +55,7 @@ void Engine::configure_passthrough() noexcept
         stage = nullptr;
     }
     input_scale_ = 1.0 / 32768.0;
+    source_gain_ = 1.0;
     scaled_reference_ = 0.0;
     cursor_ = 0U;
     saturate_ = true;
@@ -85,6 +86,7 @@ bool Engine::configure(const Scenario& scenario, double reference_rms, std::uint
     }
     const double gain = det::db_to_amplitude(scenario.source_gain_db);
     input_scale_ = gain / 32768.0;
+    source_gain_ = gain;
     scaled_reference_ = reference_rms * gain;
     saturate_ = scenario.saturate;
     cursor_ = 0U;
@@ -182,6 +184,99 @@ std::size_t Engine::process(const std::int16_t* input, std::size_t frames, std::
         }
         output[index] = static_cast<std::int16_t>(rounded);
         const double emitted = static_cast<double>(output[index]) / 32768.0;
+        const float magnitude = static_cast<float>(emitted < 0.0 ? -emitted : emitted);
+        if (magnitude > block_peak)
+        {
+            block_peak = magnitude;
+        }
+        block_energy += emitted * emitted;
+    }
+    stats_.events_scheduled = 0U;
+    stats_.events_applied = 0U;
+    stats_.events_dropped = 0U;
+    for (std::uint32_t index = 0U; index < stage_count_; ++index)
+    {
+        const StageStats& stage = stages_[index]->stats();
+        stats_.events_scheduled += stage.events_scheduled;
+        stats_.events_applied += stage.events_applied;
+        stats_.events_dropped += stage.events_dropped;
+    }
+    cursor_ += frames;
+    if (process_error_ != ProcessError::none)
+    {
+        return 0U;
+    }
+    if (block_peak > stats_.peak)
+    {
+        stats_.peak = block_peak;
+    }
+    stats_.output_energy += block_energy;
+    output_digest_.update(output, count);
+    stats_.frames_out += count;
+    stats_.output_digest = output_digest_.value();
+    return count;
+}
+
+std::size_t Engine::process(const float* input, std::size_t frames, float* output,
+                            std::size_t output_capacity) noexcept
+{
+    if (process_error_ != ProcessError::none)
+    {
+        return 0U;
+    }
+    if (!configured_ || input == nullptr || output == nullptr ||
+        frames > engine_block_frames || output_capacity < frames + engine_slack_frames)
+    {
+        process_error_ = ProcessError::invalid_buffer;
+        return 0U;
+    }
+    source_digest_.update(input, frames);
+    stats_.frames_in += frames;
+    stats_.source_digest = source_digest_.value();
+    for (std::size_t index = 0U; index < frames; ++index)
+    {
+        work_[index] = static_cast<float>(static_cast<double>(input[index]) * source_gain_);
+    }
+    std::size_t count = frames;
+    const std::size_t capacity = output_capacity < engine_capacity_frames
+                                     ? output_capacity
+                                     : engine_capacity_frames;
+    for (std::uint32_t index = 0U; index < stage_count_; ++index)
+    {
+        count = stages_[index]->process(work_, count, cursor_, capacity);
+    }
+
+    constexpr double minimum = -1.0;
+    constexpr double maximum = static_cast<double>(waveform_generator::audio::pcm24_max) /
+                               waveform_generator::audio::pcm24_scale;
+    float block_peak = 0.0F;
+    double block_energy = 0.0;
+    for (std::size_t index = 0U; index < count; ++index)
+    {
+        double sample = static_cast<double>(work_[index]);
+        if (sample < minimum || sample > maximum)
+        {
+            ++stats_.clipped_samples;
+            if (stats_.first_clipped_frame == 0xFFFFFFFFFFFFFFFFULL)
+            {
+                stats_.first_clipped_frame = stats_.frames_out + index;
+            }
+            if (!saturate_)
+            {
+                process_error_ = ProcessError::clipping;
+            }
+        }
+        if (sample < minimum)
+        {
+            sample = minimum;
+        }
+        else if (sample > maximum)
+        {
+            sample = maximum;
+        }
+        output[index] = static_cast<float>(sample);
+        const double emitted = static_cast<double>(det::quantize_pcm24(output[index])) /
+                               waveform_generator::audio::pcm24_scale;
         const float magnitude = static_cast<float>(emitted < 0.0 ? -emitted : emitted);
         if (magnitude > block_peak)
         {

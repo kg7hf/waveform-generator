@@ -8,15 +8,15 @@
 namespace waveform_generator
 {
 
-// One exact 48-frame period, quantized to a PCM16 peak of 4096. The PCM table
+// One exact 48-frame period, quantized to a PCM24 peak of 1048576. The PCM table
 // and phase advance are independent of callback size and scheduling jitter.
-constexpr std::array<std::int16_t, 48U> tone_period{
-    0, 535, 1060, 1567, 2048, 2493, 2896, 3250,
-    3547, 3784, 3956, 4061, 4096, 4061, 3956, 3784,
-    3547, 3250, 2896, 2493, 2048, 1567, 1060, 535,
-    0, -535, -1060, -1567, -2048, -2493, -2896, -3250,
-    -3547, -3784, -3956, -4061, -4096, -4061, -3956, -3784,
-    -3547, -3250, -2896, -2493, -2048, -1567, -1060, -535,
+constexpr std::array<std::int32_t, 48U> tone_period{
+    0, 136867, 271391, 401273, 524288, 638333, 741455, 831891,
+    908093, 968758, 1012847, 1039605, 1048576, 1039605, 1012847, 968758,
+    908093, 831891, 741455, 638333, 524288, 401273, 271391, 136867,
+    0, -136867, -271391, -401273, -524288, -638333, -741455, -831891,
+    -908093, -968758, -1012847, -1039605, -1048576, -1039605, -1012847, -968758,
+    -908093, -831891, -741455, -638333, -524288, -401273, -271391, -136867,
 };
 std::size_t tone_phase{};
 
@@ -25,8 +25,7 @@ void tone_hook(void*, const std::uint32_t*, std::uint32_t* playback,
 {
     for (std::size_t frame = 0U; frame < frames; ++frame)
     {
-        const auto signed_sample = static_cast<std::int32_t>(tone_period[tone_phase]);
-        const auto word = static_cast<std::uint32_t>(signed_sample) << 16U;
+        const auto word = static_cast<std::uint32_t>(tone_period[tone_phase]) << 8U;
         playback[2U * frame] = word;
         playback[2U * frame + 1U] = word;
         ++tone_phase;

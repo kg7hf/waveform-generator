@@ -414,4 +414,77 @@ bool LiveController::process(std::int16_t* pcm, std::size_t frames, const char**
     return true;
 }
 
+bool LiveController::process(float* pcm, std::size_t frames, const char** error) noexcept
+{
+    if (!configured_)
+    {
+        return fail(error, "live controller is not configured");
+    }
+    if ((pcm == nullptr && frames != 0U) || frames > engine_capacity_frames ||
+        frames > unbounded_frames - stats_.frames)
+    {
+        return fail(error, "invalid live float block or output timeline overflow");
+    }
+    constexpr double minimum = -1.0;
+    constexpr double maximum = static_cast<double>(waveform_generator::audio::pcm24_max) /
+                               waveform_generator::audio::pcm24_scale;
+    for (std::size_t index = 0U; index < frames; ++index)
+    {
+        const std::uint64_t absolute = stats_.frames + index;
+        while (pending_count_ != 0U && capture_[pending_[0]].frame == absolute)
+        {
+            apply(capture_[pending_[0]]);
+            --pending_count_;
+            for (std::size_t pending = 0U; pending < pending_count_; ++pending)
+            {
+                pending_[pending] = pending_[pending + 1U];
+            }
+        }
+        double sample = static_cast<double>(pcm[index]) * fade_gain(absolute);
+        for (std::size_t oscillator = 0U; oscillator < live_cw_capacity; ++oscillator)
+        {
+            if (state_.cw[oscillator].enabled)
+            {
+                sample += cw_amplitude_[oscillator] * det::sin(cw_phase_[oscillator]);
+            }
+            cw_phase_[oscillator] += cw_step_[oscillator];
+            if (cw_phase_[oscillator] >= det::two_pi)
+            {
+                cw_phase_[oscillator] -= det::two_pi;
+            }
+        }
+        sample += static_sample(absolute);
+        if (sample < minimum || sample > maximum)
+        {
+            ++stats_.clipped_samples;
+        }
+        if (sample < minimum)
+        {
+            sample = minimum;
+        }
+        else if (sample > maximum)
+        {
+            sample = maximum;
+        }
+        pcm[index] = static_cast<float>(sample);
+        const double emitted = static_cast<double>(det::quantize_pcm24(pcm[index])) /
+                               waveform_generator::audio::pcm24_scale;
+        const auto magnitude = static_cast<float>(emitted < 0.0 ? -emitted : emitted);
+        if (magnitude > stats_.peak)
+        {
+            stats_.peak = magnitude;
+        }
+        stats_.output_energy += emitted * emitted;
+    }
+    digest_.update(pcm, frames);
+    stats_.output_digest = digest_.value();
+    stats_.frames += frames;
+    if (state_.fade_active &&
+        stats_.frames - state_.fade_start_frame >= state_.fade_duration_frames)
+    {
+        state_.fade_active = false;
+    }
+    return true;
+}
+
 } // namespace signal_lab

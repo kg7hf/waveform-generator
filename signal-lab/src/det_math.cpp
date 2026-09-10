@@ -204,6 +204,21 @@ std::uint64_t seconds_to_frames(double seconds, std::uint32_t sample_rate_hz) no
     return static_cast<std::uint64_t>(round_half_even(seconds * static_cast<double>(sample_rate_hz)));
 }
 
+waveform_generator::audio::Pcm24Sample quantize_pcm24(float sample) noexcept
+{
+    double rounded = round_half_even(static_cast<double>(sample) *
+                                     waveform_generator::audio::pcm24_scale);
+    if (rounded < waveform_generator::audio::pcm24_min)
+    {
+        rounded = waveform_generator::audio::pcm24_min;
+    }
+    else if (rounded > waveform_generator::audio::pcm24_max)
+    {
+        rounded = waveform_generator::audio::pcm24_max;
+    }
+    return static_cast<waveform_generator::audio::Pcm24Sample>(rounded);
+}
+
 Pcg32::Pcg32(std::uint64_t seed, std::uint32_t family, std::uint32_t index) noexcept
 {
     reseed(seed, family, index);
@@ -266,6 +281,22 @@ void StreamDigest::update(const std::int16_t* samples, std::size_t count) noexce
         hash *= 0x100000001B3ULL;
         hash ^= static_cast<std::uint64_t>(bits >> 8U);
         hash *= 0x100000001B3ULL;
+    }
+    hash_ = hash;
+}
+
+void StreamDigest::update(const float* samples, std::size_t count) noexcept
+{
+    std::uint64_t hash = hash_;
+    for (std::size_t index = 0U; index < count; ++index)
+    {
+        const auto bits = static_cast<std::uint32_t>(quantize_pcm24(samples[index])) &
+                          0x00FFFFFFU;
+        for (std::uint32_t byte = 0U; byte < 3U; ++byte)
+        {
+            hash ^= static_cast<std::uint64_t>((bits >> (8U * byte)) & 0xFFU);
+            hash *= 0x100000001B3ULL;
+        }
     }
     hash_ = hash;
 }

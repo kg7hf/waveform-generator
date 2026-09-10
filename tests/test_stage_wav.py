@@ -32,18 +32,18 @@ class StageWavTests(unittest.TestCase):
         facts = STAGE_WAV._write_tone_from_recipe(
             ROOT / "fixtures" / "tone-10s.json", tone, False
         )
-        self.assertEqual(facts["file_bytes"], 960_044)
+        self.assertEqual(facts["file_bytes"], 1_440_044)
         self.assertEqual(facts["data_offset"], 44)
-        self.assertEqual(facts["data_bytes"], 960_000)
+        self.assertEqual(facts["data_bytes"], 1_440_000)
         self.assertEqual(facts["samples"], 480_000)
         self.assertEqual(facts["duration_seconds"], 10.0)
         self.assertEqual(
             facts["file_sha256"],
-            "17997fdffee61d60804c7d4a4943ed100a251ff19706354587739b757c505760",
+            "8172261986018cb9a7b8e3913302f77064da26476277ec631545551a2a418303",
         )
         self.assertEqual(
             facts["pcm_sha256"],
-            "9771da8d42a4179bac40fe6ec740828364c8f406670532386490fda3640df6a8",
+            "7e6b57ae998e983d2c90d9b27d0d9297a31bcf742bf3b765c271d5dcf9c57ce4",
         )
 
         card = self.temporary_path / "card"
@@ -57,11 +57,11 @@ class StageWavTests(unittest.TestCase):
         self.assertEqual(
             (card / "WG" / "PLAY.WGM").read_text(encoding="ascii"),
             "WGM1\n"
-            "wav_bytes=960044\n"
-            "wav_sha256=17997fdffee61d60804c7d4a4943ed100a251ff19706354587739b757c505760\n"
+            "wav_bytes=1440044\n"
+            "wav_sha256=8172261986018cb9a7b8e3913302f77064da26476277ec631545551a2a418303\n"
             "data_offset=44\n"
-            "data_bytes=960000\n"
-            "pcm_sha256=9771da8d42a4179bac40fe6ec740828364c8f406670532386490fda3640df6a8\n"
+            "data_bytes=1440000\n"
+            "pcm_sha256=7e6b57ae998e983d2c90d9b27d0d9297a31bcf742bf3b765c271d5dcf9c57ce4\n"
             "samples=480000\n"
             "level_percent=70\n",
         )

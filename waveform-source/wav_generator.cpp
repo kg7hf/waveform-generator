@@ -1,5 +1,8 @@
 #include "waveform-source/wav_generator.hpp"
 
+#include "common/pcm24.hpp"
+#include "signal_lab/det_math.hpp"
+
 #include <algorithm>
 #include <cstring>
 #include <limits>
@@ -38,7 +41,8 @@ void WavGenerator::stop() noexcept
 }
 
 m110::Status WavGenerator::begin(Encoder& source, std::string_view profile, ByteSource& payload, std::size_t payload_bytes,
-                                 ByteSink& sink, std::uint32_t trailing_silence_frames) noexcept
+                                 ByteSink& sink, std::uint32_t trailing_silence_frames,
+                                 WavEncoding encoding) noexcept
 {
     stop();
     source_ = &source;
@@ -50,22 +54,26 @@ m110::Status WavGenerator::begin(Encoder& source, std::string_view profile, Byte
     payload_digest_ = {};
     wav_digest_ = {};
     pcm_digest_ = {};
+    sample_bytes_ = encoding == WavEncoding::pcm24 ? 3U : 2U;
     const auto configured = source.configure(profile, *this, payload_bytes);
     if (!configured.is_ok()) { (void)fail(configured); return status_; }
     waveform_frames_ = source.total_frames();
-    constexpr auto maximum_frames = (std::numeric_limits<std::uint32_t>::max() - 36U) / 2U;
+    const auto maximum_frames = (std::numeric_limits<std::uint32_t>::max() - 36U) /
+                                sample_bytes_;
     if (waveform_frames_ > maximum_frames || trailing_silence_frames > maximum_frames - waveform_frames_)
     {
         (void)fail({m110::StatusCode::invalid_argument, "native WAV exceeds the RIFF size limit"});
         return status_;
     }
     total_frames_ = waveform_frames_ + trailing_silence_frames;
-    const auto data_bytes = static_cast<std::uint32_t>(total_frames_ * 2U);
+    const auto data_bytes = static_cast<std::uint32_t>(total_frames_ * sample_bytes_);
     std::array<std::uint8_t, 44U> header{};
     std::memcpy(header.data(), "RIFF", 4U); put32(header.data() + 4U, 36U + data_bytes);
     std::memcpy(header.data() + 8U, "WAVEfmt ", 8U); put32(header.data() + 16U, 16U);
     put16(header.data() + 20U, 1U); put16(header.data() + 22U, 1U); put32(header.data() + 24U, 48000U);
-    put32(header.data() + 28U, 96000U); put16(header.data() + 32U, 2U); put16(header.data() + 34U, 16U);
+    put32(header.data() + 28U, 48000U * sample_bytes_);
+    put16(header.data() + 32U, static_cast<std::uint16_t>(sample_bytes_));
+    put16(header.data() + 34U, static_cast<std::uint16_t>(sample_bytes_ * 8U));
     std::memcpy(header.data() + 36U, "data", 4U); put32(header.data() + 40U, data_bytes);
     if (!sink_->write(header.data(), header.size()))
     {
@@ -93,20 +101,37 @@ JobState WavGenerator::step(std::size_t max_frames) noexcept
     if (frames_written_ < waveform_frames_)
     {
         const auto request = static_cast<std::size_t>(std::min<std::uint64_t>(limit, waveform_frames_ - frames_written_));
-        count = source_->read(frames_.data(), request);
+        count = source_->read_float(frames_.data(), request);
         if (!source_->status().is_ok()) { return fail(source_->status()); }
         if (count == 0U || count > request) { return fail({m110::StatusCode::io_error, "encoder did not honor its declared frame count"}); }
     }
     if (frames_written_ + count == waveform_frames_ || frames_written_ >= waveform_frames_)
     {
-        std::fill(frames_.begin() + static_cast<std::ptrdiff_t>(count), frames_.begin() + static_cast<std::ptrdiff_t>(limit), std::int16_t{});
+        std::fill(frames_.begin() + static_cast<std::ptrdiff_t>(count),
+                  frames_.begin() + static_cast<std::ptrdiff_t>(limit), 0.0F);
         count = limit;
     }
     if (count == 0U) { return fail({m110::StatusCode::io_error, "encoder ended without consuming its declared payload"}); }
-    for (std::size_t i = 0U; i < count; ++i) { put16(bytes_.data() + 2U * i, static_cast<std::uint16_t>(frames_[i])); }
-    if (!sink_->write(bytes_.data(), count * 2U)) { return fail({m110::StatusCode::io_error, "failed to write native WAV PCM"}); }
-    wav_digest_.update(bytes_.data(), count * 2U);
-    pcm_digest_.update(bytes_.data(), count * 2U);
+    for (std::size_t i = 0U; i < count; ++i)
+    {
+        if (sample_bytes_ == 3U)
+        {
+            waveform_generator::audio::write_pcm24_le(
+                bytes_.data() + 3U * i, signal_lab::det::quantize_pcm24(frames_[i]));
+        }
+        else
+        {
+            double rounded = signal_lab::det::round_half_even(
+                static_cast<double>(frames_[i]) * 32768.0);
+            rounded = std::clamp(rounded, -32768.0, 32767.0);
+            put16(bytes_.data() + 2U * i,
+                  static_cast<std::uint16_t>(static_cast<std::int16_t>(rounded)));
+        }
+    }
+    const auto output_bytes = count * sample_bytes_;
+    if (!sink_->write(bytes_.data(), output_bytes)) { return fail({m110::StatusCode::io_error, "failed to write native WAV PCM"}); }
+    wav_digest_.update(bytes_.data(), output_bytes);
+    pcm_digest_.update(bytes_.data(), output_bytes);
     frames_written_ += count;
     if (frames_written_ == total_frames_)
     {

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare one known-good WAV for the P1.2 microSD playback checkpoint.
+"""Prepare one known-good PCM24 WAV for the RT1170 playback checkpoint.
 
 This is deliberately a small staging utility, not the Phase 1 qualification
 packager.  It accepts only the one transparent firmware format and copies the
@@ -20,13 +20,13 @@ import sys
 from typing import BinaryIO
 
 
-BLOCK_ALIGN = 2
-BYTE_RATE = 96_000
+BLOCK_ALIGN = 3
+BYTE_RATE = 144_000
 CHANNELS = 1
 FIXED_CARD_NAME = "PLAY.WAV"
 FIXED_SIDECAR_NAME = "PLAY.WGM"
 SAMPLE_RATE_HZ = 48_000
-SAMPLE_WIDTH_BITS = 16
+SAMPLE_WIDTH_BITS = 24
 STAGE_DIRECTORY = "WG"
 
 
@@ -141,7 +141,7 @@ def inspect_wav(path: Path) -> dict[str, object]:
         expected = (1, CHANNELS, SAMPLE_RATE_HZ, BYTE_RATE, BLOCK_ALIGN, SAMPLE_WIDTH_BITS)
         if fmt_fields != expected:
             raise WavError(
-                "unsupported format: expected PCM16 mono 48000 Hz "
+                "unsupported format: expected packed PCM24 mono 48000 Hz "
                 f"(got tag={format_tag}, channels={channels}, rate={sample_rate}, "
                 f"byte_rate={byte_rate}, align={block_align}, bits={sample_bits})"
             )
@@ -165,7 +165,7 @@ def inspect_wav(path: Path) -> dict[str, object]:
         "samples": samples,
         "duration_seconds": samples / SAMPLE_RATE_HZ,
         "format": {
-            "encoding": "pcm_s16le",
+            "encoding": "pcm_s24le",
             "sample_rate_hz": SAMPLE_RATE_HZ,
             "channels": CHANNELS,
             "bits_per_sample": SAMPLE_WIDTH_BITS,
@@ -176,7 +176,7 @@ def inspect_wav(path: Path) -> dict[str, object]:
 def _write_tone_from_recipe(recipe_path: Path, output_path: Path, force: bool) -> dict[str, object]:
     recipe = json.loads(recipe_path.read_text(encoding="utf-8"))
     preparation = recipe.get("preparation", {})
-    period = preparation.get("pcm16_period")
+    period = preparation.get("pcm24_period")
     repetitions = preparation.get("period_repetitions")
     declared_samples = preparation.get("samples")
     if (
@@ -186,7 +186,7 @@ def _write_tone_from_recipe(recipe_path: Path, output_path: Path, force: bool) -
         or not isinstance(repetitions, int)
         or repetitions <= 0
         or declared_samples != len(period) * repetitions
-        or any(not isinstance(sample, int) or sample < -32768 or sample > 32767 for sample in period)
+        or any(not isinstance(sample, int) or sample < -8388608 or sample > 8388607 for sample in period)
     ):
         raise WavError("tone recipe does not contain the expected bounded integer period")
 
@@ -212,7 +212,10 @@ def _write_tone_from_recipe(recipe_path: Path, output_path: Path, force: bool) -
         b"data",
         data_bytes,
     )
-    packed_period = struct.pack(f"<{len(period)}h", *period)
+    packed_period = b"".join(
+        (sample & 0xFFFFFF).to_bytes(3, byteorder="little", signed=False)
+        for sample in period
+    )
     try:
         with temporary.open("wb") as stream:
             stream.write(header)

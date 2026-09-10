@@ -33,9 +33,9 @@ def verify(output, payload):
     assert sidecar['generator']['source_manifest_sha256'] not in ('', 'unidentified-source')
     if output.suffix.lower() == '.wav':
         with wave.open(str(output), 'rb') as wav:
-            assert (wav.getframerate(), wav.getnchannels(), wav.getsampwidth()) == (48000, 1, 2)
+            assert (wav.getframerate(), wav.getnchannels(), wav.getsampwidth()) == (48000, 1, 3)
             assert wav.getnframes() == sidecar['wav']['samples']
-        assert data[-96000:] == bytes(96000)
+        assert data[-144000:] == bytes(144000)
     return data
 
 
