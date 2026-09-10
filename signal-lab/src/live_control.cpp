@@ -71,9 +71,12 @@ bool LiveController::reset(std::uint64_t seed, double reference_rms, const char*
     stats_ = LiveStats{};
     pending_count_ = 0U;
     capture_count_ = 0U;
-    cw_phase_ = 0.0;
-    cw_step_ = det::two_pi * state_.cw_frequency_hz / sample_rate_hz;
-    cw_amplitude_ = std::sqrt(2.0) * reference_rms_ * det::db_to_amplitude(-state_.cw_ci_db);
+    for (std::size_t index = 0U; index < live_cw_capacity; ++index)
+    {
+        cw_phase_[index] = 0.0;
+        cw_step_[index] = det::two_pi * state_.cw[index].frequency_hz / sample_rate_hz;
+        cw_amplitude_[index] = std::sqrt(2.0) * reference_rms_ * det::db_to_amplitude(-state_.cw[index].ci_db);
+    }
     next_static_frame_ = unbounded_frames;
     static_decay_ = det::exp(-1.0 / static_cast<double>(static_tau_frames));
     // Live static draws are separate from every scenario stage and CW control.
@@ -99,6 +102,11 @@ ControlResult LiveController::validate(const ControlEvent& event) const noexcept
         return ControlResult::late_event;
     }
     if (event.kind != ControlKind::fade_now && event.duration_frames != 0U)
+    {
+        return ControlResult::invalid_event;
+    }
+    const bool cw_control = event.kind == ControlKind::cw_enable || event.kind == ControlKind::cw_frequency || event.kind == ControlKind::cw_ci;
+    if ((cw_control && event.oscillator >= live_cw_capacity) || (!cw_control && event.oscillator != 0U))
     {
         return ControlResult::invalid_event;
     }
@@ -176,7 +184,8 @@ ControlResult LiveController::enqueue_sweep(const ControlSweep& sweep) noexcept
     }
     for (std::size_t index = 0U; index < sweep.count; ++index)
     {
-        const ControlEvent event{sweep.first_frame + index * sweep.step_frames, sweep.kind, sweep.values[index], sweep.fade_duration_frames};
+        const ControlEvent event{sweep.first_frame + index * sweep.step_frames, sweep.kind, sweep.values[index],
+                                 sweep.fade_duration_frames, sweep.oscillator};
         const ControlResult result = validate(event);
         if (result != ControlResult::accepted)
         {
@@ -193,7 +202,8 @@ ControlResult LiveController::enqueue_sweep(const ControlSweep& sweep) noexcept
     }
     for (std::size_t index = 0U; index < sweep.count; ++index)
     {
-        insert({sweep.first_frame + index * sweep.step_frames, sweep.kind, sweep.values[index], sweep.fade_duration_frames});
+        insert({sweep.first_frame + index * sweep.step_frames, sweep.kind, sweep.values[index],
+                sweep.fade_duration_frames, sweep.oscillator});
     }
     return ControlResult::accepted;
 }
@@ -210,15 +220,15 @@ void LiveController::apply(const ControlEvent& event) noexcept
     switch (event.kind)
     {
     case ControlKind::cw_enable:
-        state_.cw_enabled = event.value == 1.0;
+        state_.cw[event.oscillator].enabled = event.value == 1.0;
         break;
     case ControlKind::cw_frequency:
-        state_.cw_frequency_hz = event.value;
-        cw_step_ = det::two_pi * event.value / sample_rate_hz;
+        state_.cw[event.oscillator].frequency_hz = event.value;
+        cw_step_[event.oscillator] = det::two_pi * event.value / sample_rate_hz;
         break;
     case ControlKind::cw_ci:
-        state_.cw_ci_db = event.value;
-        cw_amplitude_ = std::sqrt(2.0) * reference_rms_ * det::db_to_amplitude(-event.value);
+        state_.cw[event.oscillator].ci_db = event.value;
+        cw_amplitude_[event.oscillator] = std::sqrt(2.0) * reference_rms_ * det::db_to_amplitude(-event.value);
         break;
     case ControlKind::static_enable:
         if (event.value == 1.0 && !state_.static_enabled)
@@ -358,16 +368,19 @@ bool LiveController::process(std::int16_t* pcm, std::size_t frames, const char**
             }
         }
         double sample = static_cast<double>(pcm[index]) / 32768.0 * fade_gain(absolute);
-        if (state_.cw_enabled)
+        for (std::size_t oscillator = 0U; oscillator < live_cw_capacity; ++oscillator)
         {
-            sample += cw_amplitude_ * det::sin(cw_phase_);
+            if (state_.cw[oscillator].enabled)
+            {
+                sample += cw_amplitude_[oscillator] * det::sin(cw_phase_[oscillator]);
+            }
+            cw_phase_[oscillator] += cw_step_[oscillator];
+            if (cw_phase_[oscillator] >= det::two_pi)
+            {
+                cw_phase_[oscillator] -= det::two_pi;
+            }
         }
         sample += static_sample(absolute);
-        cw_phase_ += cw_step_;
-        if (cw_phase_ >= det::two_pi)
-        {
-            cw_phase_ -= det::two_pi;
-        }
         const double scaled = sample * 32768.0;
         if (scaled < -32768.0 || scaled > 32767.0)
         {

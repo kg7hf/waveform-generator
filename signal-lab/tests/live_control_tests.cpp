@@ -107,7 +107,7 @@ void test_cw_phase_and_switches()
     {
         near(output[index], expected[index], 1.0, "CW events retain oscillator phase and apply before the designated sample");
     }
-    check(controller.state().cw_enabled && controller.state().cw_frequency_hz == 6000.0 && controller.state().cw_ci_db == 20.0 &&
+    check(controller.state().cw[0].enabled && controller.state().cw[0].frequency_hz == 6000.0 && controller.state().cw[0].ci_db == 20.0 &&
               controller.stats().controls_applied == 7U,
           "CW state and applied count reflect every control");
 
@@ -124,6 +124,44 @@ void test_cw_phase_and_switches()
         energy += value * value;
     }
     near(20.0 * std::log10(0.25 / std::sqrt(energy / tone.size())), 6.0, 0.002, "CW RMS matches the requested C/I");
+}
+
+void test_multi_cw_bank()
+{
+    LiveController combined;
+    check(combined.reset(1U, 0.1), "multi-CW reset succeeds");
+    accepted(combined, {0U, ControlKind::cw_frequency, 12000.0, 0U, 0U});
+    accepted(combined, {0U, ControlKind::cw_ci, 0.0, 0U, 0U});
+    accepted(combined, {0U, ControlKind::cw_enable, 1.0, 0U, 0U});
+    accepted(combined, {0U, ControlKind::cw_frequency, 6000.0, 0U, 1U});
+    accepted(combined, {0U, ControlKind::cw_ci, 0.0, 0U, 1U});
+    accepted(combined, {0U, ControlKind::cw_enable, 1.0, 0U, 1U});
+    const auto output = render(combined, std::vector<std::int16_t>(8U), 3U);
+    const std::int16_t expected[] = {0, 7911, 4634, -1357, 0, 1357, -4634, -7911};
+    for (std::size_t index = 0U; index < output.size(); ++index)
+    {
+        near(output[index], expected[index], 2.0, "CW bank sums independent phase-continuous oscillators");
+    }
+    check(combined.state().cw[0].enabled && combined.state().cw[1].enabled &&
+              combined.state().cw[0].frequency_hz == 12000.0 && combined.state().cw[1].frequency_hz == 6000.0,
+          "CW bank retains independent slot state");
+    check(combined.enqueue({8U, ControlKind::cw_enable, 1.0, 0U, signal_lab::live_cw_capacity}) == ControlResult::invalid_event,
+          "CW slot outside the bounded bank is rejected");
+    check(combined.enqueue({8U, ControlKind::static_enable, 1.0, 0U, 1U}) == ControlResult::invalid_event,
+          "non-CW controls cannot carry a CW slot");
+
+    ControlSweep sweep;
+    sweep.first_frame = 8U;
+    sweep.kind = ControlKind::cw_frequency;
+    sweep.values[0] = 300.0;
+    sweep.values[1] = 3400.0;
+    sweep.count = 2U;
+    sweep.step_frames = 2U;
+    sweep.oscillator = 2U;
+    check(combined.enqueue_sweep(sweep) == ControlResult::accepted, "CW sweep targets one oscillator slot");
+    (void)render(combined, std::vector<std::int16_t>(3U), 1U);
+    check(combined.state().cw[2].frequency_hz == 3400.0 && combined.state().cw[0].frequency_hz == 12000.0,
+          "slot sweep does not change another oscillator");
 }
 
 void test_fade_shape_and_replacement()
@@ -244,7 +282,7 @@ void test_sweep_atomicity_order_and_limits()
     accepted(controller, {10U, ControlKind::cw_frequency, 1000.0, 0U});
     accepted(controller, {10U, ControlKind::cw_frequency, 2000.0, 0U});
     auto output = render(controller, std::vector<std::int16_t>(11U), 11U);
-    check(controller.state().cw_frequency_hz == 2000.0, "equal-frame controls retain enqueue order");
+    check(controller.state().cw[0].frequency_hz == 2000.0, "equal-frame controls retain enqueue order");
     ControlSweep sweep;
     sweep.first_frame = 11U;
     sweep.kind = ControlKind::cw_frequency;
@@ -255,9 +293,9 @@ void test_sweep_atomicity_order_and_limits()
     check(controller.enqueue_sweep(sweep) == ControlResult::accepted && controller.capture_data()[2].frame == 11U && controller.capture_data()[3].frame == 16U,
           "sweep capture stores expanded absolute event times");
     output = render(controller, std::vector<std::int16_t>(5U), 5U);
-    check(controller.state().cw_frequency_hz == 300.0, "first sweep step persists for its exact dwell");
+    check(controller.state().cw[0].frequency_hz == 300.0, "first sweep step persists for its exact dwell");
     output = render(controller, std::vector<std::int16_t>(1U), 1U);
-    check(controller.state().cw_frequency_hz == 3400.0, "next sweep step applies at the designated frame");
+    check(controller.state().cw[0].frequency_hz == 3400.0, "next sweep step applies at the designated frame");
     const auto count = controller.capture_count();
     sweep.first_frame = controller.frame();
     sweep.values[1] = -1.0;
@@ -287,7 +325,8 @@ void test_sweep_atomicity_order_and_limits()
     check(controller.capture_count() == signal_lab::live_capture_capacity && controller.enqueue({2U, ControlKind::cw_ci, 20.0, 0U}) == ControlResult::capture_full,
           "capture exhaustion never silently loses replay evidence");
     check(controller.reset(42U, 0.25) && controller.frame() == 0U && controller.capture_count() == 0U && controller.pending_count() == 0U &&
-              !controller.state().cw_enabled && !controller.state().static_enabled && !controller.state().fade_active,
+              !controller.state().cw[0].enabled && !controller.state().cw[1].enabled &&
+              !controller.state().static_enabled && !controller.state().fade_active,
           "reset clears all state queues and capture for reproducible replay");
 }
 
@@ -297,6 +336,7 @@ int main()
 {
     test_disabled_path_and_validation();
     test_cw_phase_and_switches();
+    test_multi_cw_bank();
     test_fade_shape_and_replacement();
     test_replay_block_independence_and_static();
     test_sweep_atomicity_order_and_limits();

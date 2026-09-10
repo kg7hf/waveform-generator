@@ -2,6 +2,8 @@
 
 #include "signal_lab/json.hpp"
 
+#include <limits>
+
 namespace signal_lab
 {
 namespace
@@ -35,6 +37,26 @@ bool read_number(const Document& document, const Value& object, const char* key,
         return set_error(error, "parameter must be a number");
     }
     out = node->number;
+    return true;
+}
+
+bool read_integer(const Document& document, const Value& object, const char* key, std::uint32_t& out,
+                  std::uint32_t low, std::uint32_t high, const char* message, const char** error) noexcept
+{
+    double value = 0.0;
+    if (!read_number(document, object, key, value, true, error))
+    {
+        return false;
+    }
+    if (!(value >= static_cast<double>(low) && value <= static_cast<double>(high)))
+    {
+        return set_error(error, message);
+    }
+    out = static_cast<std::uint32_t>(value);
+    if (static_cast<double>(out) != value)
+    {
+        return set_error(error, message);
+    }
     return true;
 }
 
@@ -241,13 +263,13 @@ bool parse_fade(const Document& document, const Value& object, FadeParams& param
         }
         if (document.has(object, "count"))
         {
-            double count = 0.0;
-            if (!read_number(document, object, "count", count, true, error))
+            if (!read_integer(document, object, "count", params.count, 1U,
+                              std::numeric_limits<std::uint32_t>::max(),
+                              "fade.count must be an integer in 1..4294967295", error))
             {
                 return false;
             }
             params.has_count = true;
-            params.count = count > 0.0 ? static_cast<std::uint32_t>(count) : 0U;
         }
     }
     return true;
@@ -256,22 +278,8 @@ bool parse_fade(const Document& document, const Value& object, FadeParams& param
 bool parse_slip(const Document& document, const Value& object, SampleSlipParams& params, const char** error) noexcept
 {
     const auto read_length = [&](const Value& value, std::uint32_t& out) noexcept {
-        double length = 0.0;
-        if (!read_number(document, value, "length_samples", length, true, error))
-        {
-            return false;
-        }
-        // Test the floating-point range before converting, including non-finite values.
-        if (!(length >= 1.0 && length <= static_cast<double>(max_slip_length)))
-        {
-            return set_error(error, "sample_slip length_samples must be an integer in 1..1024");
-        }
-        out = static_cast<std::uint32_t>(length);
-        if (static_cast<double>(out) != length)
-        {
-            return set_error(error, "sample_slip length_samples must be an integer in 1..1024");
-        }
-        return true;
+        return read_integer(document, value, "length_samples", out, 1U, max_slip_length,
+                            "sample_slip length_samples must be an integer in 1..1024", error);
     };
     const Value* events = document.find(object, "events");
     if (events != nullptr)
@@ -316,7 +324,7 @@ bool parse_slip(const Document& document, const Value& object, SampleSlipParams&
         const Value* placement = document.find(object, "placement");
         double first = 0.0;
         double step = 0.0;
-        double count = 1.0;
+        std::uint32_t count = 1U;
         if (placement == nullptr || placement->equals("single"))
         {
             if (!read_number(document, object, "at_seconds", first, true, error))
@@ -327,7 +335,8 @@ bool parse_slip(const Document& document, const Value& object, SampleSlipParams&
         else if (placement->equals("spaced"))
         {
             if (!read_number(document, object, "first_seconds", first, true, error) || !read_number(document, object, "period_seconds", step, true, error) ||
-                !read_number(document, object, "count", count, true, error))
+                !read_integer(document, object, "count", count, 1U, max_events,
+                              "sample_slip.count must be an integer in 1..32", error))
             {
                 return false;
             }
@@ -335,7 +344,8 @@ bool parse_slip(const Document& document, const Value& object, SampleSlipParams&
         else if (placement->equals("clustered"))
         {
             if (!read_number(document, object, "first_seconds", first, true, error) || !read_number(document, object, "spacing_seconds", step, true, error) ||
-                !read_number(document, object, "count", count, true, error))
+                !read_integer(document, object, "count", count, 1U, max_events,
+                              "sample_slip.count must be an integer in 1..32", error))
             {
                 return false;
             }
@@ -344,11 +354,7 @@ bool parse_slip(const Document& document, const Value& object, SampleSlipParams&
         {
             return set_error(error, "sample_slip.placement must be single, spaced or clustered");
         }
-        if (count < 1.0 || count > static_cast<double>(max_events))
-        {
-            return set_error(error, "sample_slip.count out of range");
-        }
-        params.event_count = static_cast<std::uint32_t>(count);
+        params.event_count = count;
         for (std::uint32_t index = 0U; index < params.event_count; ++index)
         {
             params.events[index].at_seconds = first + static_cast<double>(index) * step;

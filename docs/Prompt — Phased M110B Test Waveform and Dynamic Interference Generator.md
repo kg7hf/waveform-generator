@@ -1127,3 +1127,167 @@ The longer-term goal is more capable:
 > **Turn the existing RT1170 waveform generator into a protocol-independent real-time impairment and interference generator that can dynamically modify any clean PCM waveform during playback.**
 
 The phased architecture must allow us to achieve the first objective quickly without creating throw-away work that blocks the second.
+
+---
+
+# 34. Phase 6 - Expanded Channel and Interference Simulation
+
+Phase 6 extends the completed waveform-agnostic engine into a composable RF/audio
+impairment instrument. The implementation shall distinguish three kinds of
+transformation rather than treating every effect as generic noise:
+
+1. `channel` effects modify the wanted waveform, including deep fading,
+   multipath, Doppler, and frequency-selective fading.
+2. `interferer` sources generate independent additive waveforms, including CW,
+   keyed CW, AM carriers, impulsive emitters, pulsed radars, and jammers.
+3. `receiver_fault` effects model front-end or transport behavior, including
+   saturation, clipping, quantization, clock error, and sample slips.
+
+The default physical ordering is:
+
+```text
+wanted source
+    -> propagation/channel effects
+    -> additive interferer summation
+    -> receiver front-end limiting
+    -> sampling/transport faults
+    -> PCM16 output
+```
+
+Scenario ordering remains explicit where an experiment intentionally needs a
+different placement. The sidecar shall record the resolved order and level
+conventions.
+
+## 34.1 Phase 6A - Contract and correctness hardening
+
+Before adding new emitters:
+
+- make Python and portable C++ parsers reject fractional, Boolean, non-finite,
+  zero, negative, and overflowing integer parameters identically;
+- use the portable 1024-sample limit for every shared `sample_slip` scenario;
+- retain the 32-event portable limit for explicit/sample-slip schedules;
+- add regressions for compact and explicit sample-slip forms and periodic fade
+  counts;
+- preserve deterministic output across processing block sizes; and
+- keep all RT1170 processing bounded and allocation-free.
+
+Phase 6A is the first implementation increment of this roadmap.
+
+## 34.2 Phase 6B - Composable tone and oscillator sources
+
+The existing ordered float pipeline already provides wide intermediate
+summation and one final PCM quantization boundary. Extend it rather than adding
+a modem-specific mixer.
+
+Deliver:
+
+- multiple simultaneous CW sources with independent frequency, C/I, phase,
+  start, stop, and drift;
+- keyed-CW envelopes with configurable words per minute, message spacing, and
+  shaped rise/fall edges;
+- stable per-source identity so adding an unrelated stage does not change an
+  existing source's random phase or RNG stream;
+- a bounded live-control oscillator bank; and
+- worked recipes for single-tone, multi-tone, comb, and swept-tone jamming.
+
+Repeated `cw` stages may be used for fixed multi-CW scenarios immediately, but
+that capability does not by itself provide keyed Morse or a live oscillator
+bank.
+
+## 34.3 Phase 6C - Generalized impulses and burst emitters
+
+Implement reusable scheduling and pulse-shaping primitives:
+
+- periodic pulse trains;
+- periodic trains with bounded jitter;
+- bounded-random inter-arrival times;
+- clustered events and bursts;
+- configurable pulse width, polarity, rise/fall, decay, ringing, and spectrum;
+- deterministic amplitude distributions; and
+- finite event capacity with explicit dropped-event accounting.
+
+Build named recipes from those primitives instead of hard-coding unique DSP
+classes for `ignition`, `lightning`, or `woodpecker`:
+
+- ignition noise: RPM/cylinder-related repetition, jitter, polarity variation,
+  and broadband impulse shaping;
+- lightning/static crashes: bounded or clustered arrivals, heavy-tailed levels,
+  and selectable crash templates;
+- pulsed-radar/woodpecker-style interference: carrier frequency, PRF, pulse
+  width, burst length, chirp/sweep, and jitter.
+
+The current Poisson `STATIC RATE` control remains an average-rate model. It
+must not be described as a bounded lightning scheduler.
+
+## 34.4 Phase 6D - AM and intentional interference families
+
+Add a reusable AM source with carrier frequency, modulation index, audio source,
+bandwidth filter, level convention, drift, and start/stop window. Add composable
+intentional-interference recipes for:
+
+- spot CW and keyed CW;
+- multi-tone and comb interference;
+- swept/chirped carriers;
+- barrage and band-limited noise;
+- pulsed and burst interference; and
+- combinations of the above.
+
+Reactive or waveform-following interference is a later subphase because it
+requires bounded signal analysis and control feedback, not just sample
+generation.
+
+## 34.5 Phase 6E - Deep and frequency-selective fading
+
+Keep scalar fades for deterministic outages, then add a real channel model:
+
+- configurable deep-fade/outage envelopes;
+- Rayleigh and Rician amplitude processes;
+- delayed paths with independent gain, phase, and Doppler;
+- frequency-selective fading over the occupied audio passband; and
+- optional Watterson-style profiles with every coefficient and seed retained.
+
+A scalar amplitude reduction shall not be reported as multipath or
+frequency-selective fading.
+
+# 35. Phase-6 Scenario and Level Contract
+
+Every source shall use an explicit level convention. Supported conventions
+shall distinguish at least:
+
+```text
+dBFS
+interferer RMS relative to wanted-signal reference RMS
+carrier-to-interference ratio
+impulse envelope peak relative to wanted-signal reference RMS
+wanted-signal peak relative to wanted-signal RMS
+```
+
+The scenario and sidecar shall record resolved frequencies, sample-indexed
+event positions, source IDs, seeds, phases, envelopes, clipping policy, and
+event-drop counters. Schedulers shall use sample positions, not wall-clock
+callbacks. One source's random stream shall not change when another source is
+inserted or removed.
+
+# 36. Phase-6 Verification and Hardware Evidence
+
+Each new primitive requires:
+
+- host Python and portable C++ contract tests;
+- deterministic vectors at multiple block sizes;
+- phase and envelope continuity at block boundaries;
+- exact event-boundary and overflow tests;
+- defined headroom, summation, saturation, and clipping behavior;
+- long-run bounded-memory and event-capacity tests;
+- RT1170 Release build and static-memory accounting;
+- host/RT1170 PCM or digest comparison for deterministic cases; and
+- receiver-side payload, EOM, BER, acquisition, and recovery measurements.
+
+The powered RT1170 and hard-patched codec/PC audio loop may be used for analog
+engineering tests after host and firmware gates pass. Before programming or
+claiming results, bind the run to the exact original MIMXRT1170-EVK identity,
+firmware hash, scenario hash, Realtek endpoint identity, sample format, gain
+settings, and chronological playback/capture logs.
+
+Host tests, cross-builds, waveform hashes, analog loopback, and receiver decode
+results are separate evidence classes. None alone establishes formal
+MIL-STD-188-110 conformance.

@@ -32,7 +32,11 @@ int main()
     check(!parse("18 SWEEP FADE 6 30 17 1000 250", seq, r));
     check(parse("19 PLAY:0123456789abcdef0123456789abcdef", seq, r) && r.run_id[31] == 'f');
     check(!parse("20 PLAY:0123456789ABCDEF0123456789abcdef", seq, r));
-    check(!parse(std::string("21 CW FREQ ") + std::string(192, '0'), seq, r));
+    check(parse("21 CW 1 ON", seq, r) && r.kind == Kind::cw_on && r.oscillator == 1 && r.value == 1);
+    check(parse("22 CW 3 FREQ 2800", seq, r) && r.kind == Kind::cw_frequency && r.oscillator == 3 && r.value == 2800);
+    check(parse("23 SWEEP CW 2 CI 20 -3 4 100", seq, r) && r.kind == Kind::sweep_ci && r.oscillator == 2 && r.steps == 4);
+    check(!parse("24 CW 4 ON", seq, r));
+    check(!parse(std::string("25 CW FREQ ") + std::string(192, '0'), seq, r));
     check(parse("4294967295 STOP", seq, r));
     check(!parse("4294967296 STOP", seq, r));
     std::puts("live protocol tests passed");

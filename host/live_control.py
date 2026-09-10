@@ -194,10 +194,20 @@ def parse_command(text: str) -> Command:
     tokens = body.split(" ")
     bounds = {("CW", "FREQ"): (0, 24000), ("CW", "CI"): (-120, 120),
               ("STATIC", "RATE"): (0.001, 1000), ("STATIC", "PEAK"): (-120, 60)}
+    if len(tokens) == 3 and tokens[0] == "CW" and tokens[2] in ("ON", "OFF"):
+        _decimal(tokens[1], 3)
+        return Command(text, body, True, at, 1)
     if len(tokens) == 3 and tuple(tokens[:2]) in bounds:
         low, high = bounds[tuple(tokens[:2])]
         value = _number(tokens[2], low, high, positive=tokens[1] == "FREQ")
         if tokens[1] == "FREQ" and value >= 24000:
+            raise ControlError("CW frequency must be below Nyquist")
+        return Command(text, body, True, at, 1)
+    if len(tokens) == 4 and tokens[0] == "CW" and tokens[2] in ("FREQ", "CI"):
+        _decimal(tokens[1], 3)
+        low, high = bounds[("CW", tokens[2])]
+        value = _number(tokens[3], low, high, positive=tokens[2] == "FREQ")
+        if tokens[2] == "FREQ" and value >= 24000:
             raise ControlError("CW frequency must be below Nyquist")
         return Command(text, body, True, at, 1)
     if len(tokens) == 4 and tokens[:2] == ["FADE", "NOW"]:
@@ -205,13 +215,19 @@ def parse_command(text: str) -> Command:
         if _decimal(tokens[3], 3600000) < 1:
             raise ControlError("fade duration must be 1..3600000 integer milliseconds")
         return Command(text, body, True, at, 1)
-    if tokens[:2] == ["SWEEP", "CW"] and len(tokens) == 7 and tokens[2] in ("FREQ", "CI"):
-        low, high = bounds[("CW", tokens[2])]
-        for token in tokens[3:5]:
-            value = _number(token, low, high, positive=tokens[2] == "FREQ")
-            if tokens[2] == "FREQ" and value >= 24000:
+    if tokens[:2] == ["SWEEP", "CW"] and len(tokens) in (7, 8):
+        kind_index = 2
+        if len(tokens) == 8:
+            _decimal(tokens[2], 3)
+            kind_index = 3
+        if tokens[kind_index] not in ("FREQ", "CI"):
+            raise ControlError("unsupported WFG-LIVE/1 command")
+        low, high = bounds[("CW", tokens[kind_index])]
+        for token in tokens[kind_index + 1:kind_index + 3]:
+            value = _number(token, low, high, positive=tokens[kind_index] == "FREQ")
+            if tokens[kind_index] == "FREQ" and value >= 24000:
                 raise ControlError("CW frequency must be below Nyquist")
-        steps_token, interval_token = tokens[5:7]
+        steps_token, interval_token = tokens[kind_index + 3:kind_index + 5]
     elif tokens[:2] == ["SWEEP", "FADE"] and len(tokens) == 7:
         for token in tokens[2:4]:
             _number(token, 0, 120)

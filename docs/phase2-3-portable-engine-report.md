@@ -238,7 +238,7 @@ corpus.
   (CMSIS-DSP `arm_fir_f32`, or a 257-tap kernel with its hash in the scenario)
   before Watterson fading joins the chain.
 - **Arena**: 32 KiB holds five stages (MIX-005 used 21 KiB); the sample-slip
-  stage caps runs at 1024 samples, the Python engine allowed 48 000.
+  stage caps runs at 1024 samples in both the Python and portable engines.
 - **Events**: `max_events` is 32 per stage (explicit fade starts, slip events);
   periodic and Poisson schedules are unbounded.
 - **Level**: the analog path delivers about −36 dBFS RMS at codec level 70 %;

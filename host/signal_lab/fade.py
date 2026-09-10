@@ -13,7 +13,7 @@ import numpy as np
 
 from . import FS
 from .rng import FAMILY_FADE_SCHEDULE, generator
-from .stream import Impairment, number, seconds_to_frames
+from .stream import Impairment, integer, number, seconds_to_frames
 
 MAX_EVENTS = 100000
 
@@ -72,7 +72,7 @@ class Fade(Impairment):
             period = seconds_to_frames(p["period_seconds"], "fade.period_seconds", True)
             starts = list(range(first, window_end, period))
             if "count" in p:
-                starts = starts[: int(p["count"])]
+                starts = starts[:integer(p["count"], "fade.count", 1, 2 ** 32 - 1)]
             self.schedule = "periodic"
         self.starts = [s for s in starts if s < total_frames]
         if len(self.starts) > MAX_EVENTS:

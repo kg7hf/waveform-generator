@@ -64,13 +64,16 @@ the engineering counters establish hardware-qualified completion.
 
 | Command | Meaning |
 | --- | --- |
-| `CW ON`, `CW OFF` | Enable/disable the live carrier. |
-| `CW FREQ 1800`, `CW CI 3` | Carrier frequency in Hz and source-to-carrier RMS ratio in dB. |
+| `CW ON`, `CW OFF` | Enable/disable CW slot 0 (backward-compatible form). |
+| `CW FREQ 1800`, `CW CI 3` | Set slot 0 carrier frequency in Hz and source-to-carrier RMS ratio in dB. |
+| `CW 1 ON`, `CW 1 OFF` | Enable/disable a selected slot; valid slots are 0 through 3. |
+| `CW 1 FREQ 2800`, `CW 1 CI 6` | Set frequency or C/I independently for a selected slot. |
 | `STATIC ON`, `STATIC OFF` | Enable/disable seeded static crashes. |
 | `STATIC RATE 1`, `STATIC PEAK 20` | Crash arrivals per second and peak dB relative to source RMS. |
 | `FADE NOW 18 250` | One raised-cosine fade, depth 18 dB, total duration 250 ms. |
 | `SWEEP CW FREQ 300 3400 16 500` | Sixteen equally spaced frequency values, dwelling 500 ms at each step. CW must be enabled separately. |
 | `SWEEP CW CI 20 -3 16 1000` | Sixteen equally spaced C/I values at one-second intervals. |
+| `SWEEP CW 2 FREQ 300 3400 16 500` | Apply a frequency or C/I sweep to one selected CW slot. |
 | `SWEEP FADE 6 30 5 1000 250` | Five fades with depths 6, 12, 18, 24 and 30 dB, one second apart, each lasting 250 ms. |
 
 Prefix a live command with `AT:<output_frame> ` to specify its exact application
@@ -86,7 +89,7 @@ audio, so command acknowledgement is not an analog timestamp. Late commands,
 exhausted queues, or a finished producer are rejected. No file I/O, formatting
 or control processing occurs in the audio callback.
 
-The live signal order is source multiplied by live fade, then live CW and static
+The live signal order is source multiplied by live fade, then the four-slot live CW bank and static
 added, followed by PCM16 saturation. The fixed scenario is processed first.
 The independent live seed does not alter scenario RNG streams. Without live
 controls, PCM samples pass through unchanged and are still hashed.

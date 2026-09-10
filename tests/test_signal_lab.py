@@ -174,6 +174,16 @@ class ImpairmentLevelTests(unittest.TestCase):
         gain = out[int(2.0 * FS): int(2.1 * FS)] / self.signal[int(2.0 * FS): int(2.1 * FS)]
         self.assertTrue(np.allclose(gain, 10 ** (-24 / 20)))
 
+    def test_fade_count_requires_a_positive_uint32_integer(self):
+        params = {"depth_db": 18, "duration_ms": 250, "first_seconds": 0,
+                  "period_seconds": 1}
+        for count in (0, -1, 1.5, True, "2", 2 ** 32, float("inf")):
+            with self.subTest(count=count), self.assertRaisesRegex(ValueError, "fade.count"):
+                Fade(dict(params, count=count)).prepare(self.reference, len(self.signal), 0, 0)
+        stage = Fade(dict(params, count=2))
+        stage.prepare(self.reference, len(self.signal), 0, 0)
+        self.assertEqual(stage.starts, [0, FS])
+
 
 class SampleSlipTests(unittest.TestCase):
     def run_slip(self, params, data, block):
@@ -198,6 +208,24 @@ class SampleSlipTests(unittest.TestCase):
         self.assertEqual([e["frame"] for e in stage.applied], [int(0.5 * FS), int(1.5 * FS), int(2.5 * FS)])
         _out, stage = self.run_slip({"kind": "duplicate", "length_samples": 48, "placement": "clustered", "first_seconds": 1.0, "spacing_seconds": 0.01, "count": 4}, data, block=4096)
         self.assertEqual(stage.stats()["net_shift_samples"], 4 * 48)
+
+    def test_validation_matches_portable_limits(self):
+        data = np.arange(2048, dtype=np.float64)
+        for length in (0, -1, 1.5, 1024.5, 1025, 48000, True, "1", float("inf")):
+            with self.subTest(form="compact", length=length), self.assertRaisesRegex(ValueError, "length_samples"):
+                self.run_slip({"kind": "delete", "length_samples": length,
+                               "placement": "single", "at_seconds": 0}, data, block=2048)
+            with self.subTest(form="explicit", length=length), self.assertRaisesRegex(ValueError, "length_samples"):
+                self.run_slip({"events": [{"at_seconds": 0, "kind": "delete",
+                                            "length_samples": length}]}, data, block=2048)
+        for count in (0, -1, 1.5, 33, True, "2", float("inf")):
+            with self.subTest(count=count), self.assertRaisesRegex(ValueError, "sample_slip.count"):
+                self.run_slip({"kind": "delete", "length_samples": 1,
+                               "placement": "spaced", "first_seconds": 0,
+                               "period_seconds": 0.001, "count": count}, data, block=2048)
+        out, _ = self.run_slip({"kind": "delete", "length_samples": 1024,
+                                "placement": "single", "at_seconds": 0}, data, block=2048)
+        self.assertEqual(len(out), 1024)
 
 
 class ScenarioAndRenderTests(unittest.TestCase):

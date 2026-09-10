@@ -53,6 +53,10 @@ function(wfg_configure_rt1170_target target_name)
         -mfpu=fpv5-d16
         --specs=nano.specs
         --specs=nosys.specs
+        # WFG-LIVE/1 publishes the effective reference RMS with enough digits
+        # for deterministic replay. newlib-nano omits floating-point printf
+        # unless this archive member is requested explicitly.
+        -Wl,-u,_printf_float
         -static
         -Wl,--gc-sections
         "-Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/waveform_generator.map"

@@ -9,6 +9,7 @@ namespace waveform_generator::live_protocol
 {
 inline constexpr char version[] = "WFG-LIVE/1";
 inline constexpr std::size_t wire_capacity = 192;
+inline constexpr std::uint32_t cw_oscillator_capacity = 4U;
 enum class Kind { info, status, counters, load, play, stop, media_host, media_local, generate_file,
                   seed, reference, cw_on, cw_frequency, cw_ci, static_on, static_rate,
                   static_peak, fade, sweep_frequency, sweep_ci, sweep_fade };
@@ -31,6 +32,7 @@ struct Request
     std::uint32_t steps{};
     std::uint32_t interval_ms{};
     std::uint32_t duration_ms{};
+    std::uint32_t oscillator{}; // CW slot 0..3; legacy commands address slot 0.
 };
 
 // Positive canonical connection sequence is consumed even for a bad command.

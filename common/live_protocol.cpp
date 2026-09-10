@@ -164,6 +164,13 @@ bool parse(std::string_view text, std::uint32_t& last_sequence, Request& request
         request.value = words[1] == "ON" ? 1 : 0;
         return true;
     }
+    if (count == 3 && words[0] == "CW" && (words[2] == "ON" || words[2] == "OFF"))
+    {
+        if (!number32(words[1], request.oscillator) || request.oscillator >= cw_oscillator_capacity) return false;
+        request.kind = Kind::cw_on;
+        request.value = words[2] == "ON" ? 1 : 0;
+        return true;
+    }
     if (count == 3 && decimal(words[2], request.value))
     {
         if (words[0] == "CW" && words[1] == "FREQ") request.kind = Kind::cw_frequency;
@@ -173,17 +180,36 @@ bool parse(std::string_view text, std::uint32_t& last_sequence, Request& request
         else return false;
         return true; // live controller validates physical ranges atomically
     }
+    if (count == 4 && words[0] == "CW" && decimal(words[3], request.value))
+    {
+        if (!number32(words[1], request.oscillator) || request.oscillator >= cw_oscillator_capacity) return false;
+        if (words[2] == "FREQ") request.kind = Kind::cw_frequency;
+        else if (words[2] == "CI") request.kind = Kind::cw_ci;
+        else return false;
+        return true;
+    }
     if (count == 4 && words[0] == "FADE" && words[1] == "NOW")
     {
         request.kind = Kind::fade;
         return decimal(words[2], request.value) && number32(words[3], request.duration_ms) && request.duration_ms > 0 && request.duration_ms <= 3600000;
     }
-    if (count == 7 && words[0] == "SWEEP")
+    if ((count == 7 || count == 8) && words[0] == "SWEEP")
     {
         std::size_t first = 3;
-        if (words[1] == "CW" && words[2] == "FREQ") request.kind = Kind::sweep_frequency;
-        else if (words[1] == "CW" && words[2] == "CI") request.kind = Kind::sweep_ci;
-        else if (words[1] == "FADE")
+        if (words[1] == "CW")
+        {
+            std::size_t kind = 2;
+            if (count == 8)
+            {
+                if (!number32(words[2], request.oscillator) || request.oscillator >= cw_oscillator_capacity) return false;
+                kind = 3;
+                first = 4;
+            }
+            if (words[kind] == "FREQ") request.kind = Kind::sweep_frequency;
+            else if (words[kind] == "CI") request.kind = Kind::sweep_ci;
+            else return false;
+        }
+        else if (count == 7 && words[1] == "FADE")
         {
             request.kind = Kind::sweep_fade; first = 2;
             if (!number32(words[6], request.duration_ms) || request.duration_ms == 0 || request.duration_ms > 3600000) return false;

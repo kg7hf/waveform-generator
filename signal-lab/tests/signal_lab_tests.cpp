@@ -201,6 +201,11 @@ void test_scenario()
     check(!signal_lab::parse_scenario(bad.c_str(), bad.size(), scenario, &error), "slip must be last");
     const std::string with_reference = "{\"reference_rms\": 0.25, \"impairments\": []}";
     check(signal_lab::parse_scenario(with_reference.c_str(), with_reference.size(), scenario, &error) && scenario.has_reference_rms && scenario.reference_rms == 0.25, "reference_rms");
+    for (const char* count : {"0", "-1", "1.5", "true", "4294967296", "1e300", "1e999"})
+    {
+        const std::string fade = std::string("{\"impairments\":[{\"type\":\"fade\",\"depth_db\":18,\"duration_ms\":250,\"period_seconds\":1,\"count\":") + count + "}]}";
+        check(!signal_lab::parse_scenario(fade.c_str(), fade.size(), scenario, &error), "fade rejects invalid count before conversion");
+    }
 }
 
 void test_engine_determinism()
@@ -308,6 +313,11 @@ void test_slip_validation_and_capacity()
         check(!signal_lab::parse_scenario(compact.c_str(), compact.size(), scenario, &error), "compact slip rejects invalid length before conversion");
         const std::string explicit_event = std::string("{\"impairments\":[{\"type\":\"sample_slip\",\"events\":[{\"kind\":\"delete\",\"at_seconds\":0,\"length_samples\":") + length + "}]}]}";
         check(!signal_lab::parse_scenario(explicit_event.c_str(), explicit_event.size(), scenario, &error), "explicit slip rejects invalid length before conversion");
+    }
+    for (const char* count : {"0", "-1", "1.5", "true", "32.5", "33", "4294967297", "1e300", "1e999"})
+    {
+        const std::string slip = std::string("{\"impairments\":[{\"type\":\"sample_slip\",\"kind\":\"delete\",\"placement\":\"spaced\",\"first_seconds\":0,\"period_seconds\":0.001,\"length_samples\":1,\"count\":") + count + "}]}";
+        check(!signal_lab::parse_scenario(slip.c_str(), slip.size(), scenario, &error), "sample slip rejects invalid count before conversion");
     }
 
     std::vector<std::int16_t> source(8192U);

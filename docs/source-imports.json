@@ -571,8 +571,8 @@
       "destination": "cmake/rt1170_flags.cmake",
       "license_identifier": "unspecified",
       "retained_notice_paths": [],
-      "local_sha256": "164f22144c68307d5b0585d7aace047de0678d2b7570e0d2d539d1af23333bf7",
-      "local_size_bytes": 2668,
+      "local_sha256": "71b1264e0d76d883d0a6392505bf25eb1925f7d5ff375be62c2108446bb24f09",
+      "local_size_bytes": 2913,
       "adaptations": [
         "Generator-local adaptation; source paths and target-specific build/support behavior are owned by this project. Exact local bytes are identified below.",
         "2026-09-06: links against the generator-local cmake/MIMXRT1176xxxxx_cm7_flexspi_nor_wfg.ld (import m110-026) instead of the vendor script."

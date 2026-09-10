@@ -125,6 +125,12 @@ void test_owner_lifecycle()
     run_selected();
     live = waveform_generator::player_live_snapshot();
     check(live.live_frame == 10000U && live.live_events == 1U && live.reference_rms == 0.125, "second run reuses configured codec and applies preserved preset");
+    waveform_generator::response_sequence = 99U;
+    waveform_generator::queue_status("status");
+    const std::string live_status(waveform_generator::response_buffer, waveform_generator::response_size);
+    check(live_status.find("\"live_reference_rms\":0.125") != std::string::npos,
+          "STATUS publishes a valid round-trippable live reference number");
+    waveform_generator::response_size = waveform_generator::response_written = 0U;
 
     check(command("LOAD:PLAY.WAV").ok, "source reload resets completed capture");
     stop_on_next_wait = true;
@@ -170,8 +176,9 @@ void test_usb_service()
     pump_usb();
     check(tx.find("\"seq\":1,\"protocol\":\"WFG-LIVE/1\",\"ok\":true") != std::string::npos &&
               tx.find("\"seq\":2,\"protocol\":\"WFG-LIVE/1\",\"ok\":true") != std::string::npos &&
+              tx.find("\"multi-cw\"") != std::string::npos &&
               std::count(tx.begin(), tx.end(), '\n') == 2,
-          "INFO and STATUS remain complete framed responses after partial writes");
+          "INFO advertises multi-CW and STATUS remains framed after partial writes");
     tx.clear();
     feed("2 PLAY\n3 UNKNOWN\n3 INFO?\n4 INFO?\n");
     pump_usb();

@@ -82,13 +82,15 @@ class CommandTests(unittest.TestCase):
                      "STOP", "MEDIA HOST", "MEDIA LOCAL", "SEED:18446744073709551615", "REFERENCE:0.125",
                      "GENERATE:600:long:INPUT.BIN:OUT.WAV", "ENCODE M110B 600:long INPUT.BIN OUT.WAV",
                      "ENCODE FUTURE custom:profile INPUT.BIN OUT.WAV",
-                     "CW ON", "CW OFF", "CW FREQ 1800", "CW CI -3", "STATIC ON", "STATIC OFF",
-                     "STATIC RATE 1", "STATIC PEAK 20", "FADE NOW 18 250", "AT:42 CW CI 3"):
+                     "CW ON", "CW OFF", "CW FREQ 1800", "CW CI -3", "CW 1 ON", "CW 3 FREQ 2800",
+                     "AT:42 CW 2 CI 3", "STATIC ON", "STATIC OFF", "STATIC RATE 1", "STATIC PEAK 20",
+                     "FADE NOW 18 250"):
             with self.subTest(text=text):
                 self.assertEqual(live.parse_command(text).text, text)
         sweep = live.parse_command("AT:48000 SWEEP CW FREQ 300 3400 16 250")
         self.assertEqual(sweep.events, 16)
         self.assertEqual(sweep.event_frames(48000), [48000 + 12000 * index for index in range(16)])
+        self.assertEqual(live.parse_command("SWEEP CW 2 CI 20 -3 4 100").events, 4)
         self.assertEqual(live.parse_command("SWEEP FADE 6 30 5 1000 250").events, 5)
 
     def test_invalid_commands_fail_before_serial(self):
@@ -99,6 +101,7 @@ class CommandTests(unittest.TestCase):
                      "ENCODE M110B bad\\profile X.BIN Y.WAV", 'ENCODE M110B bad"profile X.BIN Y.WAV',
                      "REFERENCE:nan", "REFERENCE:0", "CW FREQ 24000", "CW FREQ 0", "CW CI 121",
                      "STATIC RATE 0", "STATIC PEAK 61", "FADE NOW 121 250", "FADE NOW 6 0.0001",
+                     "CW -1 ON", "CW 01 ON", "CW 4 ON", "CW 4 FREQ 1800", "SWEEP CW 4 CI 20 -3 4 100",
                      "SWEEP CW CI 20 -3 0 100", "SWEEP FADE 6 30 17 1000 250", "CW ON" + " " * 190,
                      "AT:18446744073709551615 SWEEP CW CI 20 -3 2 1"):
             with self.subTest(text=text):

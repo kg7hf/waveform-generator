@@ -21,6 +21,7 @@ extern "C"
 #include <cstdint>
 #include <cstring>
 #include <cstdio>
+#include <cmath>
 #include <string_view>
 
 namespace waveform_generator
@@ -89,6 +90,24 @@ void append_uint(std::uint64_t value) noexcept
         digit_count--;
         append_char(digits[digit_count]);
     }
+}
+
+void append_json_number(double value) noexcept
+{
+    if (!std::isfinite(value))
+    {
+        append_literal("null");
+        return;
+    }
+
+    char number[32]{};
+    const auto written = std::snprintf(number, sizeof(number), "%.17g", value);
+    if (written <= 0 || static_cast<std::size_t>(written) >= sizeof(number) || number[0] == '\0')
+    {
+        append_literal("null");
+        return;
+    }
+    append_literal(number);
 }
 
 void append_field(const char* name, std::uint64_t value) noexcept
@@ -269,8 +288,7 @@ void queue_status(const char* field = nullptr) noexcept
         append_literal(",\"tx_wav_sha256\":\""); append_literal(artifact.wav_sha256); append_literal("\"");
         append_literal(",\"tx_error\":\""); append_literal(artifact.error); append_literal("\"");
         append_literal(",\"live_reference_rms\":");
-        char number[32]{};
-        if (live.reference_rms > 0) { std::snprintf(number, sizeof(number), "%.17g", live.reference_rms); append_literal(number); }
+        if (live.reference_rms > 0) append_json_number(live.reference_rms);
         else append_literal("null");
         append_literal(",\"selected_file\":\""); append_literal(live.selected_file); append_literal("\"}}");
         json_fields = false;
@@ -288,7 +306,7 @@ void queue_info() noexcept
     for (const auto word : words) for (int i = 7; i >= 0; --i) append_char(hex[(word >> (4 * i)) & 15]);
     append_literal("\",\"source_manifest_sha256\":\"");
     append_literal(WFG_SOURCE_MANIFEST_SHA256);
-    append_literal("\",\"capabilities\":[\"wav-files\",\"live-controls\",\"sample-indexed-replay\",\"stepped-sweeps\",\"reusable-playback\"");
+    append_literal("\",\"capabilities\":[\"wav-files\",\"live-controls\",\"multi-cw\",\"sample-indexed-replay\",\"stepped-sweeps\",\"reusable-playback\"");
 #if !defined(WFG_MSC_READ_ONLY)
     append_literal(",\"sd-wav-generation\",\"dd008-payload-upload\"],\"encoders\":[\"M110B\"]");
 #else

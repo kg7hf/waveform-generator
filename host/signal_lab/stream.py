@@ -40,6 +40,17 @@ def number(value, name, low=None, high=None):
     return value
 
 
+def integer(value, name, low=None, high=None):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(name + " must be an integer")
+    numeric = float(value)
+    if (not math.isfinite(numeric) or not numeric.is_integer() or
+            (low is not None and numeric < low) or
+            (high is not None and numeric > high)):
+        raise ValueError(name + " is out of range, non-finite, or not an integer")
+    return int(numeric)
+
+
 class Impairment:
     """Base class.  Subclasses override prepare() and process()."""
 

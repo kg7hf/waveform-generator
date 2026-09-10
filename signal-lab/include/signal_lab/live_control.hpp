@@ -18,6 +18,7 @@ inline constexpr std::size_t live_pending_capacity = 64U;
 inline constexpr std::size_t live_capture_capacity = 128U;
 inline constexpr std::size_t live_sweep_capacity = 16U;
 inline constexpr std::size_t live_static_capacity = 12U;
+inline constexpr std::size_t live_cw_capacity = 4U;
 
 enum class ControlKind : std::uint8_t
 {
@@ -36,6 +37,7 @@ struct ControlEvent
     ControlKind kind{ControlKind::cw_enable};
     double value{};                       // Enabled: 0 or 1; otherwise Hz, dB, or events/s.
     std::uint64_t duration_frames{};      // fade_now only; zero for every other kind.
+    std::uint32_t oscillator{};           // CW slot; zero for non-CW controls.
 };
 
 struct ControlSweep
@@ -46,6 +48,7 @@ struct ControlSweep
     std::size_t count{};
     std::uint64_t step_frames{};          // Positive; step i occurs at first_frame + i * step_frames.
     std::uint64_t fade_duration_frames{}; // fade_now only.
+    std::uint32_t oscillator{};           // CW slot; zero for fade sweeps.
 };
 
 enum class ControlResult : std::uint8_t
@@ -61,11 +64,16 @@ enum class ControlResult : std::uint8_t
 [[nodiscard]] const char* control_result_name(ControlResult result) noexcept;
 [[nodiscard]] const char* control_kind_name(ControlKind kind) noexcept;
 
+struct LiveOscillatorState
+{
+    bool enabled{};
+    double frequency_hz{1800.0};
+    double ci_db{3.0};
+};
+
 struct LiveState
 {
-    bool cw_enabled{};
-    double cw_frequency_hz{1800.0};
-    double cw_ci_db{3.0};
+    LiveOscillatorState cw[live_cw_capacity]{};
     bool static_enabled{};
     double static_rate_per_second{1.0};
     double static_peak_db{20.0};
@@ -106,7 +114,7 @@ public:
 
     // PCM16 in place, 0..engine_capacity_frames (2304) frames. Invalid calls consume
     // nothing. Processing allocates no memory and is independent of block size.
-    // Signal path: source * live fade + live CW + live static -> PCM16 saturation.
+    // Signal path: source * live fade + live CW bank + live static -> PCM16 saturation.
     [[nodiscard]] bool process(std::int16_t* pcm, std::size_t frames, const char** error = nullptr) noexcept;
 
     [[nodiscard]] bool configured() const noexcept { return configured_; }
@@ -145,9 +153,9 @@ private:
     std::uint16_t pending_[live_pending_capacity]{}; // Indices into immutable captured events.
     std::size_t pending_count_{};
     std::size_t capture_count_{};
-    double cw_phase_{};                     // Free-running even while CW is off; parameter changes retain it.
-    double cw_step_{};
-    double cw_amplitude_{};
+    double cw_phase_[live_cw_capacity]{};   // Free-running even while CW is off; parameter changes retain it.
+    double cw_step_[live_cw_capacity]{};
+    double cw_amplitude_[live_cw_capacity]{};
     std::uint64_t next_static_frame_{unbounded_frames};
     double static_decay_{};
     det::Pcg32 static_schedule_rng_{};
