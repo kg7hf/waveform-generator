@@ -123,6 +123,12 @@ public:
     [[nodiscard]] bool process(float* pcm, std::size_t frames,
                                const char** error = nullptr) noexcept;
 
+    [[nodiscard]] bool process(std::nullptr_t, std::size_t frames,
+                               const char** error = nullptr) noexcept
+    {
+        return process(static_cast<float*>(nullptr), frames, error);
+    }
+
     [[nodiscard]] bool configured() const noexcept { return configured_; }
     [[nodiscard]] std::uint64_t frame() const noexcept { return stats_.frames; }
     [[nodiscard]] std::uint64_t seed() const noexcept { return seed_; }

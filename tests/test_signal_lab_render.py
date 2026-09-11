@@ -25,8 +25,16 @@ class RendererTests(unittest.TestCase):
         self.source = self.root / "clean source.wav"
         self.pcm = [12000, -10000, 6000, -4000] * 1024
         with wave.open(str(self.source), "wb") as writer:
-            writer.setparams((1, 2, 48000, 0, "NONE", "not compressed"))
-            writer.writeframes(struct.pack(f"<{len(self.pcm)}h", *self.pcm))
+            writer.setparams((1, 3, 48000, 0, "NONE", "not compressed"))
+            writer.writeframes(b"".join(
+                (sample * 256).to_bytes(3, "little", signed=True) for sample in self.pcm))
+
+    def read_pcm24_as_legacy(self, path):
+        with wave.open(str(path), "rb") as reader:
+            self.assertEqual(reader.getsampwidth(), 3)
+            packed = reader.readframes(reader.getnframes())
+        return [int.from_bytes(packed[index:index + 3], "little", signed=True) // 256
+                for index in range(0, len(packed), 3)]
 
     def render(self, document, *, name="render", extra=(), expected_exit=0):
         scenario = self.root / f"{name} scenario.json"
@@ -184,8 +192,7 @@ class RendererTests(unittest.TestCase):
         self.assertEqual(a["output_digest"], b["output_digest"])
         self.assertEqual(a["live_replay"]["controls_applied"], 23)
         self.assertGreater(a["live_replay"]["static_events_started"], 0)
-        with wave.open(str(first), "rb") as reader:
-            pcm = struct.unpack(f"<{reader.getnframes()}h", reader.readframes(reader.getnframes()))
+        pcm = self.read_pcm24_as_legacy(first)
         self.assertEqual(list(pcm[:101]), self.pcm[:101])
         self.assertEqual(list(pcm[3500:]), self.pcm[3500:])
 
@@ -209,9 +216,8 @@ class RendererTests(unittest.TestCase):
         scenario = {"source_gain_db": 0, "impairments": [{"type": "sample_slip", "kind": "delete",
                                                          "at_seconds": 0, "length_samples": 100}]}
         output, sidecar, _ = self.live_render(plan, scenario=scenario)
-        with wave.open(str(output), "rb") as reader:
-            self.assertEqual(reader.getnframes(), 1777)
-            pcm = struct.unpack("<1777h", reader.readframes(1777))
+        pcm = self.read_pcm24_as_legacy(output)
+        self.assertEqual(len(pcm), 1777)
         self.assertEqual(list(pcm[:200]), self.pcm[100:300])
         self.assertNotEqual(list(pcm[201:220]), self.pcm[301:320])
         self.assertEqual(json.loads(sidecar.read_text())["frames_out"], 1777)

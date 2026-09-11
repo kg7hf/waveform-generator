@@ -160,9 +160,9 @@ def main() -> int:
     assert tone_prep["samples"] == 480000
     assert tone_prep["period_repetitions"] * len(tone_prep["pcm24_period"]) == 480000
     assert tone["format"]["sample_rate_hz"] / len(tone_prep["pcm24_period"]) == 1000
-    expected_period = [round(4096 * math.sin(2 * math.pi * index / 48))
+    expected_period = [round(1048576 * math.sin(2 * math.pi * index / 48))
                        for index in range(48)]
-    assert tone_prep["pcm16_period"] == expected_period
+    assert tone_prep["pcm24_period"] == expected_period
 
     hour = recipes["fixtures/clean-300L-1h.json"]
     short = recipes["fixtures/clean-300L-short.json"]

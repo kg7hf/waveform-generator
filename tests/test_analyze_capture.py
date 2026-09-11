@@ -27,6 +27,9 @@ def write_wav(path: Path, fmt_tag: int, bits: int, samples: list[float | int],
     if bits == 16:
         payload = b"".join(struct.pack("<h", int(value)) for value in samples)
         channels = 1
+    elif bits == 24:
+        payload = b"".join(int(value).to_bytes(3, "little", signed=True) for value in samples)
+        channels = 1
     else:
         payload = b"".join(struct.pack("<f", float(value)) for value in samples)
         channels = 1
@@ -85,7 +88,7 @@ class AnalyzeCaptureTests(unittest.TestCase):
         capture = [0] * 60 + source[:1_000] + [0] * 10 + source[1_000:]
         source_path = root / "source.wav"
         capture_path = root / "capture.wav"
-        write_wav(source_path, 1, 16, source, rate=48_000)
+        write_wav(source_path, 1, 24, [value * 256 for value in source], rate=48_000)
         write_wav(capture_path, 3, 32, [value / 32768.0 for value in capture], rate=48_000)
         result = ANALYZER.estimate_correlation(
             ANALYZER.inspect_wav(capture_path), ANALYZER.inspect_wav(source_path),

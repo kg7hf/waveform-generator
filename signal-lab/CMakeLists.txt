@@ -1,7 +1,10 @@
 include("${CMAKE_CURRENT_SOURCE_DIR}/sources.cmake")
 
 add_library(wfg_signal_lab STATIC ${WFG_SIGNAL_LAB_SOURCES})
-target_include_directories(wfg_signal_lab PUBLIC "${WFG_SIGNAL_LAB_INCLUDE}")
+target_include_directories(wfg_signal_lab PUBLIC
+    "${WFG_SIGNAL_LAB_INCLUDE}"
+    "${CMAKE_SOURCE_DIR}"
+)
 target_compile_features(wfg_signal_lab PUBLIC cxx_std_23)
 if(MSVC)
     target_compile_options(wfg_signal_lab PRIVATE /W4 /WX /permissive- /fp:strict)

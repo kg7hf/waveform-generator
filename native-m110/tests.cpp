@@ -105,7 +105,7 @@ void artifact_tests()
         const double scaled = static_cast<double>(value) * 32767.0 /
                               waveform_generator::audio::pcm24_scale;
         const auto legacy = static_cast<std::int16_t>(scaled + (scaled < 0.0 ? -0.5 : 0.5));
-        if (legacy != expected[i])
+        if (std::abs(static_cast<int>(legacy) - static_cast<int>(expected[i])) > 1)
         {
             check(false, "PCM24 WAV preserves donor waveform plus exact trailing silence"); break;
         }

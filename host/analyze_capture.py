@@ -114,9 +114,10 @@ def _require_capture_format(info: WavInfo) -> None:
 
 
 def _require_source_format(info: WavInfo) -> None:
-    if (info.fmt_tag, info.channels, info.sample_rate_hz,
-            info.bits_per_sample, info.block_align) != (1, 1, DEFAULT_RATE, 16, 2):
-        raise WavError("source must be mono PCM16 48 kHz")
+    common = (info.fmt_tag, info.channels, info.sample_rate_hz)
+    sample_format = (info.bits_per_sample, info.block_align)
+    if common != (1, 1, DEFAULT_RATE) or sample_format not in ((16, 2), (24, 3)):
+        raise WavError("source must be mono PCM16 or packed PCM24 at 48 kHz")
 
 
 def _iter_capture_samples(info: WavInfo, chunk_bytes: int = CHUNK_BYTES) -> Iterable[float]:
@@ -268,18 +269,23 @@ def analyze_capture(path: Path, zero_threshold: int = DEFAULT_RUN_THRESHOLD,
     }
 
 
-def _read_window(info: WavInfo, start: int, count: int, pcm16: bool) -> list[float]:
+def _read_window(info: WavInfo, start: int, count: int) -> list[float]:
     start = max(0, min(start, info.samples))
     count = max(0, min(count, info.samples - start))
     if count == 0:
         return []
-    width = 2 if pcm16 else 4
+    width = info.block_align
     with info.path.open("rb") as stream:
         stream.seek(info.data_offset + start * width)
         raw = _read_exact(stream, count * width)
-    if pcm16:
+    if (info.fmt_tag, info.bits_per_sample, width) == (1, 16, 2):
         return [sample / 32768.0 for (sample,) in struct.iter_unpack("<h", raw)]
-    return [sample for (sample,) in struct.iter_unpack("<f", raw)]
+    if (info.fmt_tag, info.bits_per_sample, width) == (1, 24, 3):
+        return [int.from_bytes(raw[index:index + 3], "little", signed=True) / 8388608.0
+                for index in range(0, len(raw), 3)]
+    if (info.fmt_tag, info.bits_per_sample, width) == (3, 32, 4):
+        return [sample for (sample,) in struct.iter_unpack("<f", raw)]
+    raise WavError("unsupported correlation window format")
 
 
 def _decimate(values: list[float], step: int) -> list[float]:
@@ -309,7 +315,7 @@ def estimate_correlation(capture: WavInfo, source: WavInfo,
     _require_source_format(source)
     window = max(16, int(window_seconds * DEFAULT_RATE))
     step = max(1, min(100, window // 16))  # at least 16 correlation points.
-    source_start = _decimate(_read_window(source, 0, window, True), step)
+    source_start = _decimate(_read_window(source, 0, window), step)
     if not source_start:
         return {"available": False, "reason": "source has no correlation window"}
 
@@ -321,7 +327,7 @@ def estimate_correlation(capture: WavInfo, source: WavInfo,
         if last >= first and (not positions or positions[-1] != last):
             positions.append(last)
         for position in positions:
-            candidate = _decimate(_read_window(capture, position, window, False), step)
+            candidate = _decimate(_read_window(capture, position, window), step)
             score = _correlation(anchor, candidate)
             if score is not None and (best is None or score > best[1]):
                 best = (position, score)
@@ -329,7 +335,7 @@ def estimate_correlation(capture: WavInfo, source: WavInfo,
             fine_first = max(first, best[0] - step)
             fine_last = min(last, best[0] + step)
             for position in range(fine_first, fine_last + 1):
-                candidate = _decimate(_read_window(capture, position, window, False), step)
+                candidate = _decimate(_read_window(capture, position, window), step)
                 score = _correlation(anchor, candidate)
                 if score is not None and score > best[1]:
                     best = (position, score)
@@ -340,7 +346,7 @@ def estimate_correlation(capture: WavInfo, source: WavInfo,
         return {"available": False, "reason": "no nonconstant start correlation window"}
 
     source_end_position = max(0, source.samples - window)
-    source_end = _decimate(_read_window(source, source_end_position, window, True), step)
+    source_end = _decimate(_read_window(source, source_end_position, window), step)
     predicted = start[0] + source_end_position
     end = search(source_end, predicted, int(search_seconds * DEFAULT_RATE))
     result = {
@@ -372,7 +378,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("capture", type=Path, help="mono float32 48 kHz capture WAV")
     parser.add_argument("--output-json", type=Path, required=True)
-    parser.add_argument("--source", type=Path, help="optional mono PCM16 48 kHz source WAV")
+    parser.add_argument("--source", type=Path,
+                        help="optional mono PCM16 or packed PCM24 48 kHz source WAV")
     parser.add_argument("--zero-run-samples", type=int, default=DEFAULT_RUN_THRESHOLD)
     parser.add_argument("--constant-run-samples", type=int, default=DEFAULT_RUN_THRESHOLD)
     parser.add_argument("--dropout-level", type=float, default=DEFAULT_DROPOUT_LEVEL)
