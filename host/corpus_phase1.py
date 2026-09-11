@@ -294,7 +294,11 @@ def main(argv=None):
     parser.add_argument("--engines", default="siso,adaptive")
     parser.add_argument("--stage", default="all", choices=["all", "refs", "validate", "render", "score", "summary", "verify", "plan"])
     parser.add_argument("--only-modes", default="", help="comma-separated subset of modes")
-    parser.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 2) // 2))
+    # Default parallelism is capped at 2 as a memory safeguard: each turbo decode
+    # allocates a workspace sized by the payload cap, so many parallel decodes can
+    # exhaust memory. m110_score now derives a modest cap (removing the original
+    # cause), but the low default is retained belt-and-suspenders; raise with --jobs.
+    parser.add_argument("--jobs", type=int, default=min(2, max(1, (os.cpu_count() or 2) // 2)))
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args(argv)
     spec = load_spec(args.spec)

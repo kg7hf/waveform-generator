@@ -3,9 +3,11 @@
 
 For each WAV the expected payload is taken from its sidecar (a reference
 sidecar's "payload" or an impaired sidecar's "source_reference.payload") unless
---expect-file is given.  The decoder runs with the production receiver caps
-(maximum_payload_octets 1200000, loss-of-lock release disabled for the turbo
-engine) so a multi-minute single message is never truncated.
+--expect-file is given.  The decoder's runaway-burst payload cap
+(--maximum-payload-octets) is DERIVED from the expected payload with modest
+headroom (see derive_payload_octets) so the turbo workspace stays proportional to
+the message; pass --maximum-payload-octets to override for production/unknown
+streams.  Loss-of-lock release stays disabled for the turbo engine.
 
     python host/m110_score.py --decoder <m110_app_decode.exe> --engine siso --jobs 4 <wav>...
 """
@@ -26,7 +28,21 @@ from signal_lab.wav_io import sha256_file  # noqa: E402
 
 SCORE_SCHEMA = "signal-lab.score/1"
 DECODER_CONTRACT = "m110_app_decode_text_v1"
-PRODUCTION_ARGS = ["--maximum-payload-octets", "1200000"]
+# The decoder's runaway-burst payload cap sizes block_capacity and therefore the
+# turbo workspace it allocates. A hardcoded huge cap (previously 1_200_000 octets)
+# inflated block_capacity into the thousands, so each decode grabbed hundreds of MB
+# and parallel scoring OOM-killed decodes -- surfacing as false "decoder failure"
+# (missing=whole payload). Derive the cap from the KNOWN expected payload with
+# modest headroom instead, so the workspace stays proportional to the message; a
+# floor covers tiny payloads and an explicit override remains available for
+# production/unknown-length streams.
+MIN_PAYLOAD_OCTETS = 4096
+
+
+def derive_payload_octets(expected_bytes, override=None):
+    if override is not None:
+        return int(override)
+    return max(MIN_PAYLOAD_OCTETS, int(expected_bytes) * 2 + 512)
 KEY_VALUE = re.compile(r"(\w+)=(\S+)")
 COLUMNS = ["test_id", "mode", "family", "severity", "engine", "acquired", "mode_detected", "interleaver_detected", "mode_ok",
            "bursts", "eom_detected", "complete_message", "bit_errors", "compared_bits", "ber", "payload_bytes", "expected_bytes",
@@ -194,8 +210,9 @@ def expected_payload_from_sidecar(wav):
     return payload_path, data
 
 
-def run_decoder(decoder, wav, expect_file, engine="siso", extra_args=(), timeout=3600):
-    argv = [str(decoder), str(wav), "--engine", engine, "--expect-file", str(expect_file)] + PRODUCTION_ARGS + list(extra_args)
+def run_decoder(decoder, wav, expect_file, engine="siso", extra_args=(), timeout=3600, maximum_payload_octets=MIN_PAYLOAD_OCTETS):
+    argv = [str(decoder), str(wav), "--engine", engine, "--expect-file", str(expect_file),
+            "--maximum-payload-octets", str(int(maximum_payload_octets))] + list(extra_args)
     started = time.perf_counter()
     result = subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
     elapsed = time.perf_counter() - started
@@ -203,7 +220,7 @@ def run_decoder(decoder, wav, expect_file, engine="siso", extra_args=(), timeout
     return argv, result.returncode, elapsed, text
 
 
-def score_one(decoder, wav, engine, extra_args, expect_file=None, keep_log=True, decoder_identity=None):
+def score_one(decoder, wav, engine, extra_args, expect_file=None, keep_log=True, decoder_identity=None, maximum_payload_octets=None):
     wav = Path(wav)
     sidecar_payload, sidecar = expected_payload_from_sidecar(wav)
     expect = Path(expect_file) if expect_file else (Path(sidecar_payload) if sidecar_payload else None)
@@ -211,8 +228,9 @@ def score_one(decoder, wav, engine, extra_args, expect_file=None, keep_log=True,
         raise FileNotFoundError("no expected payload for %s (pass --expect-file)" % wav)
     expected_payload = expect.read_bytes()
     expected_bytes = len(expected_payload)
+    cap = derive_payload_octets(expected_bytes, maximum_payload_octets)
     wav_sha256 = sha256_file(wav)
-    argv, code, elapsed, text = run_decoder(decoder, wav, expect, engine, extra_args)
+    argv, code, elapsed, text = run_decoder(decoder, wav, expect, engine, extra_args, maximum_payload_octets=cap)
     record = parse_decoder_output(text)
     flat = flatten(record, expected_bytes, expected_payload)
     for burst in record["bursts"]:
@@ -282,6 +300,8 @@ def main(argv=None):
     parser.add_argument("--expect-file", type=Path, default=None, help="override the sidecar payload (single WAV)")
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--extra", default="", help="extra decoder arguments, space separated")
+    parser.add_argument("--maximum-payload-octets", type=int, default=None,
+                        help="decoder runaway-burst payload cap; default derives from the expected payload with modest headroom (production/unknown-length streams may set it explicitly)")
     parser.add_argument("--summary", type=Path, default=None, help="write <summary>.csv and <summary>.json")
     parser.add_argument("wavs", nargs="+", type=Path)
     args = parser.parse_args(argv)
@@ -290,7 +310,7 @@ def main(argv=None):
     scores = []
     failures = 0
     with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:
-        futures = {pool.submit(score_one, args.decoder, wav, args.engine, extra, args.expect_file, True, identity): wav for wav in args.wavs}
+        futures = {pool.submit(score_one, args.decoder, wav, args.engine, extra, args.expect_file, True, identity, args.maximum_payload_octets): wav for wav in args.wavs}
         for future in concurrent.futures.as_completed(futures):
             wav = futures[future]
             try:
