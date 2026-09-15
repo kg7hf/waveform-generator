@@ -1,0 +1,226 @@
+--- a/common/fsl_sdmmc_common.h
++++ b/common/fsl_sdmmc_common.h
+@@ -29,7 +29,9 @@
+ /*! @brief Reverse byte sequence for each half word in uint32_t */
+ #define SWAP_HALF_WROD_BYTE_SEQUENCE(x) (__REV16(x))
+ /*! @brief Maximum loop count to check the card operation voltage range */
++#ifndef FSL_SDMMC_MAX_VOLTAGE_RETRIES
+ #define FSL_SDMMC_MAX_VOLTAGE_RETRIES (1000U)
++#endif
+ /*! @brief Maximum loop count to send the cmd */
+ #define FSL_SDMMC_MAX_CMD_RETRIES (10U)
+ /*! @brief Default block size */
+--- a/host/usdhc/non_blocking/fsl_sdmmc_host.c
++++ b/host/usdhc/non_blocking/fsl_sdmmc_host.c
+@@ -8,6 +8,9 @@
+ 
+ #include "fsl_sdmmc_host.h"
+ #include "fsl_sdmmc_common.h"
++#if defined(WFG_SDCARD_IMAGE)
++#include "fsl_debug_console.h"
++#endif
+ #if ((defined __DCACHE_PRESENT) && __DCACHE_PRESENT) || (defined FSL_FEATURE_HAS_L1CACHE && FSL_FEATURE_HAS_L1CACHE)
+ #if !(defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL)
+ #include "fsl_cache.h"
+@@ -17,7 +20,11 @@
+ /*******************************************************************************
+  * Definitions
+  ******************************************************************************/
++#if defined(WFG_SDCARD_IMAGE)
++#define SDMMCHOST_TRANSFER_COMPLETE_TIMEOUT (20U)
++#else
+ #define SDMMCHOST_TRANSFER_COMPLETE_TIMEOUT (~0U)
++#endif
+ #define SDMMCHOST_TRANSFER_CMD_EVENT                                                                                   \
+     SDMMC_OSA_EVENT_TRANSFER_CMD_SUCCESS | SDMMC_OSA_EVENT_TRANSFER_CMD_FAIL | SDMMC_OSA_EVENT_TRANSFER_DATA_SUCCESS | \
+         SDMMC_OSA_EVENT_TRANSFER_DATA_FAIL
+@@ -77,6 +84,43 @@
+ /*******************************************************************************
+  * Code
+  ******************************************************************************/
++#if defined(WFG_SDCARD_IMAGE)
++static uint32_t s_wfg_sdhost_transfer_count;
++
++static bool SDMMCHOST_DiagnosticShouldPrint(void)
++{
++    s_wfg_sdhost_transfer_count++;
++    return (s_wfg_sdhost_transfer_count <= 16U) || ((s_wfg_sdhost_transfer_count % 100U) == 0U);
++}
++
++static void SDMMCHOST_DiagnosticTransferMarker(const char *stage,
++                                               sdmmchost_transfer_t *content,
++                                               status_t status,
++                                               uint32_t transferCount)
++{
++    const uint32_t commandIndex = (content != NULL && content->command != NULL) ? content->command->index : 0xFFFFFFFFU;
++    const uint32_t responseType =
++        (content != NULL && content->command != NULL) ? (uint32_t)content->command->responseType : 0xFFFFFFFFU;
++    PRINTF("SDHOST %s n=%u cmd=%u response=%u status=%u\r\n", stage, transferCount, commandIndex, responseType,
++           (uint32_t)status);
++}
++
++static void SDMMCHOST_DiagnosticTransferWaitMarker(const char *stage,
++                                                   sdmmchost_transfer_t *content,
++                                                   status_t waitStatus,
++                                                   uint32_t event,
++                                                   USDHC_Type *base,
++                                                   uint32_t transferCount)
++{
++    const uint32_t commandIndex = (content != NULL && content->command != NULL) ? content->command->index : 0xFFFFFFFFU;
++    const uint32_t response0 =
++        (content != NULL && content->command != NULL) ? content->command->response[0U] : 0xFFFFFFFFU;
++    PRINTF("SDHOST %s n=%u cmd=%u wait=%u event=0x%x response0=0x%x present=0x%x int=0x%x\r\n", stage,
++           transferCount, commandIndex, (uint32_t)waitStatus, event, response0, USDHC_GetPresentStatusFlags(base),
++           USDHC_GetInterruptStatusFlags(base));
++}
++#endif
++
+ static void SDMMCHOST_DetectCardInsertByHost(USDHC_Type *base, void *userData)
+ {
+     sd_detect_card_t *cd = NULL;
+@@ -496,18 +540,42 @@
+     /* clear redundant transfer event flag */
+     (void)SDMMC_OSAEventClear(&(host->hostEvent), SDMMCHOST_TRANSFER_CMD_EVENT);
+ 
++#if defined(WFG_SDCARD_IMAGE)
++    const uint32_t diagnosticTransferCount = s_wfg_sdhost_transfer_count + 1U;
++    const bool printDiagnostic = SDMMCHOST_DiagnosticShouldPrint();
++    if (printDiagnostic)
++    {
++        SDMMCHOST_DiagnosticTransferMarker("before_submit", content, kStatus_Success, diagnosticTransferCount);
++    }
++#endif
++
+ #if defined SDMMCHOST_ENABLE_CACHE_LINE_ALIGN_TRANSFER && SDMMCHOST_ENABLE_CACHE_LINE_ALIGN_TRANSFER
+     error = USDHC_TransferScatterGatherADMANonBlocking(host->hostController.base, &host->handle, &dmaConfig, &transfer);
+ #else
+     error = USDHC_TransferNonBlocking(host->hostController.base, &host->handle, &dmaConfig, content);
+ #endif
+ 
++#if defined(WFG_SDCARD_IMAGE)
++    if (printDiagnostic || error != kStatus_Success)
++    {
++        SDMMCHOST_DiagnosticTransferMarker("after_submit", content, error, diagnosticTransferCount);
++    }
++#endif
++
+     if (error == kStatus_Success)
+     {
++        const status_t commandWaitStatus =
++            SDMMC_OSAEventWait(&(host->hostEvent), SDMMCHOST_TRANSFER_CMD_EVENT, SDMMCHOST_TRANSFER_COMPLETE_TIMEOUT,
++                               &event);
++#if defined(WFG_SDCARD_IMAGE)
++        if (printDiagnostic)
++        {
++            SDMMCHOST_DiagnosticTransferWaitMarker("after_cmd_wait", content, commandWaitStatus, event,
++                                                   host->hostController.base, diagnosticTransferCount);
++        }
++#endif
+         /* wait command event */
+-        if ((kStatus_Fail == SDMMC_OSAEventWait(&(host->hostEvent), SDMMCHOST_TRANSFER_CMD_EVENT,
+-                                                SDMMCHOST_TRANSFER_COMPLETE_TIMEOUT, &event)) ||
+-            ((event & SDMMC_OSA_EVENT_TRANSFER_CMD_FAIL) != 0U))
++        if ((kStatus_Fail == commandWaitStatus) || ((event & SDMMC_OSA_EVENT_TRANSFER_CMD_FAIL) != 0U))
+         {
+             error = kStatus_Fail;
+         }
+@@ -517,10 +585,21 @@
+             {
+                 if ((event & SDMMC_OSA_EVENT_TRANSFER_DATA_SUCCESS) == 0U)
+                 {
+-                    if (((event & SDMMC_OSA_EVENT_TRANSFER_DATA_FAIL) != 0U) ||
+-                        (kStatus_Fail == SDMMC_OSAEventWait(&(host->hostEvent), SDMMCHOST_TRANSFER_DATA_EVENT,
+-                                                            SDMMCHOST_TRANSFER_COMPLETE_TIMEOUT, &event) ||
+-                         ((event & SDMMC_OSA_EVENT_TRANSFER_DATA_FAIL) != 0U)))
++                    status_t dataWaitStatus = kStatus_Success;
++                    if ((event & SDMMC_OSA_EVENT_TRANSFER_DATA_FAIL) == 0U)
++                    {
++                        dataWaitStatus = SDMMC_OSAEventWait(&(host->hostEvent), SDMMCHOST_TRANSFER_DATA_EVENT,
++                                                            SDMMCHOST_TRANSFER_COMPLETE_TIMEOUT, &event);
++#if defined(WFG_SDCARD_IMAGE)
++                        if (printDiagnostic)
++                        {
++                            SDMMCHOST_DiagnosticTransferWaitMarker("after_data_wait", content, dataWaitStatus, event,
++                                                                   host->hostController.base, diagnosticTransferCount);
++                        }
++#endif
++                    }
++
++                    if (((event & SDMMC_OSA_EVENT_TRANSFER_DATA_FAIL) != 0U) || (kStatus_Fail == dataWaitStatus))
+                     {
+                         error = kStatus_Fail;
+                     }
+--- a/sd/fsl_sd.c
++++ b/sd/fsl_sd.c
+@@ -6,6 +6,11 @@
+  * SPDX-License-Identifier: BSD-3-Clause
+  */
+ #include "fsl_sd.h"
++#if defined(WFG_SDCARD_IMAGE)
++#include "FreeRTOS.h"
++#include "fsl_debug_console.h"
++#include "task.h"
++#endif
+ 
+ /*******************************************************************************
+  * Definitions
+@@ -1139,13 +1144,24 @@
+     sdmmchost_cmd_t command      = {0};
+     status_t error               = kStatus_Fail;
+     uint32_t i                   = FSL_SDMMC_MAX_VOLTAGE_RETRIES;
++#if defined(WFG_SDCARD_IMAGE)
++    uint32_t attempts            = 0U;
++    const TickType_t startTicks  = xTaskGetTickCount();
++#endif
+ 
+     command.index        = (uint32_t)kSD_ApplicationSendOperationCondition;
+     command.argument     = argument;
+     command.responseType = kCARD_ResponseTypeR3;
+ 
++#if defined(WFG_SDCARD_IMAGE)
++    PRINTF("SDCARD acmd41_start retries=%u argument=0x%x\r\n", i, argument);
++#endif
++
+     while (0U != i--)
+     {
++#if defined(WFG_SDCARD_IMAGE)
++        attempts++;
++#endif
+         if (kStatus_Success != SD_SendApplicationCmd(card, 0U))
+         {
+             continue;
+@@ -1175,6 +1191,10 @@
+             }
+             card->ocr = command.response[0U];
+ 
++#if defined(WFG_SDCARD_IMAGE)
++            PRINTF("SDCARD acmd41_ready attempts=%u elapsed_ms=%u response0=0x%x\r\n", attempts,
++                   (uint32_t)((xTaskGetTickCount() - startTicks) * portTICK_PERIOD_MS), command.response[0U]);
++#endif
+             return kStatus_Success;
+         }
+ 
+@@ -1182,6 +1202,11 @@
+     }
+ 
+     SDMMC_LOG("\r\nError: send ACMD41 timeout\r\n");
++
++#if defined(WFG_SDCARD_IMAGE)
++    PRINTF("SDCARD acmd41_not_ready attempts=%u elapsed_ms=%u response0=0x%x status=%u\r\n", attempts,
++           (uint32_t)((xTaskGetTickCount() - startTicks) * portTICK_PERIOD_MS), command.response[0U], (uint32_t)error);
++#endif
+ 
+     return error;
+ }
+@@ -2015,7 +2040,11 @@
+     /* set DATA bus width */
+     SDMMCHOST_SetCardBusWidth(card->host, kSDMMC_BusWdith1Bit);
+     /*set card freq to 400KHZ*/
++#if defined(WFG_SD_IDENTIFICATION_CLOCK_HZ)
++    card->busClock_Hz = SDMMCHOST_SetCardClock(card->host, WFG_SD_IDENTIFICATION_CLOCK_HZ);
++#else
+     card->busClock_Hz = SDMMCHOST_SetCardClock(card->host, SDMMC_CLOCK_400KHZ);
++#endif
+ 
+     error = SD_ProbeBusVoltage(card);
+     /* probe bus voltage*/

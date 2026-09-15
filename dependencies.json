@@ -1,0 +1,65 @@
+{
+  "dependencies": [
+    {
+      "name": "mcux-sdk",
+      "destination": "third_party/mcux-sdk",
+      "files": [
+        "boards/evkmimxrt1170/board.c"
+      ]
+    },
+    {
+      "name": "CMSIS",
+      "destination": "third_party/CMSIS",
+      "files": [
+        "Core/Include/core_cm7.h"
+      ]
+    },
+    {
+      "name": "FreeRTOS-Kernel",
+      "destination": "third_party/FreeRTOS-Kernel",
+      "files": [
+        "include/FreeRTOS.h"
+      ]
+    },
+    {
+      "name": "tinyusb",
+      "destination": "third_party/tinyusb",
+      "files": [
+        "src/tusb.h"
+      ]
+    },
+    {
+      "name": "sdmmc",
+      "destination": "third_party/sdmmc",
+      "files": [
+        "common/fsl_sdmmc_common.c",
+        "common/fsl_sdmmc_common.h",
+        "common/fsl_sdmmc_spec.h",
+        "COPYING-BSD-3",
+        "host/usdhc/fsl_sdmmc_host.h",
+        "host/usdhc/non_blocking/fsl_sdmmc_host.c",
+        "osa/fsl_sdmmc_osa.c",
+        "osa/fsl_sdmmc_osa.h",
+        "sd/fsl_sd.c",
+        "sd/fsl_sd.h"
+      ],
+      "patch": "patches/sdmmc-wfg.patch"
+    },
+    {
+      "name": "fatfs",
+      "destination": "third_party/fatfs",
+      "files": [
+        "LICENSE.txt",
+        "source/diskio.c",
+        "source/diskio.h",
+        "source/ff.c",
+        "source/ff.h",
+        "source/ffunicode.c",
+        "source/fsl_sd_disk/fsl_sd_disk.c",
+        "source/fsl_sd_disk/fsl_sd_disk.h",
+        "SW-Content-Register.txt"
+      ],
+      "patch": "patches/fatfs-wfg.patch"
+    }
+  ]
+}

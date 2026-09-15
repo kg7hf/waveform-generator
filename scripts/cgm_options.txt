@@ -1,0 +1,21 @@
+# Mechanical formatting authority, matching the M110 embedded project.
+--style=allman
+--mode=c
+--convert-tabs
+--indent=spaces=4
+--indent-preproc-define
+--indent-preproc-cond
+--indent-switches
+--indent-cases
+--indent-col1-comments
+--break-blocks
+--pad-oper
+--pad-header
+--delete-empty-lines
+--align-pointer=type
+--align-reference=type
+--break-closing-brackets
+--add-brackets
+--max-code-length=200
+--break-after-logical
+--lineend=linux

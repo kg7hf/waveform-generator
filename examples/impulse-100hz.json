@@ -1,0 +1,23 @@
+{
+  "schema": "signal-lab.scenario/1",
+  "test_id": "impulse-100hz",
+  "seed": 42,
+  "source": {
+    "path": "build/demo/clean.wav"
+  },
+  "reference": "auto",
+  "source_gain_db": -12,
+  "clip_policy": "reject",
+  "impairments": [
+    {
+      "type": "impulse",
+      "peak_db": 6,
+      "decay_ms": 1,
+      "period_seconds": 0.01,
+      "first_seconds": 0.5,
+      "ring_hz": 1700,
+      "phase_degrees": 0,
+      "truncate_tau": 8
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 Paul R. Decker
+set(WFG_ENCODER_PLUGIN_SOURCES "${CMAKE_CURRENT_LIST_DIR}/registry.cpp")
+set(WFG_ENCODER_PLUGIN_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}")

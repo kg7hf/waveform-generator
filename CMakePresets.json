@@ -1,0 +1,231 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 27,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "host-debug",
+      "displayName": "Waveform generator | Host | Debug",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/host-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "WFG_TARGET": "host"
+      }
+    },
+    {
+      "name": "host-release",
+      "displayName": "Waveform generator | Host | Release",
+      "inherits": "host-debug",
+      "binaryDir": "${sourceDir}/build/host-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "rt1170-player-debug",
+      "displayName": "Waveform generator SD player | MIMXRT1170-EVK CM7 | Debug",
+      "inherits": "rt1170-debug",
+      "binaryDir": "${sourceDir}/build/rt1170-player-debug",
+      "cacheVariables": {
+        "WFG_FIRMWARE_IMAGE": "player"
+      }
+    },
+    {
+      "name": "rt1170-player-release",
+      "displayName": "Waveform generator SD player | MIMXRT1170-EVK CM7 | Release",
+      "inherits": "rt1170-release",
+      "binaryDir": "${sourceDir}/build/rt1170-player-release",
+      "cacheVariables": {
+        "WFG_FIRMWARE_IMAGE": "player"
+      }
+    },
+    {
+      "name": "rt1170-player-readonly-debug",
+      "displayName": "Waveform generator read-only USB SD player | MIMXRT1170-EVK CM7 | Debug",
+      "inherits": "rt1170-player-debug",
+      "binaryDir": "${sourceDir}/build/rt1170-player-readonly-debug",
+      "cacheVariables": {
+        "WFG_MSC_READ_ONLY": "ON"
+      }
+    },
+    {
+      "name": "rt1170-player-readonly-release",
+      "displayName": "Waveform generator read-only USB SD player | MIMXRT1170-EVK CM7 | Release",
+      "inherits": "rt1170-player-release",
+      "binaryDir": "${sourceDir}/build/rt1170-player-readonly-release",
+      "cacheVariables": {
+        "WFG_MSC_READ_ONLY": "ON"
+      }
+    },
+    {
+      "name": "rt1170-debug",
+      "displayName": "Diagnostic | Waveform generator scaffold | MIMXRT1170-EVK CM7 | Debug",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/rt1170-debug",
+      "toolchainFile": "${sourceDir}/cmake/arm-none-eabi.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "flexspi_nor_debug",
+        "WFG_TARGET": "rt1170",
+        "WFG_FIRMWARE_IMAGE": "scaffold"
+      },
+      "environment": {
+        "ARMGCC_DIR": "$penv{USERPROFILE}/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi"
+      }
+    },
+    {
+      "name": "rt1170-release",
+      "displayName": "Diagnostic | Waveform generator scaffold | MIMXRT1170-EVK CM7 | Release",
+      "inherits": "rt1170-debug",
+      "binaryDir": "${sourceDir}/build/rt1170-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "flexspi_nor_release"
+      }
+    },
+    {
+      "name": "rt1170-tone-debug",
+      "displayName": "Diagnostic | Waveform generator tone diagnostic | MIMXRT1170-EVK CM7 | Debug",
+      "inherits": "rt1170-debug",
+      "binaryDir": "${sourceDir}/build/rt1170-tone-debug",
+      "cacheVariables": {
+        "WFG_FIRMWARE_IMAGE": "tone"
+      }
+    },
+    {
+      "name": "rt1170-tone-release",
+      "displayName": "Diagnostic | Waveform generator tone diagnostic | MIMXRT1170-EVK CM7 | Release",
+      "inherits": "rt1170-release",
+      "binaryDir": "${sourceDir}/build/rt1170-tone-release",
+      "cacheVariables": {
+        "WFG_FIRMWARE_IMAGE": "tone"
+      }
+    },
+    {
+      "name": "rt1170-sdcard-debug",
+      "displayName": "Diagnostic | Waveform generator SD-only bring-up | MIMXRT1170-EVK CM7 | Debug",
+      "inherits": "rt1170-debug",
+      "binaryDir": "${sourceDir}/build/rt1170-sdcard-debug",
+      "cacheVariables": {
+        "WFG_FIRMWARE_IMAGE": "sdcard"
+      }
+    },
+    {
+      "name": "rt1170-sdcard-release",
+      "displayName": "Diagnostic | Waveform generator SD-only bring-up | MIMXRT1170-EVK CM7 | Release",
+      "inherits": "rt1170-release",
+      "binaryDir": "${sourceDir}/build/rt1170-sdcard-release",
+      "cacheVariables": {
+        "WFG_FIRMWARE_IMAGE": "sdcard"
+      }
+    },
+    {
+      "name": "rt1170-sdcard-identify-debug",
+      "displayName": "Diagnostic | Waveform generator read-only SD identify | MIMXRT1170-EVK CM7 | Debug",
+      "inherits": "rt1170-sdcard-debug",
+      "binaryDir": "${sourceDir}/build/rt1170-sdcard-identify-debug",
+      "cacheVariables": {
+        "WFG_SD_POWER_CONTROL_TEST": "OFF"
+      }
+    },
+    {
+      "name": "rt1170-sdcard-identify-release",
+      "displayName": "Diagnostic | Waveform generator read-only SD identify | MIMXRT1170-EVK CM7 | Release",
+      "inherits": "rt1170-sdcard-release",
+      "binaryDir": "${sourceDir}/build/rt1170-sdcard-identify-release",
+      "cacheVariables": {
+        "WFG_SD_POWER_CONTROL_TEST": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "host-debug",
+      "configurePreset": "host-debug"
+    },
+    {
+      "name": "host-release",
+      "configurePreset": "host-release"
+    },
+    {
+      "name": "host-capture-debug",
+      "configurePreset": "host-debug",
+      "targets": [
+        "waveform_capture"
+      ]
+    },
+    {
+      "name": "host-capture-release",
+      "configurePreset": "host-release",
+      "targets": [
+        "waveform_capture"
+      ]
+    },
+    {
+      "name": "rt1170-player-debug",
+      "configurePreset": "rt1170-player-debug"
+    },
+    {
+      "name": "rt1170-player-release",
+      "configurePreset": "rt1170-player-release"
+    },
+    {
+      "name": "rt1170-player-readonly-debug",
+      "configurePreset": "rt1170-player-readonly-debug"
+    },
+    {
+      "name": "rt1170-player-readonly-release",
+      "configurePreset": "rt1170-player-readonly-release"
+    },
+    {
+      "name": "rt1170-debug",
+      "configurePreset": "rt1170-debug"
+    },
+    {
+      "name": "rt1170-release",
+      "configurePreset": "rt1170-release"
+    },
+    {
+      "name": "rt1170-tone-debug",
+      "configurePreset": "rt1170-tone-debug"
+    },
+    {
+      "name": "rt1170-tone-release",
+      "configurePreset": "rt1170-tone-release"
+    },
+    {
+      "name": "rt1170-sdcard-debug",
+      "configurePreset": "rt1170-sdcard-debug"
+    },
+    {
+      "name": "rt1170-sdcard-release",
+      "configurePreset": "rt1170-sdcard-release"
+    },
+    {
+      "name": "rt1170-sdcard-identify-debug",
+      "configurePreset": "rt1170-sdcard-identify-debug"
+    },
+    {
+      "name": "rt1170-sdcard-identify-release",
+      "configurePreset": "rt1170-sdcard-identify-release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "host-debug",
+      "configurePreset": "host-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "host-release",
+      "configurePreset": "host-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

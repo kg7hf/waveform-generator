@@ -1,0 +1,2 @@
+# Unified patch context uses a single space for an unchanged blank line.
+patches/*.patch -whitespace

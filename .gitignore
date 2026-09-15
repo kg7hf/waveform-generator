@@ -1,0 +1,18 @@
+/build/
+/artifacts/
+# Regenerable corpus outputs and run reports stay local.
+# Keep reusable binary payloads; WAVs, sidecars and scores are generated files.
+/test-vectors/**
+!/test-vectors/simulated-interference/
+!/test-vectors/simulated-interference/payload/
+!/test-vectors/simulated-interference/payload/**
+/.venv/
+/.pytest_cache/
+**/__pycache__/
+*.py[cod]
+
+# Machine-specific CMake overrides.
+/CMakeUserPresets.json
+
+# Local optional modules are separate repositories; never publish their sources here.
+/private/

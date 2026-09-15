@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 Paul R. Decker
+
+
+from __future__ import annotations
+
+import importlib.util
+from pathlib import Path
+import tempfile
+import struct
+import unittest
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SPEC = importlib.util.spec_from_file_location("stage_wav", ROOT / "host" / "stage_wav.py")
+assert SPEC is not None and SPEC.loader is not None
+STAGE_WAV = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(STAGE_WAV)
+
+
+class StageWavTests(unittest.TestCase):
+    def setUp(self) -> None:
+        temporary = tempfile.TemporaryDirectory(prefix='wfg-test-')
+        self.addCleanup(temporary.cleanup)
+        self.temporary_path = Path(temporary.name)
+
+    def test_frozen_tone_generation_and_card_copy(self) -> None:
+        tone = self.temporary_path / "tone.wav"
+        facts = STAGE_WAV._write_tone_from_recipe(
+            ROOT / "fixtures" / "tone-10s.json", tone, False
+        )
+        self.assertEqual(facts["file_bytes"], 1_440_044)
+        self.assertEqual(facts["data_offset"], 44)
+        self.assertEqual(facts["data_bytes"], 1_440_000)
+        self.assertEqual(facts["samples"], 480_000)
+        self.assertEqual(facts["duration_seconds"], 10.0)
+        self.assertEqual(
+            facts["file_sha256"],
+            "8172261986018cb9a7b8e3913302f77064da26476277ec631545551a2a418303",
+        )
+        self.assertEqual(
+            facts["pcm_sha256"],
+            "7e6b57ae998e983d2c90d9b27d0d9297a31bcf742bf3b765c271d5dcf9c57ce4",
+        )
+
+        card = self.temporary_path / "card"
+        card.mkdir()
+        staged = STAGE_WAV.stage_wav(tone, card, False)
+        self.assertTrue(staged["verified"])
+        self.assertEqual(
+            staged["source"]["file_sha256"], staged["destination_file_sha256"]
+        )
+        self.assertEqual((card / "WG" / "PLAY.WAV").read_bytes(), tone.read_bytes())
+        self.assertEqual(
+            (card / "WG" / "PLAY.WGM").read_text(encoding="ascii"),
+            "WGM1\n"
+            "wav_bytes=1440044\n"
+            "wav_sha256=8172261986018cb9a7b8e3913302f77064da26476277ec631545551a2a418303\n"
+            "data_offset=44\n"
+            "data_bytes=1440000\n"
+            "pcm_sha256=7e6b57ae998e983d2c90d9b27d0d9297a31bcf742bf3b765c271d5dcf9c57ce4\n"
+            "samples=480000\n"
+            "level_percent=70\n",
+        )
+
+    def test_rejects_an_unsupported_sample_rate(self) -> None:
+        tone = self.temporary_path / "tone.wav"
+        STAGE_WAV._write_tone_from_recipe(
+            ROOT / "fixtures" / "tone-10s.json", tone, False
+        )
+        contents = bytearray(tone.read_bytes())
+        struct.pack_into("<I", contents, 24, 44_100)
+        tone.write_bytes(contents)
+        with self.assertRaisesRegex(STAGE_WAV.WavError, "unsupported format"):
+            STAGE_WAV.inspect_wav(tone)
+
+    def test_rejects_truncated_chunk_data(self) -> None:
+        tone = self.temporary_path / "tone.wav"
+        STAGE_WAV._write_tone_from_recipe(
+            ROOT / "fixtures" / "tone-10s.json", tone, False
+        )
+        tone.write_bytes(tone.read_bytes()[:-1])
+        with self.assertRaisesRegex(STAGE_WAV.WavError, "RIFF length"):
+            STAGE_WAV.inspect_wav(tone)
+
+
+if __name__ == "__main__":
+    unittest.main()

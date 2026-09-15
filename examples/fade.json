@@ -1,0 +1,20 @@
+{
+  "schema": "signal-lab.scenario/1",
+  "test_id": "fade",
+  "seed": 42,
+  "source": {
+    "path": "build/demo/clean.wav"
+  },
+  "reference": "auto",
+  "source_gain_db": 0,
+  "clip_policy": "reject",
+  "impairments": [
+    {
+      "type": "fade",
+      "depth_db": 12,
+      "duration_ms": 200,
+      "first_seconds": 1,
+      "period_seconds": 2
+    }
+  ]
+}

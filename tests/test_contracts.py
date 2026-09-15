@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 Paul R. Decker
+
+"""Standard-library syntax, reference, recipe, and semantic contract checks."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import math
+from pathlib import Path
+import re
+
+
+def parse_finite_float(value: str) -> float:
+    parsed = float(value)
+    if not math.isfinite(parsed):
+        raise ValueError(f"non-finite JSON number {value!r}")
+    return parsed
+
+
+def load_json(path: Path) -> object:
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"duplicate JSON key {key!r} in {path}")
+            result[key] = value
+        return result
+
+    def reject_constant(value: str):
+        raise ValueError(f"non-finite JSON number {value!r} in {path}")
+
+    def finite_float(value: str):
+        try:
+            return parse_finite_float(value)
+        except ValueError as error:
+            raise ValueError(f"{error} in {path}") from error
+
+    with path.open("r", encoding="utf-8") as stream:
+        return json.load(stream, object_pairs_hook=unique_object,
+                         parse_constant=reject_constant, parse_float=finite_float)
+
+
+def resolve_json_pointer(document: object, pointer: str) -> object:
+    if pointer == "":
+        return document
+    if not pointer.startswith("/"):
+        raise ValueError(f"invalid JSON pointer fragment {pointer!r}")
+    current = document
+    for encoded in pointer[1:].split("/"):
+        token = encoded.replace("~1", "/").replace("~0", "~")
+        if isinstance(current, dict):
+            if token not in current:
+                raise ValueError(f"unresolved JSON pointer token {token!r}")
+            current = current[token]
+        elif isinstance(current, list):
+            if not token.isdecimal() or int(token) >= len(current):
+                raise ValueError(f"invalid JSON array pointer token {token!r}")
+            current = current[int(token)]
+        else:
+            raise ValueError(f"JSON pointer descends through scalar at {token!r}")
+    return current
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", required=True, type=Path)
+    args = parser.parse_args()
+    root = args.root.resolve(strict=True)
+
+    json_paths = sorted(
+        [
+            root / "dependencies.json",
+            root / ".vscode/extensions.json",
+            root / ".vscode/settings.json",
+            root / "waveform-generator.code-workspace",
+        ]
+        + list((root / "schema").glob("*.json"))
+        + list((root / "fixtures").glob("*.json"))
+    )
+    assert json_paths, "no contract JSON files found"
+    documents = {path.relative_to(root).as_posix(): load_json(path) for path in json_paths}
+
+    schemas = {name: value for name, value in documents.items() if name.startswith("schema/")}
+    for name, schema in schemas.items():
+        assert isinstance(schema, dict), name
+        assert schema.get("$schema") == "https://json-schema.org/draft/2020-12/schema", name
+        for ref in _refs(schema):
+            resource, separator, fragment = ref.partition("#")
+            if ":" in resource:
+                raise AssertionError((name, "external $ref is not allowed", ref))
+            if resource:
+                target = (root / "schema" / resource).resolve()
+                assert target.is_relative_to(root / "schema") and target.is_file(), (name, ref)
+                referenced_document = load_json(target)
+            else:
+                referenced_document = schema
+            if separator:
+                resolve_json_pointer(referenced_document, fragment)
+
+    try:
+        json.loads('{"overflow":1e999}', parse_float=parse_finite_float)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("overflowing JSON float was accepted")
+
+    workspace = documents["waveform-generator.code-workspace"]
+    assert workspace["folders"] == [
+        {"name": "RT1170 Waveform Generator", "path": "."}
+    ]
+    editor_settings = (
+        documents[".vscode/settings.json"],
+        workspace["settings"],
+    )
+    for settings in editor_settings:
+        assert settings["cmake.sourceDirectory"] == "${workspaceFolder}"
+        assert settings["cmake.useCMakePresets"] == "always"
+    assert workspace["extensions"] == documents[".vscode/extensions.json"]
+
+    recipes = {
+        name: value for name, value in documents.items() if name.startswith("fixtures/")
+    }
+    assert set(recipes) == {
+        "fixtures/tone-10s.json",
+    }
+    for name, recipe in recipes.items():
+        assert isinstance(recipe, dict), name
+        assert recipe.get("schema_version") == "fixture-recipe/1", name
+        assert recipe.get("status") == "recipe_not_generated", name
+        fixture_schema = schemas["schema/fixture-recipe.schema.json"]
+        assert set(fixture_schema["required"]) <= recipe.keys(), name
+        assert recipe.keys() <= fixture_schema["properties"].keys(), name
+        fmt = recipe["format"]
+        for key, rule in fixture_schema["properties"]["format"]["properties"].items():
+            assert fmt[key] == rule["const"], (name, key)
+        expected_bits = 24
+        assert fmt == {
+            "container": "RIFF/WAVE",
+            "encoding": f"pcm_s{expected_bits}le",
+            "sample_rate_hz": 48000,
+            "channels": 1,
+            "bits_per_sample": expected_bits,
+        }, name
+        assert not ({"wav", "pcm", "sidecar", "wav_sha256"} & recipe.keys()), name
+
+    tone = recipes["fixtures/tone-10s.json"]
+    tone_prep = tone["preparation"]
+    assert tone_prep["samples"] == 480000
+    assert tone_prep["period_repetitions"] * len(tone_prep["pcm24_period"]) == 480000
+    assert tone["format"]["sample_rate_hz"] / len(tone_prep["pcm24_period"]) == 1000
+    expected_period = [round(1048576 * math.sin(2 * math.pi * index / 48))
+                       for index in range(48)]
+    assert tone_prep["pcm24_period"] == expected_period
+
+    link_pattern = re.compile(r"\[[^]]+\]\((?![a-z]+:|#)([^)#]+)(?:#[^)]+)?\)")
+    for markdown in sorted(list((root / "docs").rglob("*.md"))
+                           + list((root / "fixtures").glob("*.md"))
+                           + [root / "README.md", root / "THIRD_PARTY_NOTICES.md"]):
+        for target in link_pattern.findall(markdown.read_text(encoding="utf-8")):
+            assert (markdown.parent / target).resolve().exists(), (markdown, target)
+
+    return 0
+
+
+def _refs(value: object):
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key == "$ref" and isinstance(item, str):
+                yield item
+            yield from _refs(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from _refs(item)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

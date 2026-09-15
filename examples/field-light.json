@@ -1,0 +1,29 @@
+{
+  "schema": "signal-lab.scenario/1",
+  "test_id": "field-light",
+  "seed": 42,
+  "source": {
+    "path": "build/demo/clean.wav"
+  },
+  "reference": "auto",
+  "source_gain_db": -12,
+  "clip_policy": "reject",
+  "impairments": [
+    {
+      "type": "fade",
+      "depth_db": 6,
+      "duration_ms": 200,
+      "first_seconds": 1,
+      "period_seconds": 3
+    },
+    {
+      "type": "awgn",
+      "snr_db": 20
+    },
+    {
+      "type": "cw",
+      "frequency_hz": 900,
+      "ci_db": 12
+    }
+  ]
+}
