@@ -1,0 +1,14 @@
+/build/
+/artifacts/
+# Generated test vectors, WAVs, sidecars and run reports stay local.
+/test-vectors/
+/.venv/
+/.pytest_cache/
+**/__pycache__/
+*.py[cod]
+
+# Machine-specific CMake overrides.
+/CMakeUserPresets.json
+
+# Local optional modules are separate repositories; never publish their sources here.
+/private/

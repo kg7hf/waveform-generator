@@ -1,0 +1,18 @@
+{
+  "schema": "signal-lab.scenario/1",
+  "test_id": "SECOND-SOURCE-OFFSET",
+  "seed": 17,
+  "reference": "auto",
+  "source_gain_db": -12,
+  "clip_policy": "reject",
+  "impairments": [
+    {
+      "type": "second_source",
+      "source_path": "interferer.wav",
+      "si_db": 6,
+      "start_frame": 0,
+      "source_start_frame": 0,
+      "frequency_offset_hz": 25
+    }
+  ]
+}

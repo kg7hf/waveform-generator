@@ -1,0 +1,45 @@
+{
+  "indirect_calls": [
+    {
+      "caller": "^void waveform_source::WavGenerator::stop\\(",
+      "targets": "^virtual void waveform_example::ToneEncoder::stop\\(\\)",
+      "why": "The public RT1170 TONE build registers only ToneEncoder. WavGenerator::stop dispatches Encoder::stop to that concrete adapter."
+    },
+    {
+      "caller": "^waveform_source::JobState waveform_source::WavGenerator::fail\\(",
+      "targets": "^virtual void waveform_example::ToneEncoder::stop\\(\\)",
+      "why": "The public RT1170 TONE build registers only ToneEncoder. WavGenerator::fail stops that concrete adapter after a failed job."
+    },
+    {
+      "caller": "^m110::Status waveform_source::WavGenerator::begin\\(",
+      "targets": "^(virtual (waveform_source::Status waveform_example::ToneEncoder::configure|uint64_t waveform_example::ToneEncoder::total_frames|waveform_source::Status waveform_example::ToneEncoder::status|void waveform_example::ToneEncoder::stop)\\(|virtual m110::Status waveform_generator::\\{anonymous\\}::FileSink::write\\()",
+      "why": "In the public TONE firmware, begin dispatches encoder setup/status/length/stop to ToneEncoder and the WAV header write to the fixed FileSink in rt1170/tx_artifact.cpp."
+    },
+    {
+      "caller": "^waveform_source::JobState waveform_source::WavGenerator::step\\(",
+      "targets": "^(virtual (std::size_t waveform_example::ToneEncoder::read_float|waveform_source::Status waveform_example::ToneEncoder::status|void waveform_example::ToneEncoder::stop)\\(|virtual m110::Status waveform_generator::\\{anonymous\\}::FileSink::write\\()",
+      "why": "In the public TONE firmware, step dispatches sample/status/failure-stop calls to ToneEncoder and PCM writes to the fixed FileSink in rt1170/tx_artifact.cpp."
+    },
+    {
+      "caller": "^virtual std::size_t waveform_source::WavGenerator::read\\(",
+      "targets": "^virtual std::size_t waveform_generator::\\{anonymous\\}::FileBytes::read\\(",
+      "why": "The public TONE job supplies the firmware's fixed FileBytes object as the WAV writer's payload source."
+    },
+    {
+      "caller": "^virtual waveform_source::Status waveform_example::ToneEncoder::configure\\(",
+      "targets": "^(virtual void waveform_example::ToneEncoder::stop\\(\\)|virtual std::size_t waveform_source::WavGenerator::read\\()",
+      "why": "ToneEncoder configures itself and reads payload through the WavGenerator ByteSource adapter in the public TONE job."
+    },
+    {
+      "caller": "^virtual std::size_t waveform_example::ToneEncoder::read_float\\(",
+      "targets": "^virtual std::size_t waveform_source::WavGenerator::read\\(",
+      "why": "The public TONE adapter reads its payload through the WavGenerator ByteSource adapter."
+    },
+    {
+      "caller": "^0\\(\\)$",
+      "caller_title": ":_ZN18waveform_generator12_GLOBAL__N_116start_generationEv\\.part\\.0$",
+      "targets": "^(waveform_source::Encoder\\* waveform_generator::\\{anonymous\\}::construct\\(void\\*, std::size_t\\)|constexpr waveform_example::ToneEncoder::~ToneEncoder\\(\\))$",
+      "why": "GCC 14 labels start_generation.part.0 as 0() in this image; its two indirect calls are the registered TONE descriptor constructor and the corresponding virtual Encoder destructor."
+    }
+  ]
+}

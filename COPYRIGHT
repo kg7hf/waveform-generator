@@ -1,0 +1,23 @@
+Waveform generator
+SPDX-FileCopyrightText: 2026 Paul R. Decker
+
+Unless an individual file states otherwise, the original source code,
+build scripts, tests, examples, configuration, and documentation in this
+repository are licensed under the GNU General Public License version 3 only
+(SPDX-License-Identifier: GPL-3.0-only). See LICENSE for the complete terms.
+This notice also covers project-authored files whose formats do not support
+comments, such as JSON configuration and test fixtures.
+
+This program is distributed without any warranty, including the implied
+warranties of merchantability or fitness for a particular purpose. See LICENSE.
+
+Third-party works retain their own copyright and license notices. In
+particular, the Git submodules under third_party/ and adapted NXP linker
+scripts are not claimed as original work by Paul R. Decker. The linker
+scripts retain BSD-3-Clause terms, including Paul's adaptations; the NXP
+license text is included in LICENSES/BSD-3-Clause-NXP.txt. Patches retain
+the notices and terms of the works they modify. See THIRD_PARTY_NOTICES.md
+for component licenses and the dated patch modification notices.
+
+The Free Software Foundation holds the copyright on the GPL license text
+in LICENSE; the project's copyright notice does not alter that document.

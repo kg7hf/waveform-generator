@@ -1,0 +1,9 @@
+# Text files are stored and checked out with LF on every platform; Git detects
+# binary files (WAVs, images) and leaves them alone. Later lines override this.
+* text=auto eol=lf
+# Unified patch context uses a single space for an unchanged blank line.
+patches/*.patch -whitespace
+# The lane's pathsim patch is copied verbatim and mixes CRLF and LF lines
+# (upstream stores some files with CRLF); keep its bytes exact so its sha256
+# matches the lane copy whatever the clone's end-of-line policy.
+patches/pathsim-*.patch -text

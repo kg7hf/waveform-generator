@@ -1,0 +1,644 @@
+# WFG-LIVE/1 request corpus: tests/live_protocol_corpus.hpp makes the lines, tests/live_protocol_corpus_tests.cpp
+# compares them. <last sequence before> "<seed>" -> <outcome> | edits <n> refused <n> digest <FNV-1a of the
+# edits' "<line>" -> <outcome> lines>. An outcome is seq=<the reply's seq> last=<last sequence after>, then
+# error=<the reply's code>, or ok kind=<kind> and the request's fields that are not their default.
+0 "1 INFO?" -> seq=1 last=1 ok kind=info | edits 249 refused 228 digest 575e640d88397fdb
+0 "1 STATUS?" -> seq=1 last=1 ok kind=status | edits 294 refused 273 digest 225daeb9facc1d49
+0 "1 COUNTERS?" -> seq=1 last=1 ok kind=counters | edits 341 refused 320 digest ccf0d8eac26f03e0
+0 "1 USB?" -> seq=1 last=1 ok kind=usb_diagnostics | edits 225 refused 204 digest 3775ee593463eba6
+0 "1 PLAYLIST?" -> seq=1 last=1 ok kind=playlist_status | edits 338 refused 317 digest c167273cc338b2de
+0 "1 ENGINE?" -> seq=1 last=1 ok kind=engine_status | edits 295 refused 274 digest bf6518512cacd4a6
+0 "1 FILES?" -> seq=1 last=1 ok kind=files | edits 273 refused 251 digest 43415991174fa855
+0 "1 FILES? 0" -> seq=1 last=1 ok kind=files | edits 346 refused 316 digest 8674ee15e26e9140
+0 "1 FILES? 18446744073709551615" -> seq=1 last=1 ok kind=files integer=18446744073709551615 | edits 771 refused 666 digest 39ff98f3e92b6478
+0 "1 PLAY" -> seq=1 last=1 ok kind=play | edits 226 refused 205 digest 85455b3dd5348466
+0 "1 STOP" -> seq=1 last=1 ok kind=stop | edits 227 refused 206 digest 3219b5c669dda7c1
+0 "1 MEDIA HOST" -> seq=1 last=1 ok kind=media_host | edits 406 refused 392 digest 7222b1cf9b9b7fd9
+0 "1 MEDIA LOCAL" -> seq=1 last=1 ok kind=media_local | edits 428 refused 414 digest d92aaea08eabe0a9
+0 "1 PREPARE?" -> seq=1 last=1 ok kind=prepare_status | edits 318 refused 296 digest e482e1b4b01caac3
+0 "1 PREPAREPLAY?" -> seq=1 last=1 ok kind=prepare_play_status | edits 409 refused 387 digest cb895d5b293b4710
+0 "1 AT:0 PREPAREPLAY?" -> seq=1 last=1 error=BAD_REQUEST | edits 591 refused 591 digest 5e4f6316a6aef0dc
+0 "1 PREPAREPLAY? EXTRA" -> seq=1 last=1 error=BAD_REQUEST | edits 589 refused 588 digest b71c1374239f4dc9
+0 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:KEEP" -> seq=1 last=1 ok kind=prepare_file prepare_source="SRC.WAV" prepare_scenario="TEST.SCN" prepare_output="OUT.WAV" prepare_retention=1 | edits 1280 refused 1087 digest 75a2900ce0206ac9
+0 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:TEMP:18446744073709551615" -> seq=1 last=1 ok kind=prepare_file prepare_source="SRC.WAV" prepare_scenario="TEST.SCN" prepare_output="OUT.WAV" prepare_seed_override=1 prepare_seed=18446744073709551615 | edits 1781 refused 1496 digest fa0cde72447efe0b
+0 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:0" -> seq=1 last=1 ok kind=prepare_file prepare_source="SRC.WAV" prepare_scenario="TEST.SCN" prepare_output="OUT.WAV" prepare_retention=1 prepare_seed_override=1 | edits 1353 refused 1143 digest e658c6f6a10954c1
+0 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:TEMP:01" -> seq=1 last=1 error=BAD_REQUEST | edits 1377 refused 1355 digest 9371552e94f40501
+0 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:TEMP:18446744073709551616" -> seq=1 last=1 error=BAD_REQUEST | edits 1781 refused 1688 digest 96307213d67d32d6
+0 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:keep" -> seq=1 last=1 error=BAD_REQUEST | edits 1279 refused 1279 digest ac25d951d31c1b05
+0 "1 AT:0 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:KEEP" -> seq=1 last=1 error=BAD_REQUEST | edits 1462 refused 1462 digest 5cea05c5b33eae78
+0 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1200:4096" -> seq=1 last=1 ok kind=prepare_play prepare_source="SRC.WAV" prepare_scenario="TEST.SCN" prepare_output="OUT.WAV" prepare_retention=1 prepare_rate=1200 prepare_margin_frames=4096 | edits 1656 refused 1399 digest adf747e90fdb85f1
+0 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:TEMP:4294967295:4294967295:18446744073709551615" -> seq=1 last=1 ok kind=prepare_play prepare_source="SRC.WAV" prepare_scenario="TEST.SCN" prepare_output="OUT.WAV" prepare_seed_override=1 prepare_seed=18446744073709551615 prepare_rate=4294967295 prepare_margin_frames=4294967295 | edits 2004 refused 1677 digest a5bfcee53f63a2d3
+0 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:0:0" -> seq=1 last=1 ok kind=prepare_play prepare_source="SRC.WAV" prepare_scenario="TEST.SCN" prepare_output="OUT.WAV" prepare_retention=1 prepare_seed_override=1 prepare_rate=1 | edits 1589 refused 1351 digest c754b8a2292fcce5
+0 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:0:0" -> seq=1 last=1 error=BAD_REQUEST | edits 1516 refused 1504 digest d8ebeef4ecbf9ec8
+0 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:01:0" -> seq=1 last=1 error=BAD_REQUEST | edits 1538 refused 1523 digest 98b3fc99cbc4827e
+0 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:4294967296:0" -> seq=1 last=1 error=BAD_REQUEST | edits 1725 refused 1670 digest 922e254ae34953ad
+0 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:01" -> seq=1 last=1 error=BAD_REQUEST | edits 1538 refused 1520 digest e257a4c8e12e4c87
+0 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:4294967296" -> seq=1 last=1 error=BAD_REQUEST | edits 1725 refused 1660 digest fc2479491592e6a0
+0 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:0:18446744073709551616" -> seq=1 last=1 error=BAD_REQUEST | edits 2014 refused 1921 digest 461dc9dbade88568
+0 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:0:1:2" -> seq=1 last=1 error=BAD_REQUEST | edits 1663 refused 1653 digest e6ef610b46b924fc
+0 "1 AT:0 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:0" -> seq=1 last=1 error=BAD_REQUEST | edits 1699 refused 1699 digest 0bce85de6f38dd2b
+0 "1 OUTPUT CODEC" -> seq=1 last=1 ok kind=output_codec | edits 453 refused 439 digest d64d32eac4a21db0
+0 "1 OUTPUT USB" -> seq=1 last=1 ok kind=output_usb | edits 407 refused 393 digest d838430808df1dbe
+0 "2 INFO?\x0d" -> seq=2 last=2 ok kind=info | edits 271 refused 250 digest ee102627d312ea1f
+0 "3 PLAY\x0d" -> seq=3 last=3 ok kind=play | edits 249 refused 227 digest 2544842087ac5076
+0 "1 STATUS" -> seq=1 last=1 error=BAD_REQUEST | edits 273 refused 264 digest e6cade7f13a67387
+0 "1 OUTPUT" -> seq=1 last=1 error=BAD_REQUEST | edits 273 refused 264 digest 855c618ca2cb126b
+0 "1 OUTPUT SPEAKER" -> seq=1 last=1 error=BAD_REQUEST | edits 499 refused 497 digest e744159e28c4b621
+0 "1 OUTPUT usb" -> seq=1 last=1 error=BAD_REQUEST | edits 407 refused 405 digest 51207b82c811a010
+0 "1 MEDIA" -> seq=1 last=1 error=BAD_REQUEST | edits 249 refused 240 digest 60e4a1431bda9e81
+0 "0 INFO?" -> seq=0 last=0 error=BAD_REQUEST | edits 248 refused 236 digest c757d47c31e190de
+0 "01 INFO?" -> seq=0 last=0 error=BAD_REQUEST | edits 271 refused 256 digest 333cbbf645941243
+0 "4294967295 STOP" -> seq=4294967295 last=4294967295 ok kind=stop | edits 436 refused 382 digest 71545997989469c9
+0 "4294967296 STOP" -> seq=0 last=0 error=BAD_REQUEST | edits 436 refused 390 digest 84830c5be37bee23
+0 "18446744073709551616 STOP" -> seq=0 last=0 error=BAD_REQUEST | edits 654 refused 642 digest 65f82fae5cb90f52
+0 "INFO?" -> seq=0 last=0 error=BAD_REQUEST | edits 164 refused 164 digest f35667fce4011d40
+0 " 1 INFO?" -> seq=0 last=0 error=BAD_REQUEST | edits 271 refused 268 digest 991d9ef0fca607e0
+0 "1" -> seq=0 last=0 error=BAD_REQUEST | edits 59 refused 59 digest fafbd1575ff2ae33
+0 "1 " -> seq=1 last=1 error=BAD_REQUEST | edits 91 refused 91 digest ae3ffe9f99ce754f
+0 "" -> seq=0 last=0 error=BAD_REQUEST | edits 10 refused 10 digest 20e264615bddeb65
+0 "\x0d" -> seq=0 last=0 error=BAD_REQUEST | edits 29 refused 29 digest 190818b2b30e08ec
+0 "1  INFO?" -> seq=1 last=1 error=BAD_REQUEST | edits 268 refused 264 digest c602e283876176c0
+0 "1 INFO?\x0d\x0d" -> seq=0 last=0 error=BAD_REQUEST | edits 290 refused 288 digest 3a4afb4aa181735a
+0 "1 INFO?\x0dX" -> seq=0 last=0 error=BAD_REQUEST | edits 337 refused 335 digest 01daee270fb712fa
+0 "-1 INFO?" -> seq=0 last=0 error=BAD_REQUEST | edits 272 refused 258 digest 283e5a9cf63f4437
+0 "+1 INFO?" -> seq=0 last=0 error=BAD_REQUEST | edits 273 refused 270 digest 5414874722fc7519
+0 "1\x09INFO?" -> seq=0 last=0 error=BAD_REQUEST | edits 237 refused 236 digest 08f4242619195f86
+0 "1 INFO?\x01" -> seq=0 last=0 error=BAD_REQUEST | edits 273 refused 271 digest a39cf943750883b0
+0 "1 INFO?\x7f" -> seq=0 last=0 error=BAD_REQUEST | edits 271 refused 269 digest cd7af872e21f1f91
+0 "1 INFO?\x80" -> seq=0 last=0 error=BAD_REQUEST | edits 271 refused 269 digest 271f1f23a73ac1af
+0 "1 PLAY:0123456789abcdef0123456789abcdef" -> seq=1 last=1 ok kind=play run_id="0123456789abcdef0123456789abcdef" | edits 1128 refused 959 digest 625b240705c3081b
+0 "1 PLAY:0123456789ABCDEF0123456789abcdef" -> seq=1 last=1 error=BAD_REQUEST | edits 1129 refused 1127 digest c5c1f0b7a64f7993
+0 "1 PLAY:0123456789abcdef0123456789abcde" -> seq=1 last=1 error=BAD_REQUEST | edits 1105 refused 1073 digest aecfd779b31aacb9
+0 "1 PLAY:0123456789abcdef0123456789abcdef0" -> seq=1 last=1 error=BAD_REQUEST | edits 1179 refused 1144 digest 08b62225cdd27904
+0 "1 PLAY:" -> seq=1 last=1 error=BAD_REQUEST | edits 248 refused 246 digest fb34fdcec325d545
+0 "1 PLAY:0123456789abcdef0123456789abcdeg" -> seq=1 last=1 error=BAD_REQUEST | edits 1128 refused 1123 digest 3dc3d5a9675f2cdd
+0 "1 LOAD:REF_600.WAV" -> seq=1 last=1 ok kind=load name="REF_600.WAV" | edits 613 refused 516 digest 91c27e9868245a11
+0 "4 LOAD:REF_600.WAV\x0d" -> seq=4 last=4 ok kind=load name="REF_600.WAV" | edits 636 refused 538 digest d84e053ce31262ba
+0 "1 LOAD:A.WAV" -> seq=1 last=1 ok kind=load name="A.WAV" | edits 445 refused 394 digest 1dfa8cc2445ffc6a
+0 "1 LOAD:ABCDEFGH.WAV" -> seq=1 last=1 ok kind=load name="ABCDEFGH.WAV" | edits 608 refused 501 digest 7a338d8c79090b73
+0 "1 LOAD:ABCDEFGHI.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 631 refused 591 digest d640b88f5f73018e
+0 "1 LOAD:.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 381 refused 381 digest 1720645754ecd673
+0 "1 LOAD:A.BIN" -> seq=1 last=1 error=BAD_REQUEST | edits 446 refused 444 digest 78924265197976f1
+0 "1 LOAD:a.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 445 refused 408 digest e74e5be75b06acfc
+0 "1 LOAD:A.WAVX" -> seq=1 last=1 error=BAD_REQUEST | edits 468 refused 466 digest c2149cd664e5fe8f
+0 "1 LOAD:A" -> seq=1 last=1 error=BAD_REQUEST | edits 313 refused 312 digest c168af45482e1de5
+0 "1 LOAD:../X.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 510 refused 510 digest 659e144ceeedefeb
+0 "1 LOAD:X.WAV " -> seq=1 last=1 error=BAD_REQUEST | edits 468 refused 466 digest 6ef5a92f3e4c9726
+0 "1 LOAD:" -> seq=1 last=1 error=BAD_REQUEST | edits 248 refused 248 digest f0413287df038f27
+0 "1 LOAD:A.wav" -> seq=1 last=1 error=BAD_REQUEST | edits 445 refused 444 digest 01cd75321f704d20
+0 "1 LOAD:A.B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 533 refused 526 digest 2b96ab174687798c
+0 "1 SEED:0" -> seq=1 last=1 ok kind=seed | edits 297 refused 267 digest 5909820295c1d649
+0 "1 SEED:18446744073709551615" -> seq=1 last=1 ok kind=seed integer=18446744073709551615 | edits 722 refused 618 digest def9123b77fd6aab
+0 "1 SEED:18446744073709551616" -> seq=1 last=1 error=BAD_REQUEST | edits 722 refused 630 digest 5368550b6583a2b9
+0 "1 SEED:" -> seq=1 last=1 error=BAD_REQUEST | edits 246 refused 246 digest 1de45443e2540a00
+0 "1 SEED:01" -> seq=1 last=1 error=BAD_REQUEST | edits 318 refused 295 digest 5f81e2966b20cae6
+0 "1 SEED:-1" -> seq=1 last=1 error=BAD_REQUEST | edits 319 refused 300 digest 38d134bfa0c075bd
+0 "1 REFERENCE:0.125" -> seq=1 last=1 ok kind=reference value=0.125 | edits 508 refused 472 digest 266382da528ef875
+0 "1 REFERENCE:1" -> seq=1 last=1 ok kind=reference value=1 | edits 416 refused 399 digest 334b0db08fb73d11
+0 "1 REFERENCE:1.0" -> seq=1 last=1 ok kind=reference value=1 | edits 461 refused 443 digest 7cb6c1d166a52026
+0 "1 REFERENCE:0" -> seq=1 last=1 error=BAD_REQUEST | edits 415 refused 410 digest 765533e9d3f2efd2
+0 "1 REFERENCE:1.0000001" -> seq=1 last=1 error=BAD_REQUEST | edits 579 refused 567 digest 652583c67b3c8899
+0 "1 REFERENCE:-0.5" -> seq=1 last=1 error=BAD_REQUEST | edits 483 refused 479 digest 8abf071efc42e9d8
+0 "1 REFERENCE:nan" -> seq=1 last=1 error=BAD_REQUEST | edits 475 refused 475 digest 09eff4eef8bc93e9
+0 "1 REFERENCE:" -> seq=1 last=1 error=BAD_REQUEST | edits 364 refused 364 digest f230cfa9f0e7a144
+0 "1 REFERENCE:.5" -> seq=1 last=1 error=BAD_REQUEST | edits 439 refused 436 digest 99a1e253801b2bcf
+0 "1 REFERENCE:0." -> seq=1 last=1 error=BAD_REQUEST | edits 438 refused 435 digest c49d12d54f0e094a
+0 "1 REFERENCE:0.12345678901234" -> seq=1 last=1 ok kind=reference value=0.12345678901234 | edits 758 refused 664 digest efe4162705c9f510
+0 "1 REFERENCE:0.123456789012345" -> seq=1 last=1 error=BAD_REQUEST | edits 781 refused 749 digest 37ec7841009ca874
+0 "1 REFERENCE:0.1234567890123456" -> seq=1 last=1 error=BAD_REQUEST | edits 804 refused 787 digest 030be38fa8874e21
+0 "1 REFERENCE:00.5" -> seq=1 last=1 ok kind=reference value=0.5 | edits 480 refused 458 digest 2d039c628a2947a2
+0 "1 REFERENCE:0.5." -> seq=1 last=1 error=BAD_REQUEST | edits 484 refused 477 digest 7e8450a04d60d913
+0 "1 REFERENCE:-" -> seq=1 last=1 error=BAD_REQUEST | edits 387 refused 386 digest 32cad77891f1afda
+0 "13 GENERATE:600:long:PAYLOAD.BIN:TEST.WAV" -> seq=13 last=13 ok kind=generate_file name="TEST.WAV" input="PAYLOAD.BIN" rate=600 interleave=1 | edits 1268 refused 1086 digest 161916afebc47be5
+0 "1 GENERATE:75:short:A.BIN:B.WAV" -> seq=1 last=1 ok kind=generate_file name="B.WAV" input="A.BIN" rate=75 | edits 1036 refused 945 digest 5278f7311acbb088
+0 "1 GENERATE:150:zero:A.BIN:B.WAV" -> seq=1 last=1 ok kind=generate_file name="B.WAV" input="A.BIN" rate=150 interleave=2 | edits 1035 refused 943 digest c730d2a656ee72e1
+0 "1 GENERATE:300:long:A.BIN:B.WAV" -> seq=1 last=1 ok kind=generate_file name="B.WAV" input="A.BIN" rate=300 interleave=1 | edits 1032 refused 940 digest 1d7de3df356cf8b3
+0 "1 GENERATE:1200:short:A.BIN:B.WAV" -> seq=1 last=1 ok kind=generate_file name="B.WAV" input="A.BIN" rate=1200 | edits 1078 refused 986 digest 5c89c4646ce356fb
+0 "1 GENERATE:2400:long:A.BIN:B.WAV" -> seq=1 last=1 ok kind=generate_file name="B.WAV" input="A.BIN" rate=2400 interleave=1 | edits 1057 refused 965 digest dd4b9db3d81c7dad
+0 "1 GENERATE:4800:zero:A.BIN:B.WAV" -> seq=1 last=1 ok kind=generate_file name="B.WAV" input="A.BIN" rate=4800 interleave=2 | edits 1056 refused 965 digest 0a28ecaa63ea760f
+0 "1 GENERATE:100:long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1031 refused 1029 digest afd06ef620e1e96c
+0 "1 GENERATE:9600:long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1056 refused 1053 digest 2ec05a8398c7f08f
+0 "1 GENERATE:600:medium:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1079 refused 1076 digest 7c463913da18607b
+0 "1 GENERATE:600:long:A.WAV:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1031 refused 1030 digest 10bc77c9cd1bc411
+0 "1 GENERATE:600:long:A.BIN:B.BIN" -> seq=1 last=1 error=BAD_REQUEST | edits 1033 refused 1032 digest f26f69cac2d2f8d2
+0 "1 GENERATE:600:long:A.BIN" -> seq=1 last=1 error=BAD_REQUEST | edits 811 refused 811 digest df654b5bbe7f50d7
+0 "1 GENERATE:600:long:A.BIN:B.WAV:C" -> seq=1 last=1 error=BAD_REQUEST | edits 1121 refused 1120 digest 9b583ebda1546935
+0 "1 GENERATE:600:long:A.BIN:B.WAV:" -> seq=1 last=1 error=BAD_REQUEST | edits 1054 refused 1052 digest 00114f7e7cbe26d6
+0 "1 GENERATE::long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 934 refused 934 digest 1cf73eb47ec904e3
+0 "1 GENERATE:0600:long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1056 refused 1053 digest 8bc3b44dfcabc00f
+0 "1 AT:0 GENERATE:600:long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1214 refused 1214 digest 7a85fb168066a9dc
+0 "11 M110:600:long:PAYLOAD.BIN" -> seq=11 last=11 error=BAD_REQUEST | edits 906 refused 906 digest 5d579aa30def3111
+0 "26 ENCODE TONE 1000 INPUT.BIN OUT.WAV" -> seq=26 last=26 ok kind=generate_file name="OUT.WAV" input="INPUT.BIN" encoder="TONE" profile="1000" | edits 1177 refused 873 digest 1c2f063cc9f013e9
+0 "27 ENCODE CUSTOM R50:S170:F1000 INPUT.BIN OUT.WAV" -> seq=27 last=27 ok kind=generate_file name="OUT.WAV" input="INPUT.BIN" encoder="CUSTOM" profile="R50:S170:F1000" | edits 1637 refused 983 digest f2ff581720c426a8
+0 "28 ENCODE lower 1000 INPUT.BIN OUT.WAV" -> seq=28 last=28 error=BAD_REQUEST | edits 1200 refused 1168 digest 0660e4392bbd72e0
+0 "29 AT:0 ENCODE TONE 1000 INPUT.BIN OUT.WAV" -> seq=29 last=29 error=BAD_REQUEST | edits 1358 refused 1358 digest 2512ef2c51394038
+0 "31 ENCODE TONE bad\"profile INPUT.BIN OUT.WAV" -> seq=31 last=31 error=BAD_REQUEST | edits 1398 refused 1385 digest 64dc9ddcb1938b59
+0 "1 ENCODE TONE bad\\profile INPUT.BIN OUT.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1373 refused 1360 digest e24e31de29464877
+0 "1 ENCODE ABCDEFGHIJKLMNO 1000 A.BIN B.WAV" -> seq=1 last=1 ok kind=generate_file name="B.WAV" input="A.BIN" encoder="ABCDEFGHIJKLMNO" profile="1000" | edits 1260 refused 940 digest 80a3b8bc565319a7
+0 "1 ENCODE ABCDEFGHIJKLMNOP 1000 A.BIN B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1283 refused 1234 digest 096da8c7765c1e1b
+0 "1 ENCODE TONE ABCDEFGHIJKLMNOPQRSTUVWXYZ01234 A.BIN B.WAV" -> seq=1 last=1 ok kind=generate_file name="B.WAV" input="A.BIN" encoder="TONE" profile="ABCDEFGHIJKLMNOPQRSTUVWXYZ01234" | edits 1680 refused 1028 digest 373f04df71cf233d
+0 "1 ENCODE TONE ABCDEFGHIJKLMNOPQRSTUVWXYZ012345 A.BIN B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1703 refused 1604 digest aed11237ddec4f40
+0 "1 ENCODE TONE 1000 A.WAV B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1007 refused 1006 digest 7d91ced5c39cd4dc
+0 "1 ENCODE TONE 1000 A.BIN B.BIN" -> seq=1 last=1 error=BAD_REQUEST | edits 1009 refused 1008 digest 3bf4d1867b498045
+0 "1 ENCODE TONE 1000 A.BIN" -> seq=1 last=1 error=BAD_REQUEST | edits 787 refused 787 digest 0c3f662304827755
+0 "1 ENCODE TONE 1000 A.BIN B.WAV X" -> seq=1 last=1 error=BAD_REQUEST | edits 1096 refused 1095 digest 9909df26ac0295ab
+0 "1 ENCODE A_1 x A.BIN B.WAV" -> seq=1 last=1 ok kind=generate_file name="B.WAV" input="A.BIN" encoder="A_1" profile="x" | edits 961 refused 748 digest 12e8d0d596f3d3f4
+0 "1 ENCODE TONE ~ A.BIN B.WAV" -> seq=1 last=1 ok kind=generate_file name="B.WAV" input="A.BIN" encoder="TONE" profile="~" | edits 917 refused 748 digest e208758c415967f2
+0 "1 CW ON" -> seq=1 last=1 ok kind=cw_on value=1 | edits 292 refused 274 digest 965b12555ac411e0
+0 "1 CW OFF" -> seq=1 last=1 ok kind=cw_on | edits 312 refused 294 digest 8cd9385c5a6d9893
+0 "1 STATIC ON" -> seq=1 last=1 ok kind=static_on value=1 | edits 383 refused 365 digest da00b5eb0202cc7a
+0 "1 STATIC OFF" -> seq=1 last=1 ok kind=static_on | edits 403 refused 385 digest d6874de6ba664527
+0 "1 CW 0 ON" -> seq=1 last=1 ok kind=cw_on value=1 | edits 364 refused 345 digest 6ce13bab5ce27d31
+0 "21 CW 1 ON" -> seq=21 last=21 ok kind=cw_on value=1 oscillator=1 | edits 389 refused 363 digest cf9f7a4b7b4020c0
+0 "1 CW 3 OFF" -> seq=1 last=1 ok kind=cw_on oscillator=3 | edits 386 refused 366 digest ee29eae132aa0326
+0 "24 CW 4 ON" -> seq=24 last=24 error=BAD_REQUEST | edits 394 refused 391 digest 45b3cd54d4ba0516
+0 "1 CW 01 ON" -> seq=1 last=1 error=BAD_REQUEST | edits 386 refused 383 digest 52c11052c9e77029
+0 "1 STATIC 1 ON" -> seq=1 last=1 error=BAD_REQUEST | edits 456 refused 455 digest 550b0179ba07c49e
+0 "1 CW FREQ 1800" -> seq=1 last=1 ok kind=cw_frequency value=1800 | edits 477 refused 418 digest 2b0e27bb32d157d2
+0 "1 CW CI 3" -> seq=1 last=1 ok kind=cw_ci value=3 | edits 367 refused 328 digest 198fe0a8fac111a9
+0 "1 STATIC RATE 1" -> seq=1 last=1 ok kind=static_rate value=1 | edits 502 refused 464 digest aa9a8119627b5024
+0 "1 STATIC PEAK 20" -> seq=1 last=1 ok kind=static_peak value=20 | edits 524 refused 478 digest 50a8a20180d40994
+0 "22 CW 3 FREQ 2800" -> seq=22 last=22 ok kind=cw_frequency value=2800 oscillator=3 | edits 578 refused 508 digest 5f2326d29060fa80
+0 "1 CW 1 CI -3" -> seq=1 last=1 ok kind=cw_ci value=-3 oscillator=1 | edits 463 refused 417 digest 44d54cea004b713c
+0 "1 CW 2 RATE 3" -> seq=1 last=1 error=BAD_REQUEST | edits 485 refused 483 digest a94ce99fa88264b1
+0 "1 STATIC FREQ 1" -> seq=1 last=1 error=BAD_REQUEST | edits 503 refused 500 digest bdad05e4c996de10
+0 "1 CW FREQ -1.5" -> seq=1 last=1 ok kind=cw_frequency value=-1.5 | edits 480 refused 427 digest 6e76056602ed3606
+0 "1 CW FREQ 1800.25" -> seq=1 last=1 ok kind=cw_frequency value=1800.25 | edits 546 refused 469 digest 128d3578feaa76a5
+0 "1 CW 4 FREQ 1800" -> seq=1 last=1 error=BAD_REQUEST | edits 551 refused 548 digest 136652d04c6d4c83
+0 "1 CW 0 CI 3" -> seq=1 last=1 ok kind=cw_ci value=3 | edits 439 refused 398 digest c6613ee639476234
+0 "1 STATIC 0 RATE 1" -> seq=1 last=1 error=BAD_REQUEST | edits 574 refused 574 digest 1f738afce48316cb
+0 "1 CW FREQ" -> seq=1 last=1 error=BAD_REQUEST | edits 338 refused 336 digest 84ab955087ee1d4c
+0 "1 CW" -> seq=1 last=1 error=BAD_REQUEST | edits 181 refused 172 digest 9ebb8ea6c9d62b7b
+0 "1 CW ON OFF" -> seq=1 last=1 error=BAD_REQUEST | edits 423 refused 422 digest a286387fd47149ce
+0 "1 CW ONN" -> seq=1 last=1 error=BAD_REQUEST | edits 312 refused 309 digest e53a4cc6bb695214
+0 "1 FADE NOW" -> seq=1 last=1 error=BAD_REQUEST | edits 360 refused 360 digest 78c112071dd261c7
+0 "1 STATIC PEAK x" -> seq=1 last=1 error=BAD_REQUEST | edits 516 refused 513 digest 1888e5fd34d12da4
+0 "1 FADE NOW 18 250" -> seq=1 last=1 ok kind=fade value=18 duration=250 | edits 581 refused 506 digest ee27534616815894
+0 "1 FADE NOW 18 0" -> seq=1 last=1 error=BAD_REQUEST | edits 532 refused 521 digest ae7ae0d50f40bee9
+0 "1 FADE NOW 18 1" -> seq=1 last=1 ok kind=fade value=18 duration=1 | edits 533 refused 475 digest a2e1e13d8f473c46
+0 "1 FADE NOW 18 3600000" -> seq=1 last=1 ok kind=fade value=18 duration=3600000 | edits 656 refused 586 digest a705a299845caf01
+0 "1 FADE NOW 18 3600001" -> seq=1 last=1 error=BAD_REQUEST | edits 659 refused 634 digest 7c9eb337159cb06a
+0 "1 FADE NOW -3 1" -> seq=1 last=1 ok kind=fade value=-3 duration=1 | edits 532 refused 479 digest 97189f3d82939617
+0 "1 FADE LATER 18 250" -> seq=1 last=1 error=BAD_REQUEST | edits 627 refused 626 digest 596b92351cfed847
+0 "1 FADE NOW 18" -> seq=1 last=1 error=BAD_REQUEST | edits 459 refused 459 digest b61f84b8f552db76
+0 "1 FADE NOW 18 250 1" -> seq=1 last=1 error=BAD_REQUEST | edits 656 refused 644 digest a644b0a48145cd09
+0 "1 FADE NOW x 250" -> seq=1 last=1 error=BAD_REQUEST | edits 569 refused 566 digest 851905ecf26e04de
+0 "1 FADE NOW 18 2.5" -> seq=1 last=1 error=BAD_REQUEST | edits 578 refused 564 digest e197390b4f9d4fd1
+0 "16 SWEEP CW FREQ 300 3400 16 500" -> seq=16 last=16 ok kind=sweep_frequency value=300 end=3400 steps=16 interval=500 | edits 1015 refused 887 digest 882af0661ea7ee95
+0 "1 SWEEP CW CI 20 -3 16 1000" -> seq=1 last=1 ok kind=sweep_ci value=20 end=-3 steps=16 interval=1000 | edits 896 refused 796 digest 25848b77efd7fc4f
+0 "1 SWEEP CW 2 FREQ 300 3400 16 500" -> seq=1 last=1 ok kind=sweep_frequency value=300 end=3400 steps=16 interval=500 oscillator=2 | edits 1062 refused 939 digest 2693a95b446c8910
+0 "23 SWEEP CW 2 CI 20 -3 4 100" -> seq=23 last=23 ok kind=sweep_ci value=20 end=-3 steps=4 interval=100 oscillator=2 | edits 953 refused 848 digest 0dc2a2dc225a95ce
+0 "1 SWEEP CW 4 FREQ 300 3400 16 500" -> seq=1 last=1 error=BAD_REQUEST | edits 1063 refused 1060 digest 5966cce2c15d9d96
+0 "17 SWEEP FADE 6 30 5 1000 250" -> seq=17 last=17 ok kind=sweep_fade value=6 end=30 steps=5 interval=1000 duration=250 | edits 932 refused 807 digest cd758b34f31f5f5c
+0 "18 SWEEP FADE 6 30 17 1000 250" -> seq=18 last=18 error=BAD_REQUEST | edits 957 refused 949 digest 108f85e43953e1ea
+0 "1 SWEEP CW FREQ 300 3400 1 500" -> seq=1 last=1 error=BAD_REQUEST | edits 964 refused 959 digest fc32b6d6ed2fd7ad
+0 "1 SWEEP CW FREQ 300 3400 2 500" -> seq=1 last=1 ok kind=sweep_frequency value=300 end=3400 steps=2 interval=500 | edits 964 refused 847 digest cfb11dda582237a4
+0 "1 SWEEP CW FREQ 300 3400 17 500" -> seq=1 last=1 error=BAD_REQUEST | edits 989 refused 981 digest b1b9cac056580048
+0 "1 SWEEP CW FREQ 300 3400 16 0" -> seq=1 last=1 error=BAD_REQUEST | edits 945 refused 935 digest 743d70e39dfe6994
+0 "1 SWEEP CW FREQ 300 3400 16 3600000" -> seq=1 last=1 ok kind=sweep_frequency value=300 end=3400 steps=16 interval=3600000 | edits 1069 refused 946 digest c8d6fac2e962cf8d
+0 "1 SWEEP CW FREQ 300 3400 16 3600001" -> seq=1 last=1 error=BAD_REQUEST | edits 1072 refused 1048 digest 734fc097660e908f
+0 "1 SWEEP FADE 6 30 5 1000 0" -> seq=1 last=1 error=BAD_REQUEST | edits 857 refused 847 digest 7153a79caca2765a
+0 "1 SWEEP FADE 6 30 5 1000 3600000" -> seq=1 last=1 ok kind=sweep_fade value=6 end=30 steps=5 interval=1000 duration=3600000 | edits 981 refused 867 digest c080b2b8e0f1cf3c
+0 "1 SWEEP FADE 6 30 5 1000 3600001" -> seq=1 last=1 error=BAD_REQUEST | edits 984 refused 959 digest 00ce129bbde99ead
+0 "1 SWEEP CW RATE 1 2 3 4" -> seq=1 last=1 error=BAD_REQUEST | edits 809 refused 807 digest 2351f8e4c415848a
+0 "1 SWEEP STATIC RATE 1 2 3 4" -> seq=1 last=1 error=BAD_REQUEST | edits 900 refused 900 digest 90ab91e1fc9bb8c3
+0 "1 SWEEP FADE 6 30 5 1000" -> seq=1 last=1 error=BAD_REQUEST | edits 783 refused 783 digest aeaacb6ac43a5690
+0 "1 SWEEP FADE 6 30 5 1000 250 1" -> seq=1 last=1 error=BAD_REQUEST | edits 981 refused 973 digest 726089c8ce7ce5cf
+0 "1 SWEEP CW 1 FADE 6 30 5 1000" -> seq=1 last=1 error=BAD_REQUEST | edits 967 refused 965 digest febae56b1e168b9a
+0 "1 SWEEP CW x FREQ 300 3400 16 500" -> seq=1 last=1 error=BAD_REQUEST | edits 1076 refused 1074 digest c92bb5e6fc95a27c
+0 "1 SWEEP CW FREQ x 3400 16 500" -> seq=1 last=1 error=BAD_REQUEST | edits 959 refused 956 digest 0dfb1d0679242333
+0 "1 SWEEP CW FREQ 300 x 16 500" -> seq=1 last=1 error=BAD_REQUEST | edits 934 refused 931 digest b868d141463712f1
+0 "1 SWEEP CW FREQ 300 3400 x 500" -> seq=1 last=1 error=BAD_REQUEST | edits 978 refused 977 digest 0b887231689c598a
+0 "1 SWEEP CW FREQ 300 3400 16 x" -> seq=1 last=1 error=BAD_REQUEST | edits 960 refused 958 digest c6f8cd876ef8b6bf
+0 "1 SWEEP FADE 6 30 5 x 250" -> seq=1 last=1 error=BAD_REQUEST | edits 857 refused 855 digest aec3077b2bc1fcbd
+0 "1 AT:0 CW ON" -> seq=1 last=1 ok kind=cw_on scheduled=1 value=1 | edits 474 refused 443 digest 2ebd316395909adf
+0 "8 AT:18446744073709551615 CW CI -3" -> seq=8 last=8 ok kind=cw_ci scheduled=1 frame=18446744073709551615 value=-3 | edits 1000 refused 885 digest 60740603edb173e5
+0 "9 AT:18446744073709551616 CW ON" -> seq=9 last=9 error=BAD_REQUEST | edits 901 refused 827 digest 5a755e42974ad551
+0 "10 AT:0 STOP" -> seq=10 last=10 error=BAD_REQUEST | edits 430 refused 430 digest f9effd0fa3afddc1
+0 "1 AT:0 SWEEP CW FREQ 300 3400 16 500" -> seq=1 last=1 ok kind=sweep_frequency scheduled=1 value=300 end=3400 steps=16 interval=500 | edits 1171 refused 1037 digest 2dc1c26f5baa1ee0
+0 "1 AT:0 FADE NOW 18 250" -> seq=1 last=1 ok kind=fade scheduled=1 value=18 duration=250 | edits 763 refused 675 digest 685d7af66902bc96
+0 "1 AT:5" -> seq=1 last=1 error=BAD_REQUEST | edits 255 refused 253 digest 3b12c03267a0ff4f
+0 "1 AT:5 " -> seq=1 last=1 error=BAD_REQUEST | edits 276 refused 276 digest 5ca5d45dd04b1c3d
+0 "1 AT: CW ON" -> seq=1 last=1 error=BAD_REQUEST | edits 424 refused 424 digest 3b537d8147319539
+0 "1 AT:01 CW ON" -> seq=1 last=1 error=BAD_REQUEST | edits 496 refused 476 digest 6a43a8a658c10d48
+0 "1 AT:0 CW 3 FREQ 2800" -> seq=1 last=1 ok kind=cw_frequency scheduled=1 value=2800 oscillator=3 | edits 735 refused 658 digest fa9308d7c0d293ff
+0 "1 AT:0 AT:0 CW ON" -> seq=1 last=1 error=BAD_REQUEST | edits 656 refused 656 digest 3aed5eced8efe68d
+0 "1 AT:0 INFO?" -> seq=1 last=1 error=BAD_REQUEST | edits 431 refused 431 digest a5ad3e25e3b2058a
+0 "1 AT:0 SEED:1" -> seq=1 last=1 error=BAD_REQUEST | edits 480 refused 480 digest 196bf4eabde10df4
+0 "1 AT:0 REFERENCE:0.5" -> seq=1 last=1 error=BAD_REQUEST | edits 642 refused 642 digest def522d3cbfb97f8
+0 "1 AT:0 LOAD:A.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 627 refused 627 digest 8fbcb151f7fe3f38
+0 "1 AT:0 PLAY:0123456789abcdef0123456789abcdef" -> seq=1 last=1 error=BAD_REQUEST | edits 1310 refused 1310 digest 18a52a597a094732
+0 "1 AT:x CW ON" -> seq=1 last=1 error=BAD_REQUEST | edits 489 refused 486 digest 8926b8042563e45f
+0 "46 CUT" -> seq=46 last=46 ok kind=cut | edits 232 refused 202 digest d5ea4889be723bd6
+0 "47 CUT:0:4800:zero,96000:1:drop\x0d" -> seq=47 last=47 ok kind=cut cuts=0:4800:1,96000:1:0 | edits 1012 refused 901 digest ac7462d6d33821ac
+0 "48 CUT:1:0:drop,1:1:zero" -> seq=48 last=48 ok kind=cut cuts=1:0:0,1:1:1 | edits 836 refused 758 digest fc833332be1675b1
+0 "49 CUT:" -> seq=49 last=49 error=BAD_REQUEST | edits 253 refused 251 digest b08f2374931b4373
+0 "50 AT:0 CUT" -> seq=50 last=50 error=BAD_REQUEST | edits 410 refused 410 digest 4e920682f61a97c9
+0 "51 CUT " -> seq=51 last=51 error=BAD_REQUEST | edits 249 refused 247 digest cb848b9bfdb508d8
+0 "52 CUT:1:1:drop," -> seq=52 last=52 error=BAD_REQUEST | edits 555 refused 552 digest e9dadf2ffe3a5e60
+0 "53 CUT:1:1:Drop" -> seq=53 last=53 error=BAD_REQUEST | edits 535 refused 532 digest b9b1d15e01052934
+0 "54 cut" -> seq=54 last=54 error=BAD_REQUEST | edits 232 refused 223 digest 9edbd5b55370b60b
+0 "1 CUT:01:1:drop" -> seq=1 last=1 error=BAD_REQUEST | edits 527 refused 509 digest 24b58c81e9f54d82
+0 "1 CUT:4294967296:1:drop" -> seq=1 last=1 error=BAD_REQUEST | edits 714 refused 665 digest 683dc22b6bedc035
+0 "1 CUT:1:1" -> seq=1 last=1 error=BAD_REQUEST | edits 351 refused 350 digest d86aec0795e93890
+0 "1 CUT:1:1:drop:1" -> seq=1 last=1 error=BAD_REQUEST | edits 580 refused 578 digest 2888ea380c61dfa6
+0 "1 CUT:,1:1:drop" -> seq=1 last=1 error=BAD_REQUEST | edits 528 refused 524 digest 3b7b6c890bb7d90e
+0 "1 CUT:4294967295:4800:drop" -> seq=1 last=1 ok kind=cut cuts=4294967295:4800:0 | edits 782 refused 691 digest 6270ebde3506b74c
+0 "1 CUTS" -> seq=1 last=1 error=BAD_REQUEST | edits 227 refused 217 digest 3fd1bda393667841
+0 "1 CUT:1:4801:drop" -> seq=1 last=1 ok kind=cut cuts=1:4801:0 | edits 577 refused 516 digest 4fa8adf734f40241
+0 "7 PLAYLIST:BATTERY.PL" -> seq=7 last=7 ok kind=playlist_start name="BATTERY.PL" | edits 654 refused 511 digest 21a1bb21ab6fe31c
+0 "8 PLAYLIST:BATTERY.PL:CONTINUE\x0d" -> seq=8 last=8 ok kind=playlist_start name="BATTERY.PL" policy=1 | edits 925 refused 781 digest 8ed9a437d0642a6e
+0 "9 PLAYLIST:LADDER" -> seq=9 last=9 ok kind=playlist_start name="LADDER" | edits 518 refused 416 digest e865a3560a5602f3
+0 "10 PLAYLIST:ABCDEFGH.XYZ" -> seq=10 last=10 ok kind=playlist_start name="ABCDEFGH.XYZ" | edits 721 refused 567 digest 7c71840f5def75bf
+0 "11 PLAYLIST:battery.pl" -> seq=11 last=11 error=BAD_REQUEST | edits 672 refused 671 digest ba0d3310467b8354
+0 "12 PLAYLIST:BATTERY.PL:continue" -> seq=12 last=12 error=BAD_REQUEST | edits 928 refused 917 digest e0de571eb70e3e5d
+0 "13 PLAYLIST:BATTERY.PL:" -> seq=13 last=13 error=BAD_REQUEST | edits 702 refused 685 digest 7eeeacbe98c053df
+0 "14 PLAYLIST:" -> seq=14 last=14 error=BAD_REQUEST | edits 367 refused 365 digest 0f5f880847ef30b3
+0 "15 PLAYLIST:../A.PL" -> seq=15 last=15 error=BAD_REQUEST | edits 605 refused 604 digest f51b408454e768fc
+0 "16 PLAYLIST:ABCDEFGHI.PL" -> seq=16 last=16 error=BAD_REQUEST | edits 728 refused 678 digest 3e9b231b223be7db
+0 "17 PLAYLIST:A.PL:CONTINUE:CONTINUE" -> seq=17 last=17 error=BAD_REQUEST | edits 1040 refused 1035 digest cac0e5cce3399d86
+0 "18 PLAYLIST:A.PLAY" -> seq=18 last=18 error=BAD_REQUEST | edits 587 refused 558 digest bb7be5ee2675648a
+0 "19 AT:0 PLAYLIST:A.PL" -> seq=19 last=19 error=BAD_REQUEST | edits 723 refused 723 digest eeafaaa8e8e04691
+0 "20 PLAYLIST: A.PL" -> seq=20 last=20 error=BAD_REQUEST | edits 562 refused 554 digest ca71e74a2f6c42d3
+0 "21 PLAYLIST ACK:0" -> seq=21 last=21 ok kind=playlist_ack | edits 548 refused 515 digest bdca49c4a3436ed2
+0 "22 PLAYLIST ACK:4294967295" -> seq=22 last=22 ok kind=playlist_ack ack=4294967295 | edits 757 refused 682 digest 50dc6de981035bac
+0 "23 PLAYLIST ACK:4294967296" -> seq=23 last=23 error=BAD_REQUEST | edits 760 refused 703 digest 21294dcb7b5116dc
+0 "24 PLAYLIST ACK:01" -> seq=24 last=24 error=BAD_REQUEST | edits 573 refused 555 digest 1f10cd78b66d5784
+0 "25 PLAYLIST ACK:" -> seq=25 last=25 error=BAD_REQUEST | edits 499 refused 498 digest 26f2c58f75792d07
+0 "26 PLAYLIST ACK:-1" -> seq=26 last=26 error=BAD_REQUEST | edits 573 refused 557 digest 5967dcf720292d79
+0 "27 PLAYLIST ACK 5" -> seq=27 last=27 error=BAD_REQUEST | edits 553 refused 551 digest 685d7236c7fa713d
+0 "28 PLAYLIST  ACK:5" -> seq=28 last=28 error=BAD_REQUEST | edits 573 refused 571 digest 34300a623bb1f9b1
+0 "29 AT:0 PLAYLIST ACK:5" -> seq=29 last=29 error=BAD_REQUEST | edits 734 refused 734 digest 35035781a7acaa9d
+0 "1 PLAYLIST" -> seq=1 last=1 error=BAD_REQUEST | edits 317 refused 308 digest a8d688db97a348b7
+0 "1 PLAYLISTS:A.PL" -> seq=1 last=1 error=BAD_REQUEST | edits 538 refused 535 digest dc73a381bf6dcddd
+0 "1 PLAYLIST? " -> seq=1 last=1 error=BAD_REQUEST | edits 361 refused 358 digest 65b174e3f2d5c58c
+0 "1 playlist?" -> seq=1 last=1 error=BAD_REQUEST | edits 340 refused 331 digest 2eaab7087d9996f0
+0 "1 PLAYLIST:A.PL:CONTNUE" -> seq=1 last=1 error=BAD_REQUEST | edits 743 refused 738 digest 02c241cc17303ce7
+0 "3 ENGINE? " -> seq=3 last=3 error=BAD_REQUEST | edits 318 refused 316 digest 61d1959f61348200
+0 "4 engine?" -> seq=4 last=4 error=BAD_REQUEST | edits 296 refused 287 digest 89c6536228ba3320
+0 "5 AT:0 ENGINE?" -> seq=5 last=5 error=BAD_REQUEST | edits 478 refused 478 digest 1d8e5c4f37635c7a
+0 "6 ENGINE" -> seq=6 last=6 error=BAD_REQUEST | edits 275 refused 266 digest 393748c9926e00d7
+0 "7 FILES? +1" -> seq=7 last=7 error=BAD_REQUEST | edits 371 refused 367 digest 52d5ed2f4e3ec81d
+0 "8 FILES? -1" -> seq=8 last=8 error=BAD_REQUEST | edits 369 refused 349 digest e53d076c2332c512
+0 "9 FILES? 01" -> seq=9 last=9 error=BAD_REQUEST | edits 367 refused 345 digest e10cfd8395be0445
+0 "10 FILES? 18446744073709551616" -> seq=10 last=10 error=BAD_REQUEST | edits 792 refused 699 digest b0fa6cfc6c1e4aa1
+0 "11 FILES? 1 2" -> seq=11 last=11 error=BAD_REQUEST | edits 441 refused 435 digest 632f4ecd100cd15b
+0 "12 AT:0 FILES?" -> seq=12 last=12 error=BAD_REQUEST | edits 481 refused 481 digest 2acbb3dcb8b1b958
+0 "13 AT:0 FILES? 1" -> seq=13 last=13 error=BAD_REQUEST | edits 556 refused 556 digest 17efcd391b16c592
+0 "14 FILES" -> seq=14 last=14 error=BAD_REQUEST | edits 278 refused 269 digest 8f071f06941fac84
+0 "42 AT:0 USB?" -> seq=42 last=42 error=BAD_REQUEST | edits 435 refused 435 digest ea1c953d3664aaf6
+0 "43 USB? " -> seq=43 last=43 error=BAD_REQUEST | edits 276 refused 274 digest 328b9c0854e580fb
+0 "44 usb?" -> seq=44 last=44 error=BAD_REQUEST | edits 252 refused 243 digest c301f6bf4c38a396
+0 "45 USB" -> seq=45 last=45 error=BAD_REQUEST | edits 231 refused 222 digest 033514341c526962
+0 "4294967294 CUT:4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop,4294967295:4800:drop\x0d" -> seq=4294967294 last=4294967294 ok kind=cut cuts=4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0,4294967295:4800:0 | edits 3909 refused 3272 digest efa0059c0c349672
+0 "4294967292 CUT:1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero,1:1:zero" -> seq=4294967292 last=4294967292 error=BAD_REQUEST | edits 3553 refused 3536 digest cd7c97f03f767524
+0 "4294967293 CUT:111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111" -> seq=0 last=0 error=BAD_REQUEST | edits 2115 refused 2114 digest f29327e0008e384c
+0 "5 CW FREQ 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" -> seq=5 last=5 error=BAD_REQUEST | edits 2100 refused 2065 digest fd9fbb5970e3ceaa
+0 "5 CW FREQ 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\x0d" -> seq=5 last=5 error=BAD_REQUEST | edits 2105 refused 2068 digest 5e8f8f29e1e335d3
+0 "5 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -> seq=5 last=5 error=BAD_REQUEST | edits 2078 refused 2069 digest 2a2c3d58cda0981c
+0 "5 CW FREQ 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" -> seq=0 last=0 error=BAD_REQUEST | edits 2101 refused 2066 digest 492271adf584045f
+0 "5 CW FREQ 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\x0d" -> seq=0 last=0 error=BAD_REQUEST | edits 2106 refused 2069 digest 74e5af7902f74d7e
+0 "5 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -> seq=0 last=0 error=BAD_REQUEST | edits 2079 refused 2070 digest d4b99217d24cf5bb
+0 "5 CW FREQ 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" -> seq=0 last=0 error=BAD_REQUEST | edits 2120 refused 2085 digest b9ec5e1a4f6dcd1d
+0 "5 CW FREQ 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\x0d" -> seq=0 last=0 error=BAD_REQUEST | edits 2125 refused 2088 digest dac5c6bfb9ee9d48
+0 "5 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -> seq=0 last=0 error=BAD_REQUEST | edits 2099 refused 2090 digest 747f7620bdac34ac
+1 "1 INFO?" -> seq=1 last=1 error=BAD_REQUEST | edits 249 refused 237 digest baf7c0564de92586
+1 "1 STATUS?" -> seq=1 last=1 error=BAD_REQUEST | edits 294 refused 282 digest 9c7532b66ca2498e
+1 "1 COUNTERS?" -> seq=1 last=1 error=BAD_REQUEST | edits 341 refused 329 digest d5b43975eea70819
+1 "1 USB?" -> seq=1 last=1 error=BAD_REQUEST | edits 225 refused 213 digest 2b2600620a93bfe7
+1 "1 PLAYLIST?" -> seq=1 last=1 error=BAD_REQUEST | edits 338 refused 326 digest 0714c15a9c1c884b
+1 "1 ENGINE?" -> seq=1 last=1 error=BAD_REQUEST | edits 295 refused 283 digest 37a3553bf8201e9f
+1 "1 FILES?" -> seq=1 last=1 error=BAD_REQUEST | edits 273 refused 261 digest 02fd165e9ff99f58
+1 "1 FILES? 0" -> seq=1 last=1 error=BAD_REQUEST | edits 346 refused 334 digest a9fb9c46a9359da0
+1 "1 FILES? 18446744073709551615" -> seq=1 last=1 error=BAD_REQUEST | edits 771 refused 759 digest b2e742426a804cb3
+1 "1 PLAY" -> seq=1 last=1 error=BAD_REQUEST | edits 226 refused 214 digest 6274f4133b2644fb
+1 "1 STOP" -> seq=1 last=1 error=BAD_REQUEST | edits 227 refused 215 digest 7c3e669c099f8698
+1 "1 MEDIA HOST" -> seq=1 last=1 error=BAD_REQUEST | edits 406 refused 394 digest eca974085adb6b3c
+1 "1 MEDIA LOCAL" -> seq=1 last=1 error=BAD_REQUEST | edits 428 refused 416 digest f1c4223717161a08
+1 "1 PREPARE?" -> seq=1 last=1 error=BAD_REQUEST | edits 318 refused 306 digest 0e2983162effb921
+1 "1 PREPAREPLAY?" -> seq=1 last=1 error=BAD_REQUEST | edits 409 refused 397 digest f94cfef0a17d475f
+1 "1 AT:0 PREPAREPLAY?" -> seq=1 last=1 error=BAD_REQUEST | edits 591 refused 591 digest 9a68154d58de9650
+1 "1 PREPAREPLAY? EXTRA" -> seq=1 last=1 error=BAD_REQUEST | edits 589 refused 589 digest e3fa8bd85b9cf9c1
+1 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:KEEP" -> seq=1 last=1 error=BAD_REQUEST | edits 1280 refused 1268 digest ed3f847bb7bc8304
+1 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:TEMP:18446744073709551615" -> seq=1 last=1 error=BAD_REQUEST | edits 1781 refused 1769 digest f64de60df93efd70
+1 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:0" -> seq=1 last=1 error=BAD_REQUEST | edits 1353 refused 1341 digest b009436a1b23c71c
+1 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:TEMP:01" -> seq=1 last=1 error=BAD_REQUEST | edits 1377 refused 1377 digest 71b486a313cda342
+1 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:TEMP:18446744073709551616" -> seq=1 last=1 error=BAD_REQUEST | edits 1781 refused 1781 digest 7fc4b9ad3f0d21fa
+1 "1 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:keep" -> seq=1 last=1 error=BAD_REQUEST | edits 1279 refused 1279 digest f6fadc1783735da5
+1 "1 AT:0 PREPARE:OUT.WAV:SRC.WAV:TEST.SCN:KEEP" -> seq=1 last=1 error=BAD_REQUEST | edits 1462 refused 1462 digest 4b8ab3d35b2399d6
+1 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1200:4096" -> seq=1 last=1 error=BAD_REQUEST | edits 1656 refused 1644 digest 33515736f252c0f6
+1 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:0:0" -> seq=1 last=1 error=BAD_REQUEST | edits 1589 refused 1577 digest 49d2c11d3d8a318b
+1 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:0:0" -> seq=1 last=1 error=BAD_REQUEST | edits 1516 refused 1516 digest ed7859aaa860071a
+1 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:01:0" -> seq=1 last=1 error=BAD_REQUEST | edits 1538 refused 1538 digest e7338bcc413c713e
+1 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:4294967296:0" -> seq=1 last=1 error=BAD_REQUEST | edits 1725 refused 1725 digest c37d2ca2f21d507a
+1 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:01" -> seq=1 last=1 error=BAD_REQUEST | edits 1538 refused 1538 digest 9efe946e947e5d2d
+1 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:4294967296" -> seq=1 last=1 error=BAD_REQUEST | edits 1725 refused 1725 digest 0a8b616fd84c7594
+1 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:0:18446744073709551616" -> seq=1 last=1 error=BAD_REQUEST | edits 2014 refused 2014 digest 52d2858864dbe192
+1 "1 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:0:1:2" -> seq=1 last=1 error=BAD_REQUEST | edits 1663 refused 1663 digest 9e280f9c81ec5947
+1 "1 AT:0 PREPAREPLAY:OUT.WAV:SRC.WAV:TEST.SCN:KEEP:1:0" -> seq=1 last=1 error=BAD_REQUEST | edits 1699 refused 1699 digest 89e643ed7a12dba5
+1 "1 OUTPUT CODEC" -> seq=1 last=1 error=BAD_REQUEST | edits 453 refused 441 digest 555b11039ac0dcec
+1 "1 OUTPUT USB" -> seq=1 last=1 error=BAD_REQUEST | edits 407 refused 395 digest 37086f54d02f6210
+1 "2 INFO?\x0d" -> seq=2 last=2 ok kind=info | edits 271 refused 251 digest b0d52fd7c5b6d081
+2 "2 INFO?\x0d" -> seq=2 last=2 error=BAD_REQUEST | edits 271 refused 260 digest f6ab5203a83b1e5a
+2 "3 PLAY\x0d" -> seq=3 last=3 ok kind=play | edits 249 refused 229 digest 57303278df36851d
+3 "3 PLAY\x0d" -> seq=3 last=3 error=BAD_REQUEST | edits 249 refused 238 digest f3580bea9133dae9
+1 "1 STATUS" -> seq=1 last=1 error=BAD_REQUEST | edits 273 refused 273 digest a7da276cad98c30c
+1 "1 OUTPUT" -> seq=1 last=1 error=BAD_REQUEST | edits 273 refused 273 digest d2d9a840d4a58008
+1 "1 OUTPUT SPEAKER" -> seq=1 last=1 error=BAD_REQUEST | edits 499 refused 499 digest 7191b7360da493a7
+1 "1 OUTPUT usb" -> seq=1 last=1 error=BAD_REQUEST | edits 407 refused 407 digest 045beb505f408aa6
+1 "1 MEDIA" -> seq=1 last=1 error=BAD_REQUEST | edits 249 refused 249 digest 89ef5f6d97cbd97e
+4294967294 "4294967295 STOP" -> seq=4294967295 last=4294967295 ok kind=stop | edits 436 refused 427 digest e97fa54365c4f270
+4294967295 "4294967295 STOP" -> seq=4294967295 last=4294967295 error=BAD_REQUEST | edits 436 refused 436 digest 7ab9fabdda551622
+1 "1 " -> seq=1 last=1 error=BAD_REQUEST | edits 91 refused 91 digest 5a235baa662f4f3d
+1 "1  INFO?" -> seq=1 last=1 error=BAD_REQUEST | edits 268 refused 265 digest 382ac0e063e73cb0
+1 "1 PLAY:0123456789abcdef0123456789abcdef" -> seq=1 last=1 error=BAD_REQUEST | edits 1128 refused 1116 digest 5911f820ee770864
+1 "1 PLAY:0123456789ABCDEF0123456789abcdef" -> seq=1 last=1 error=BAD_REQUEST | edits 1129 refused 1129 digest 5b83dd212ecee6e7
+1 "1 PLAY:0123456789abcdef0123456789abcde" -> seq=1 last=1 error=BAD_REQUEST | edits 1105 refused 1105 digest 003cdc7c92ca6d31
+1 "1 PLAY:0123456789abcdef0123456789abcdef0" -> seq=1 last=1 error=BAD_REQUEST | edits 1179 refused 1179 digest c01ea13abb46a38b
+1 "1 PLAY:" -> seq=1 last=1 error=BAD_REQUEST | edits 248 refused 248 digest b62ae6ff56e2d4ad
+1 "1 PLAY:0123456789abcdef0123456789abcdeg" -> seq=1 last=1 error=BAD_REQUEST | edits 1128 refused 1128 digest 7838f1b9bd466e3d
+1 "1 LOAD:REF_600.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 613 refused 601 digest c74aa728b5a2076a
+3 "4 LOAD:REF_600.WAV\x0d" -> seq=4 last=4 ok kind=load name="REF_600.WAV" | edits 636 refused 540 digest 80cc65483c2ca576
+4 "4 LOAD:REF_600.WAV\x0d" -> seq=4 last=4 error=BAD_REQUEST | edits 636 refused 625 digest e104fbe95c1dbb38
+1 "1 LOAD:A.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 445 refused 433 digest c6eb9f436ec38c32
+1 "1 LOAD:ABCDEFGH.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 608 refused 596 digest 7ff1c79cbc3fe15e
+1 "1 LOAD:ABCDEFGHI.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 631 refused 631 digest f7d8662e8c0a7645
+1 "1 LOAD:.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 381 refused 381 digest c8ae0d7cc0433c4f
+1 "1 LOAD:A.BIN" -> seq=1 last=1 error=BAD_REQUEST | edits 446 refused 446 digest 0ab7e98c36151eed
+1 "1 LOAD:a.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 445 refused 445 digest a88a53f02452c15c
+1 "1 LOAD:A.WAVX" -> seq=1 last=1 error=BAD_REQUEST | edits 468 refused 468 digest 6a633cd892bf5299
+1 "1 LOAD:A" -> seq=1 last=1 error=BAD_REQUEST | edits 313 refused 313 digest 695bfc4025585f64
+1 "1 LOAD:../X.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 510 refused 510 digest f32b95ebe2432f05
+1 "1 LOAD:X.WAV " -> seq=1 last=1 error=BAD_REQUEST | edits 468 refused 468 digest ef58aa9c906cd0d4
+1 "1 LOAD:" -> seq=1 last=1 error=BAD_REQUEST | edits 248 refused 248 digest 0230aaecd9fb3ef3
+1 "1 LOAD:A.wav" -> seq=1 last=1 error=BAD_REQUEST | edits 445 refused 445 digest f689cb7b3b3f9530
+1 "1 LOAD:A.B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 533 refused 533 digest d6c01840c2836bf6
+1 "1 SEED:0" -> seq=1 last=1 error=BAD_REQUEST | edits 297 refused 285 digest 2e712138d6283d11
+1 "1 SEED:18446744073709551615" -> seq=1 last=1 error=BAD_REQUEST | edits 722 refused 710 digest bf1ebb82e6f8e832
+1 "1 SEED:18446744073709551616" -> seq=1 last=1 error=BAD_REQUEST | edits 722 refused 722 digest 498cc1dac2a9709a
+1 "1 SEED:" -> seq=1 last=1 error=BAD_REQUEST | edits 246 refused 246 digest 68b69e0622b898f8
+1 "1 SEED:01" -> seq=1 last=1 error=BAD_REQUEST | edits 318 refused 318 digest 80d4ccdb2663daee
+1 "1 SEED:-1" -> seq=1 last=1 error=BAD_REQUEST | edits 319 refused 319 digest 7ad64cc925908eb3
+1 "1 REFERENCE:0.125" -> seq=1 last=1 error=BAD_REQUEST | edits 508 refused 496 digest 21baf9ade5e7886a
+1 "1 REFERENCE:1" -> seq=1 last=1 error=BAD_REQUEST | edits 416 refused 404 digest 0f7140e41a710ebf
+1 "1 REFERENCE:1.0" -> seq=1 last=1 error=BAD_REQUEST | edits 461 refused 449 digest de22edc63e942a08
+1 "1 REFERENCE:0" -> seq=1 last=1 error=BAD_REQUEST | edits 415 refused 415 digest f2b7337a619f3a5f
+1 "1 REFERENCE:1.0000001" -> seq=1 last=1 error=BAD_REQUEST | edits 579 refused 579 digest 7824db0f93409351
+1 "1 REFERENCE:-0.5" -> seq=1 last=1 error=BAD_REQUEST | edits 483 refused 483 digest 2f95a37584daec66
+1 "1 REFERENCE:nan" -> seq=1 last=1 error=BAD_REQUEST | edits 475 refused 475 digest d0b7bc1ea7e602db
+1 "1 REFERENCE:" -> seq=1 last=1 error=BAD_REQUEST | edits 364 refused 364 digest 608d4d89191dadce
+1 "1 REFERENCE:.5" -> seq=1 last=1 error=BAD_REQUEST | edits 439 refused 439 digest 33d32b70e1083630
+1 "1 REFERENCE:0." -> seq=1 last=1 error=BAD_REQUEST | edits 438 refused 438 digest 0c9a64c565628a51
+1 "1 REFERENCE:0.12345678901234" -> seq=1 last=1 error=BAD_REQUEST | edits 758 refused 746 digest b8e457b96f551907
+1 "1 REFERENCE:0.123456789012345" -> seq=1 last=1 error=BAD_REQUEST | edits 781 refused 781 digest 77598f2ffcc225e0
+1 "1 REFERENCE:0.1234567890123456" -> seq=1 last=1 error=BAD_REQUEST | edits 804 refused 804 digest 4929c541b3fe5d26
+1 "1 REFERENCE:00.5" -> seq=1 last=1 error=BAD_REQUEST | edits 480 refused 468 digest 5b7649b22b3aa0f2
+1 "1 REFERENCE:0.5." -> seq=1 last=1 error=BAD_REQUEST | edits 484 refused 484 digest b168bdfd19de40c5
+1 "1 REFERENCE:-" -> seq=1 last=1 error=BAD_REQUEST | edits 387 refused 387 digest f38e30b71a47c28b
+12 "13 GENERATE:600:long:PAYLOAD.BIN:TEST.WAV" -> seq=13 last=13 ok kind=generate_file name="TEST.WAV" input="PAYLOAD.BIN" rate=600 interleave=1 | edits 1268 refused 1092 digest d1de5bf3048a2190
+13 "13 GENERATE:600:long:PAYLOAD.BIN:TEST.WAV" -> seq=13 last=13 error=BAD_REQUEST | edits 1268 refused 1254 digest 0e125ddc49f65d25
+1 "1 GENERATE:75:short:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1036 refused 1024 digest 8bb316140a0b2568
+1 "1 GENERATE:150:zero:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1035 refused 1023 digest 4abe3f3af45eb37c
+1 "1 GENERATE:300:long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1032 refused 1020 digest 912d0954661217c7
+1 "1 GENERATE:1200:short:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1078 refused 1066 digest 3c8890383b498fca
+1 "1 GENERATE:2400:long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1057 refused 1045 digest 2133040f6cb84ed5
+1 "1 GENERATE:4800:zero:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1056 refused 1044 digest 3f11d6509b3cc779
+1 "1 GENERATE:100:long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1031 refused 1031 digest d4b2ef80794f8f4c
+1 "1 GENERATE:9600:long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1056 refused 1056 digest 1142c90ec4777e45
+1 "1 GENERATE:600:medium:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1079 refused 1079 digest 9e77bcaddc0a6927
+1 "1 GENERATE:600:long:A.WAV:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1031 refused 1031 digest 789fbb088761752f
+1 "1 GENERATE:600:long:A.BIN:B.BIN" -> seq=1 last=1 error=BAD_REQUEST | edits 1033 refused 1033 digest 4439ebea85c03180
+1 "1 GENERATE:600:long:A.BIN" -> seq=1 last=1 error=BAD_REQUEST | edits 811 refused 811 digest eed0f46eed174237
+1 "1 GENERATE:600:long:A.BIN:B.WAV:C" -> seq=1 last=1 error=BAD_REQUEST | edits 1121 refused 1121 digest 65bc83c8c6b3ad39
+1 "1 GENERATE:600:long:A.BIN:B.WAV:" -> seq=1 last=1 error=BAD_REQUEST | edits 1054 refused 1054 digest dfbcc389779a95b2
+1 "1 GENERATE::long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 934 refused 934 digest 99e5e6f9b838f885
+1 "1 GENERATE:0600:long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1056 refused 1056 digest 8b48e463a427ac01
+1 "1 AT:0 GENERATE:600:long:A.BIN:B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1214 refused 1214 digest e87298a2f5c292de
+10 "11 M110:600:long:PAYLOAD.BIN" -> seq=11 last=11 error=BAD_REQUEST | edits 906 refused 906 digest 0863d120b17a9f35
+11 "11 M110:600:long:PAYLOAD.BIN" -> seq=11 last=11 error=BAD_REQUEST | edits 906 refused 906 digest 6193873777793aa0
+25 "26 ENCODE TONE 1000 INPUT.BIN OUT.WAV" -> seq=26 last=26 ok kind=generate_file name="OUT.WAV" input="INPUT.BIN" encoder="TONE" profile="1000" | edits 1177 refused 882 digest f3443c3e534c4f2a
+26 "26 ENCODE TONE 1000 INPUT.BIN OUT.WAV" -> seq=26 last=26 error=BAD_REQUEST | edits 1177 refused 1166 digest 0aacef20f00376fc
+26 "27 ENCODE CUSTOM R50:S170:F1000 INPUT.BIN OUT.WAV" -> seq=27 last=27 ok kind=generate_file name="OUT.WAV" input="INPUT.BIN" encoder="CUSTOM" profile="R50:S170:F1000" | edits 1637 refused 992 digest a8d9b3e300857dd3
+27 "27 ENCODE CUSTOM R50:S170:F1000 INPUT.BIN OUT.WAV" -> seq=27 last=27 error=BAD_REQUEST | edits 1637 refused 1626 digest be88ede471646e30
+27 "28 ENCODE lower 1000 INPUT.BIN OUT.WAV" -> seq=28 last=28 error=BAD_REQUEST | edits 1200 refused 1168 digest d09e5a82f97e0d54
+28 "28 ENCODE lower 1000 INPUT.BIN OUT.WAV" -> seq=28 last=28 error=BAD_REQUEST | edits 1200 refused 1200 digest c7712a6840fab4a5
+28 "29 AT:0 ENCODE TONE 1000 INPUT.BIN OUT.WAV" -> seq=29 last=29 error=BAD_REQUEST | edits 1358 refused 1358 digest 7dbf5c0317743914
+29 "29 AT:0 ENCODE TONE 1000 INPUT.BIN OUT.WAV" -> seq=29 last=29 error=BAD_REQUEST | edits 1358 refused 1358 digest 05369ebd63866da0
+30 "31 ENCODE TONE bad\"profile INPUT.BIN OUT.WAV" -> seq=31 last=31 error=BAD_REQUEST | edits 1398 refused 1385 digest ad026ff208cc6d9d
+31 "31 ENCODE TONE bad\"profile INPUT.BIN OUT.WAV" -> seq=31 last=31 error=BAD_REQUEST | edits 1398 refused 1398 digest 85f318d6c4c70d65
+1 "1 ENCODE TONE bad\\profile INPUT.BIN OUT.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1373 refused 1373 digest 2f2171a4ba6889d8
+1 "1 ENCODE ABCDEFGHIJKLMNO 1000 A.BIN B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1260 refused 1248 digest 3c83d58d8c62e08d
+1 "1 ENCODE ABCDEFGHIJKLMNOP 1000 A.BIN B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1283 refused 1283 digest 755389d8f26015ab
+1 "1 ENCODE TONE ABCDEFGHIJKLMNOPQRSTUVWXYZ01234 A.BIN B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1680 refused 1668 digest 85e5303d718c0112
+1 "1 ENCODE TONE ABCDEFGHIJKLMNOPQRSTUVWXYZ012345 A.BIN B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1703 refused 1703 digest afacccce3a63e856
+1 "1 ENCODE TONE 1000 A.WAV B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 1007 refused 1007 digest 536088f5834ed1fc
+1 "1 ENCODE TONE 1000 A.BIN B.BIN" -> seq=1 last=1 error=BAD_REQUEST | edits 1009 refused 1009 digest 641029a00735da91
+1 "1 ENCODE TONE 1000 A.BIN" -> seq=1 last=1 error=BAD_REQUEST | edits 787 refused 787 digest cc51db2d4f29f46b
+1 "1 ENCODE TONE 1000 A.BIN B.WAV X" -> seq=1 last=1 error=BAD_REQUEST | edits 1096 refused 1096 digest 98ea48fc3419f2f3
+1 "1 ENCODE A_1 x A.BIN B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 961 refused 949 digest 2dd9d1f0f9029cf7
+1 "1 ENCODE TONE ~ A.BIN B.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 917 refused 905 digest 681efe6013fb3180
+1 "1 CW ON" -> seq=1 last=1 error=BAD_REQUEST | edits 292 refused 280 digest 709a6909edeec88e
+1 "1 CW OFF" -> seq=1 last=1 error=BAD_REQUEST | edits 312 refused 300 digest 5fbee9981fe74771
+1 "1 STATIC ON" -> seq=1 last=1 error=BAD_REQUEST | edits 383 refused 371 digest 1366cffe6799b62c
+1 "1 STATIC OFF" -> seq=1 last=1 error=BAD_REQUEST | edits 403 refused 391 digest cfda286b927c94cf
+1 "1 CW 0 ON" -> seq=1 last=1 error=BAD_REQUEST | edits 364 refused 352 digest 547145ef2346fdc2
+20 "21 CW 1 ON" -> seq=21 last=21 ok kind=cw_on value=1 oscillator=1 | edits 389 refused 372 digest e61a120a7c57c484
+21 "21 CW 1 ON" -> seq=21 last=21 error=BAD_REQUEST | edits 389 refused 379 digest ec4f59def8c7c897
+1 "1 CW 3 OFF" -> seq=1 last=1 error=BAD_REQUEST | edits 386 refused 374 digest f83623c37c8726b1
+23 "24 CW 4 ON" -> seq=24 last=24 error=BAD_REQUEST | edits 394 refused 391 digest 169edda9ccd9ebb2
+24 "24 CW 4 ON" -> seq=24 last=24 error=BAD_REQUEST | edits 394 refused 394 digest 0da7fb270c6a52c4
+1 "1 CW 01 ON" -> seq=1 last=1 error=BAD_REQUEST | edits 386 refused 386 digest 512474026afdab3e
+1 "1 STATIC 1 ON" -> seq=1 last=1 error=BAD_REQUEST | edits 456 refused 456 digest 8b629aa43db9dde4
+1 "1 CW FREQ 1800" -> seq=1 last=1 error=BAD_REQUEST | edits 477 refused 465 digest 5d4249fa568b73d5
+1 "1 CW CI 3" -> seq=1 last=1 error=BAD_REQUEST | edits 367 refused 355 digest de4fda9252d7cc8a
+1 "1 STATIC RATE 1" -> seq=1 last=1 error=BAD_REQUEST | edits 502 refused 490 digest b3577d1074d6f8a9
+1 "1 STATIC PEAK 20" -> seq=1 last=1 error=BAD_REQUEST | edits 524 refused 512 digest 30c00feaa60f00bd
+21 "22 CW 3 FREQ 2800" -> seq=22 last=22 ok kind=cw_frequency value=2800 oscillator=3 | edits 578 refused 517 digest da8e02d129034b19
+22 "22 CW 3 FREQ 2800" -> seq=22 last=22 error=BAD_REQUEST | edits 578 refused 569 digest 4a20b0eaed6f8491
+1 "1 CW 1 CI -3" -> seq=1 last=1 error=BAD_REQUEST | edits 463 refused 451 digest caf00d88abf34000
+1 "1 CW 2 RATE 3" -> seq=1 last=1 error=BAD_REQUEST | edits 485 refused 485 digest 96a5a4a57dac7c21
+1 "1 STATIC FREQ 1" -> seq=1 last=1 error=BAD_REQUEST | edits 503 refused 503 digest 01156b1ccb6f895a
+1 "1 CW FREQ -1.5" -> seq=1 last=1 error=BAD_REQUEST | edits 480 refused 468 digest 91f016a436be0290
+1 "1 CW FREQ 1800.25" -> seq=1 last=1 error=BAD_REQUEST | edits 546 refused 534 digest 08fe6a091c4b1a5c
+1 "1 CW 4 FREQ 1800" -> seq=1 last=1 error=BAD_REQUEST | edits 551 refused 551 digest 15e961e01035f227
+1 "1 CW 0 CI 3" -> seq=1 last=1 error=BAD_REQUEST | edits 439 refused 427 digest 7905ad14f835fe62
+1 "1 STATIC 0 RATE 1" -> seq=1 last=1 error=BAD_REQUEST | edits 574 refused 574 digest 188f5329cc4e1d2b
+1 "1 CW FREQ" -> seq=1 last=1 error=BAD_REQUEST | edits 338 refused 338 digest db235cd4af5f3963
+1 "1 CW" -> seq=1 last=1 error=BAD_REQUEST | edits 181 refused 181 digest b41a685e94713a20
+1 "1 CW ON OFF" -> seq=1 last=1 error=BAD_REQUEST | edits 423 refused 423 digest fc00029a607da8f6
+1 "1 CW ONN" -> seq=1 last=1 error=BAD_REQUEST | edits 312 refused 312 digest 2b4821794cdfaa45
+1 "1 FADE NOW" -> seq=1 last=1 error=BAD_REQUEST | edits 360 refused 360 digest 447b20d8dfcf60f5
+1 "1 STATIC PEAK x" -> seq=1 last=1 error=BAD_REQUEST | edits 516 refused 516 digest 691c4e860cc1552d
+1 "1 FADE NOW 18 250" -> seq=1 last=1 error=BAD_REQUEST | edits 581 refused 569 digest 41277baf434b24ae
+1 "1 FADE NOW 18 0" -> seq=1 last=1 error=BAD_REQUEST | edits 532 refused 532 digest c1389fc03de6c89f
+1 "1 FADE NOW 18 1" -> seq=1 last=1 error=BAD_REQUEST | edits 533 refused 521 digest 63d3b7b2c6441aac
+1 "1 FADE NOW 18 3600000" -> seq=1 last=1 error=BAD_REQUEST | edits 656 refused 644 digest 203b2d2019ab3b28
+1 "1 FADE NOW 18 3600001" -> seq=1 last=1 error=BAD_REQUEST | edits 659 refused 659 digest cad3c2cd1e5439a9
+1 "1 FADE NOW -3 1" -> seq=1 last=1 error=BAD_REQUEST | edits 532 refused 520 digest 39c01bebaa9f1559
+1 "1 FADE LATER 18 250" -> seq=1 last=1 error=BAD_REQUEST | edits 627 refused 627 digest 39a9da093ede0b9f
+1 "1 FADE NOW 18" -> seq=1 last=1 error=BAD_REQUEST | edits 459 refused 459 digest c8f41488b2fa2fd6
+1 "1 FADE NOW 18 250 1" -> seq=1 last=1 error=BAD_REQUEST | edits 656 refused 656 digest b1f7630031a79a3f
+1 "1 FADE NOW x 250" -> seq=1 last=1 error=BAD_REQUEST | edits 569 refused 569 digest 25c4c7d71b07a847
+1 "1 FADE NOW 18 2.5" -> seq=1 last=1 error=BAD_REQUEST | edits 578 refused 578 digest 80622f2616a13a32
+15 "16 SWEEP CW FREQ 300 3400 16 500" -> seq=16 last=16 ok kind=sweep_frequency value=300 end=3400 steps=16 interval=500 | edits 1015 refused 894 digest 748f0c274841aeb0
+16 "16 SWEEP CW FREQ 300 3400 16 500" -> seq=16 last=16 error=BAD_REQUEST | edits 1015 refused 1003 digest 872e4a34d8c71bbb
+1 "1 SWEEP CW CI 20 -3 16 1000" -> seq=1 last=1 error=BAD_REQUEST | edits 896 refused 884 digest 07cae70e680d55cb
+1 "1 SWEEP CW 2 FREQ 300 3400 16 500" -> seq=1 last=1 error=BAD_REQUEST | edits 1062 refused 1050 digest 180230ad2e2fa8ca
+22 "23 SWEEP CW 2 CI 20 -3 4 100" -> seq=23 last=23 ok kind=sweep_ci value=20 end=-3 steps=4 interval=100 oscillator=2 | edits 953 refused 858 digest 44f9b707d2408fb9
+23 "23 SWEEP CW 2 CI 20 -3 4 100" -> seq=23 last=23 error=BAD_REQUEST | edits 953 refused 942 digest 17d9b47d96af0748
+1 "1 SWEEP CW 4 FREQ 300 3400 16 500" -> seq=1 last=1 error=BAD_REQUEST | edits 1063 refused 1063 digest 52e138f9a6ed569b
+16 "17 SWEEP FADE 6 30 5 1000 250" -> seq=17 last=17 ok kind=sweep_fade value=6 end=30 steps=5 interval=1000 duration=250 | edits 932 refused 815 digest 626acf29e9811d40
+17 "17 SWEEP FADE 6 30 5 1000 250" -> seq=17 last=17 error=BAD_REQUEST | edits 932 refused 921 digest c927b34ebbbb7172
+17 "18 SWEEP FADE 6 30 17 1000 250" -> seq=18 last=18 error=BAD_REQUEST | edits 957 refused 949 digest a1a2eccaa24e5144
+18 "18 SWEEP FADE 6 30 17 1000 250" -> seq=18 last=18 error=BAD_REQUEST | edits 957 refused 957 digest bed85d67bdf21758
+1 "1 SWEEP CW FREQ 300 3400 1 500" -> seq=1 last=1 error=BAD_REQUEST | edits 964 refused 964 digest ca0cb0f17858ad2a
+1 "1 SWEEP CW FREQ 300 3400 2 500" -> seq=1 last=1 error=BAD_REQUEST | edits 964 refused 952 digest 77684a37e1a128c0
+1 "1 SWEEP CW FREQ 300 3400 17 500" -> seq=1 last=1 error=BAD_REQUEST | edits 989 refused 989 digest 5531b82d6c28ebdc
+1 "1 SWEEP CW FREQ 300 3400 16 0" -> seq=1 last=1 error=BAD_REQUEST | edits 945 refused 945 digest 6ebd90ab15905a0b
+1 "1 SWEEP CW FREQ 300 3400 16 3600000" -> seq=1 last=1 error=BAD_REQUEST | edits 1069 refused 1057 digest 969fe1d034fb83e7
+1 "1 SWEEP CW FREQ 300 3400 16 3600001" -> seq=1 last=1 error=BAD_REQUEST | edits 1072 refused 1072 digest f8010f7d7173d8b3
+1 "1 SWEEP FADE 6 30 5 1000 0" -> seq=1 last=1 error=BAD_REQUEST | edits 857 refused 857 digest 71408d98cd8315a7
+1 "1 SWEEP FADE 6 30 5 1000 3600000" -> seq=1 last=1 error=BAD_REQUEST | edits 981 refused 969 digest e17188d5a38aa08a
+1 "1 SWEEP FADE 6 30 5 1000 3600001" -> seq=1 last=1 error=BAD_REQUEST | edits 984 refused 984 digest 6d3f3cdf9deefab9
+1 "1 SWEEP CW RATE 1 2 3 4" -> seq=1 last=1 error=BAD_REQUEST | edits 809 refused 809 digest 5b89747a63383894
+1 "1 SWEEP STATIC RATE 1 2 3 4" -> seq=1 last=1 error=BAD_REQUEST | edits 900 refused 900 digest ef503b9d75be0463
+1 "1 SWEEP FADE 6 30 5 1000" -> seq=1 last=1 error=BAD_REQUEST | edits 783 refused 783 digest c273a258bec464ce
+1 "1 SWEEP FADE 6 30 5 1000 250 1" -> seq=1 last=1 error=BAD_REQUEST | edits 981 refused 981 digest 96a8c505470af855
+1 "1 SWEEP CW 1 FADE 6 30 5 1000" -> seq=1 last=1 error=BAD_REQUEST | edits 967 refused 967 digest 9836262d0febb01a
+1 "1 SWEEP CW x FREQ 300 3400 16 500" -> seq=1 last=1 error=BAD_REQUEST | edits 1076 refused 1076 digest ee0b0425861ae888
+1 "1 SWEEP CW FREQ x 3400 16 500" -> seq=1 last=1 error=BAD_REQUEST | edits 959 refused 959 digest 950c3079a4c7f5f2
+1 "1 SWEEP CW FREQ 300 x 16 500" -> seq=1 last=1 error=BAD_REQUEST | edits 934 refused 934 digest a2c16d1a9387cccc
+1 "1 SWEEP CW FREQ 300 3400 x 500" -> seq=1 last=1 error=BAD_REQUEST | edits 978 refused 978 digest 1a09a0867d275cc4
+1 "1 SWEEP CW FREQ 300 3400 16 x" -> seq=1 last=1 error=BAD_REQUEST | edits 960 refused 960 digest 16c5ca4e4fca2e21
+1 "1 SWEEP FADE 6 30 5 x 250" -> seq=1 last=1 error=BAD_REQUEST | edits 857 refused 857 digest d0f69b1be7574145
+1 "1 AT:0 CW ON" -> seq=1 last=1 error=BAD_REQUEST | edits 474 refused 462 digest cf6eddfb936aff83
+7 "8 AT:18446744073709551615 CW CI -3" -> seq=8 last=8 ok kind=cw_ci scheduled=1 frame=18446744073709551615 value=-3 | edits 1000 refused 887 digest 001606e368a1a4d2
+8 "8 AT:18446744073709551615 CW CI -3" -> seq=8 last=8 error=BAD_REQUEST | edits 1000 refused 989 digest ef2e43980138dc14
+8 "9 AT:18446744073709551616 CW ON" -> seq=9 last=9 error=BAD_REQUEST | edits 901 refused 827 digest e9155a3cce2d3bbc
+9 "9 AT:18446744073709551616 CW ON" -> seq=9 last=9 error=BAD_REQUEST | edits 901 refused 901 digest 2394107797a020c4
+9 "10 AT:0 STOP" -> seq=10 last=10 error=BAD_REQUEST | edits 430 refused 430 digest 2fb8cf04c6422653
+10 "10 AT:0 STOP" -> seq=10 last=10 error=BAD_REQUEST | edits 430 refused 430 digest b69286937a737e51
+1 "1 AT:0 SWEEP CW FREQ 300 3400 16 500" -> seq=1 last=1 error=BAD_REQUEST | edits 1171 refused 1159 digest a5b2c99dff7cd658
+1 "1 AT:0 FADE NOW 18 250" -> seq=1 last=1 error=BAD_REQUEST | edits 763 refused 751 digest 11f14e19778173d5
+1 "1 AT:5" -> seq=1 last=1 error=BAD_REQUEST | edits 255 refused 255 digest e5fcec410b8e3ae4
+1 "1 AT:5 " -> seq=1 last=1 error=BAD_REQUEST | edits 276 refused 276 digest b9977ffe87918165
+1 "1 AT: CW ON" -> seq=1 last=1 error=BAD_REQUEST | edits 424 refused 424 digest d16d5d39a1946087
+1 "1 AT:01 CW ON" -> seq=1 last=1 error=BAD_REQUEST | edits 496 refused 496 digest a3a6db6303d1538d
+1 "1 AT:0 CW 3 FREQ 2800" -> seq=1 last=1 error=BAD_REQUEST | edits 735 refused 723 digest 6886a7cb3f75f621
+1 "1 AT:0 AT:0 CW ON" -> seq=1 last=1 error=BAD_REQUEST | edits 656 refused 656 digest 46a76358627aca57
+1 "1 AT:0 INFO?" -> seq=1 last=1 error=BAD_REQUEST | edits 431 refused 431 digest 312c10bf4e4f995a
+1 "1 AT:0 SEED:1" -> seq=1 last=1 error=BAD_REQUEST | edits 480 refused 480 digest e5ec6226aadead98
+1 "1 AT:0 REFERENCE:0.5" -> seq=1 last=1 error=BAD_REQUEST | edits 642 refused 642 digest b48d5e85de7f810e
+1 "1 AT:0 LOAD:A.WAV" -> seq=1 last=1 error=BAD_REQUEST | edits 627 refused 627 digest dc0fd1c09ccd355a
+1 "1 AT:0 PLAY:0123456789abcdef0123456789abcdef" -> seq=1 last=1 error=BAD_REQUEST | edits 1310 refused 1310 digest ca112e02fc347cb2
+1 "1 AT:x CW ON" -> seq=1 last=1 error=BAD_REQUEST | edits 489 refused 489 digest dc0e2930938018a2
+45 "46 CUT" -> seq=46 last=46 ok kind=cut | edits 232 refused 212 digest a4e6cbcc68196b5d
+46 "46 CUT" -> seq=46 last=46 error=BAD_REQUEST | edits 232 refused 221 digest ccd220ec36384cf3
+46 "47 CUT:0:4800:zero,96000:1:drop\x0d" -> seq=47 last=47 ok kind=cut cuts=0:4800:1,96000:1:0 | edits 1012 refused 911 digest af3802b719b74df1
+47 "47 CUT:0:4800:zero,96000:1:drop\x0d" -> seq=47 last=47 error=BAD_REQUEST | edits 1012 refused 1001 digest ffc6dad89296de65
+47 "48 CUT:1:0:drop,1:1:zero" -> seq=48 last=48 ok kind=cut cuts=1:0:0,1:1:1 | edits 836 refused 769 digest 96b38add07e93759
+48 "48 CUT:1:0:drop,1:1:zero" -> seq=48 last=48 error=BAD_REQUEST | edits 836 refused 825 digest e4869c9b535359a6
+48 "49 CUT:" -> seq=49 last=49 error=BAD_REQUEST | edits 253 refused 251 digest 49cae8ad1004a9d7
+49 "49 CUT:" -> seq=49 last=49 error=BAD_REQUEST | edits 253 refused 253 digest 2f49f5fb192dee64
+49 "50 AT:0 CUT" -> seq=50 last=50 error=BAD_REQUEST | edits 410 refused 410 digest e404da746ce5537d
+50 "50 AT:0 CUT" -> seq=50 last=50 error=BAD_REQUEST | edits 410 refused 410 digest 91c33a3963b125fb
+50 "51 CUT " -> seq=51 last=51 error=BAD_REQUEST | edits 249 refused 247 digest 2e9490c1be685a9a
+51 "51 CUT " -> seq=51 last=51 error=BAD_REQUEST | edits 249 refused 249 digest c80168d657c92249
+51 "52 CUT:1:1:drop," -> seq=52 last=52 error=BAD_REQUEST | edits 555 refused 552 digest 85511ddfbd50746b
+52 "52 CUT:1:1:drop," -> seq=52 last=52 error=BAD_REQUEST | edits 555 refused 555 digest b6ee13d223470225
+52 "53 CUT:1:1:Drop" -> seq=53 last=53 error=BAD_REQUEST | edits 535 refused 532 digest e4b91646e674e9e8
+53 "53 CUT:1:1:Drop" -> seq=53 last=53 error=BAD_REQUEST | edits 535 refused 535 digest 2f633d033b925de2
+53 "54 cut" -> seq=54 last=54 error=BAD_REQUEST | edits 232 refused 223 digest 3fac10f15ed9c442
+54 "54 cut" -> seq=54 last=54 error=BAD_REQUEST | edits 232 refused 232 digest 419b7e57cc9f376f
+1 "1 CUT:01:1:drop" -> seq=1 last=1 error=BAD_REQUEST | edits 527 refused 527 digest ee10f905c6b7d3e9
+1 "1 CUT:4294967296:1:drop" -> seq=1 last=1 error=BAD_REQUEST | edits 714 refused 714 digest 5b529b228238e716
+1 "1 CUT:1:1" -> seq=1 last=1 error=BAD_REQUEST | edits 351 refused 351 digest 57812dcdb0b6261d
+1 "1 CUT:1:1:drop:1" -> seq=1 last=1 error=BAD_REQUEST | edits 580 refused 580 digest 61049f2568173b7c
+1 "1 CUT:,1:1:drop" -> seq=1 last=1 error=BAD_REQUEST | edits 528 refused 528 digest b0174f7aa558c66e
+1 "1 CUT:4294967295:4800:drop" -> seq=1 last=1 error=BAD_REQUEST | edits 782 refused 770 digest bd19fbbce007d4bc
+1 "1 CUTS" -> seq=1 last=1 error=BAD_REQUEST | edits 227 refused 227 digest 1a165f4c6d771f9b
+1 "1 CUT:1:4801:drop" -> seq=1 last=1 error=BAD_REQUEST | edits 577 refused 565 digest f329bb1457cc102c
+6 "7 PLAYLIST:BATTERY.PL" -> seq=7 last=7 ok kind=playlist_start name="BATTERY.PL" | edits 654 refused 513 digest 9a6a896cccd12a27
+7 "7 PLAYLIST:BATTERY.PL" -> seq=7 last=7 error=BAD_REQUEST | edits 654 refused 643 digest 6502789b59170cf9
+7 "8 PLAYLIST:BATTERY.PL:CONTINUE\x0d" -> seq=8 last=8 ok kind=playlist_start name="BATTERY.PL" policy=1 | edits 925 refused 783 digest 59c5da4c552241fe
+8 "8 PLAYLIST:BATTERY.PL:CONTINUE\x0d" -> seq=8 last=8 error=BAD_REQUEST | edits 925 refused 914 digest 2ec09d959ad20294
+8 "9 PLAYLIST:LADDER" -> seq=9 last=9 ok kind=playlist_start name="LADDER" | edits 518 refused 418 digest 6f7d651dc7145c1e
+9 "9 PLAYLIST:LADDER" -> seq=9 last=9 error=BAD_REQUEST | edits 518 refused 508 digest dcde47ee93a9fb18
+9 "10 PLAYLIST:ABCDEFGH.XYZ" -> seq=10 last=10 ok kind=playlist_start name="ABCDEFGH.XYZ" | edits 721 refused 570 digest 88c89d9e987a39b4
+10 "10 PLAYLIST:ABCDEFGH.XYZ" -> seq=10 last=10 error=BAD_REQUEST | edits 721 refused 708 digest cfb8cda7c6cfd7d7
+10 "11 PLAYLIST:battery.pl" -> seq=11 last=11 error=BAD_REQUEST | edits 672 refused 671 digest 601014639adaa412
+11 "11 PLAYLIST:battery.pl" -> seq=11 last=11 error=BAD_REQUEST | edits 672 refused 672 digest a8d860ba0245cb54
+11 "12 PLAYLIST:BATTERY.PL:continue" -> seq=12 last=12 error=BAD_REQUEST | edits 928 refused 917 digest 73b78cd1cb6b41ec
+12 "12 PLAYLIST:BATTERY.PL:continue" -> seq=12 last=12 error=BAD_REQUEST | edits 928 refused 928 digest 167c2042b9763b62
+12 "13 PLAYLIST:BATTERY.PL:" -> seq=13 last=13 error=BAD_REQUEST | edits 702 refused 685 digest c9ef85a3f7ec1698
+13 "13 PLAYLIST:BATTERY.PL:" -> seq=13 last=13 error=BAD_REQUEST | edits 702 refused 702 digest 7e69b7fe916eafa5
+13 "14 PLAYLIST:" -> seq=14 last=14 error=BAD_REQUEST | edits 367 refused 365 digest 1f17bb1ec69867c6
+14 "14 PLAYLIST:" -> seq=14 last=14 error=BAD_REQUEST | edits 367 refused 367 digest fb17a07384c96176
+14 "15 PLAYLIST:../A.PL" -> seq=15 last=15 error=BAD_REQUEST | edits 605 refused 604 digest 8235d50641325a26
+15 "15 PLAYLIST:../A.PL" -> seq=15 last=15 error=BAD_REQUEST | edits 605 refused 605 digest a8d7650c55b65c67
+15 "16 PLAYLIST:ABCDEFGHI.PL" -> seq=16 last=16 error=BAD_REQUEST | edits 728 refused 678 digest 07e5f2e320847528
+16 "16 PLAYLIST:ABCDEFGHI.PL" -> seq=16 last=16 error=BAD_REQUEST | edits 728 refused 728 digest 576a94604d6a2279
+16 "17 PLAYLIST:A.PL:CONTINUE:CONTINUE" -> seq=17 last=17 error=BAD_REQUEST | edits 1040 refused 1035 digest d6cf09f9bad19a22
+17 "17 PLAYLIST:A.PL:CONTINUE:CONTINUE" -> seq=17 last=17 error=BAD_REQUEST | edits 1040 refused 1040 digest ab3db434f33538ae
+17 "18 PLAYLIST:A.PLAY" -> seq=18 last=18 error=BAD_REQUEST | edits 587 refused 558 digest da36e79232eb2e7c
+18 "18 PLAYLIST:A.PLAY" -> seq=18 last=18 error=BAD_REQUEST | edits 587 refused 587 digest ad551347e2ac2567
+18 "19 AT:0 PLAYLIST:A.PL" -> seq=19 last=19 error=BAD_REQUEST | edits 723 refused 723 digest c73f4c16a01cad08
+19 "19 AT:0 PLAYLIST:A.PL" -> seq=19 last=19 error=BAD_REQUEST | edits 723 refused 723 digest 5827f4798c9ac313
+19 "20 PLAYLIST: A.PL" -> seq=20 last=20 error=BAD_REQUEST | edits 562 refused 554 digest 3adb75ae271fbed5
+20 "20 PLAYLIST: A.PL" -> seq=20 last=20 error=BAD_REQUEST | edits 562 refused 562 digest 7c6b1c9ad4d69f63
+20 "21 PLAYLIST ACK:0" -> seq=21 last=21 ok kind=playlist_ack | edits 548 refused 524 digest 062de62e1a06b7cf
+21 "21 PLAYLIST ACK:0" -> seq=21 last=21 error=BAD_REQUEST | edits 548 refused 538 digest ad3aebe76734f2eb
+21 "22 PLAYLIST ACK:4294967295" -> seq=22 last=22 ok kind=playlist_ack ack=4294967295 | edits 757 refused 691 digest 909a807e513d4851
+22 "22 PLAYLIST ACK:4294967295" -> seq=22 last=22 error=BAD_REQUEST | edits 757 refused 748 digest a49036e72aea3331
+22 "23 PLAYLIST ACK:4294967296" -> seq=23 last=23 error=BAD_REQUEST | edits 760 refused 703 digest a1c0977d23f2554f
+23 "23 PLAYLIST ACK:4294967296" -> seq=23 last=23 error=BAD_REQUEST | edits 760 refused 760 digest 03f9764102385873
+23 "24 PLAYLIST ACK:01" -> seq=24 last=24 error=BAD_REQUEST | edits 573 refused 555 digest a23b9f76c59c76fc
+24 "24 PLAYLIST ACK:01" -> seq=24 last=24 error=BAD_REQUEST | edits 573 refused 573 digest 99aeaba637dfce2e
+24 "25 PLAYLIST ACK:" -> seq=25 last=25 error=BAD_REQUEST | edits 499 refused 498 digest 962eb3e614f2bf16
+25 "25 PLAYLIST ACK:" -> seq=25 last=25 error=BAD_REQUEST | edits 499 refused 499 digest 6b188c3043b2c024
+25 "26 PLAYLIST ACK:-1" -> seq=26 last=26 error=BAD_REQUEST | edits 573 refused 557 digest 5a64c053303295d1
+26 "26 PLAYLIST ACK:-1" -> seq=26 last=26 error=BAD_REQUEST | edits 573 refused 573 digest 75dcb97948e371d3
+26 "27 PLAYLIST ACK 5" -> seq=27 last=27 error=BAD_REQUEST | edits 553 refused 551 digest e01814503aa4c004
+27 "27 PLAYLIST ACK 5" -> seq=27 last=27 error=BAD_REQUEST | edits 553 refused 553 digest 5e34c3dafcbd9d59
+27 "28 PLAYLIST  ACK:5" -> seq=28 last=28 error=BAD_REQUEST | edits 573 refused 571 digest 40b6a11a60e74259
+28 "28 PLAYLIST  ACK:5" -> seq=28 last=28 error=BAD_REQUEST | edits 573 refused 573 digest 4b42b6b5a126ae91
+28 "29 AT:0 PLAYLIST ACK:5" -> seq=29 last=29 error=BAD_REQUEST | edits 734 refused 734 digest 1b69cabdf2e77827
+29 "29 AT:0 PLAYLIST ACK:5" -> seq=29 last=29 error=BAD_REQUEST | edits 734 refused 734 digest 910cf794058f779b
+1 "1 PLAYLIST" -> seq=1 last=1 error=BAD_REQUEST | edits 317 refused 317 digest 1a36c70bb8b9d82a
+1 "1 PLAYLISTS:A.PL" -> seq=1 last=1 error=BAD_REQUEST | edits 538 refused 538 digest 648f26dc919061fb
+1 "1 PLAYLIST? " -> seq=1 last=1 error=BAD_REQUEST | edits 361 refused 361 digest 783f6ff06d9edd7b
+1 "1 playlist?" -> seq=1 last=1 error=BAD_REQUEST | edits 340 refused 340 digest b766311398424517
+1 "1 PLAYLIST:A.PL:CONTNUE" -> seq=1 last=1 error=BAD_REQUEST | edits 743 refused 743 digest 7b14059fb56647b6
+2 "3 ENGINE? " -> seq=3 last=3 error=BAD_REQUEST | edits 318 refused 316 digest b8774e6e1c9b583d
+3 "3 ENGINE? " -> seq=3 last=3 error=BAD_REQUEST | edits 318 refused 318 digest 05e08294fc42606f
+3 "4 engine?" -> seq=4 last=4 error=BAD_REQUEST | edits 296 refused 287 digest 2fe6122607e60c39
+4 "4 engine?" -> seq=4 last=4 error=BAD_REQUEST | edits 296 refused 296 digest 999ab6ed6bf89a8a
+4 "5 AT:0 ENGINE?" -> seq=5 last=5 error=BAD_REQUEST | edits 478 refused 478 digest 7852f3c388c71819
+5 "5 AT:0 ENGINE?" -> seq=5 last=5 error=BAD_REQUEST | edits 478 refused 478 digest bf324fdf96f2399d
+5 "6 ENGINE" -> seq=6 last=6 error=BAD_REQUEST | edits 275 refused 266 digest e723788f531e9e8e
+6 "6 ENGINE" -> seq=6 last=6 error=BAD_REQUEST | edits 275 refused 275 digest 2bcf1e9f28880835
+6 "7 FILES? +1" -> seq=7 last=7 error=BAD_REQUEST | edits 371 refused 367 digest 42c1e9be90a2c362
+7 "7 FILES? +1" -> seq=7 last=7 error=BAD_REQUEST | edits 371 refused 371 digest 7e639169e374bf8a
+7 "8 FILES? -1" -> seq=8 last=8 error=BAD_REQUEST | edits 369 refused 349 digest 068171fa7bc6dd61
+8 "8 FILES? -1" -> seq=8 last=8 error=BAD_REQUEST | edits 369 refused 369 digest 094678827bbb5581
+8 "9 FILES? 01" -> seq=9 last=9 error=BAD_REQUEST | edits 367 refused 345 digest 9a325a8ef0ef75ee
+9 "9 FILES? 01" -> seq=9 last=9 error=BAD_REQUEST | edits 367 refused 367 digest 84d31495edbecd50
+9 "10 FILES? 18446744073709551616" -> seq=10 last=10 error=BAD_REQUEST | edits 792 refused 699 digest 6d21b053aa977219
+10 "10 FILES? 18446744073709551616" -> seq=10 last=10 error=BAD_REQUEST | edits 792 refused 792 digest 7daa66f759be5c44
+10 "11 FILES? 1 2" -> seq=11 last=11 error=BAD_REQUEST | edits 441 refused 435 digest 1e336c234af32d05
+11 "11 FILES? 1 2" -> seq=11 last=11 error=BAD_REQUEST | edits 441 refused 441 digest bd5aa55a98962fb4
+11 "12 AT:0 FILES?" -> seq=12 last=12 error=BAD_REQUEST | edits 481 refused 481 digest 1f777805a1d3ba83
+12 "12 AT:0 FILES?" -> seq=12 last=12 error=BAD_REQUEST | edits 481 refused 481 digest ccfcdd6af7bcd457
+12 "13 AT:0 FILES? 1" -> seq=13 last=13 error=BAD_REQUEST | edits 556 refused 556 digest 0e28fd39cf1dcaa5
+13 "13 AT:0 FILES? 1" -> seq=13 last=13 error=BAD_REQUEST | edits 556 refused 556 digest 1c26850951cdb42c
+13 "14 FILES" -> seq=14 last=14 error=BAD_REQUEST | edits 278 refused 269 digest 66cdc7722c962307
+14 "14 FILES" -> seq=14 last=14 error=BAD_REQUEST | edits 278 refused 278 digest 9b81de00991f9c19
+41 "42 AT:0 USB?" -> seq=42 last=42 error=BAD_REQUEST | edits 435 refused 435 digest 9bfa4a470b05900f
+42 "42 AT:0 USB?" -> seq=42 last=42 error=BAD_REQUEST | edits 435 refused 435 digest 3f1ef020c0e708ab
+42 "43 USB? " -> seq=43 last=43 error=BAD_REQUEST | edits 276 refused 274 digest b03d76c09e286545
+43 "43 USB? " -> seq=43 last=43 error=BAD_REQUEST | edits 276 refused 276 digest b2d3924f64db6460
+43 "44 usb?" -> seq=44 last=44 error=BAD_REQUEST | edits 252 refused 243 digest 9edf3eb8e11bc710
+44 "44 usb?" -> seq=44 last=44 error=BAD_REQUEST | edits 252 refused 252 digest eaa598145f875860
+44 "45 USB" -> seq=45 last=45 error=BAD_REQUEST | edits 231 refused 222 digest f7c87966d51c55fb
+45 "45 USB" -> seq=45 last=45 error=BAD_REQUEST | edits 231 refused 231 digest 3694c3ccd740af4e
+# totals lines 458546 refused 442082 accepted info 167 status 66 counters 66 usb_diagnostics 70 playlist_status 70 engine_status 70 files 477 prepare_status 26 prepare_play_status 27 load 586 play 406 stop 171 media_host 27 media_local 27 generate_file 4602 output_codec 29 output_usb 29 cut 1398 playlist_start 1371 playlist_ack 397 seed 294 reference 330 prepare_file 842 prepare_play 1117 cw_on 412 cw_frequency 680 cw_ci 408 static_on 63 static_rate 52 static_peak 63 fade 475 sweep_frequency 872 sweep_ci 331 sweep_fade 443

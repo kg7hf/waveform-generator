@@ -1,0 +1,26 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "pathsim-host",
+      "displayName": "Channel sim | pathsim host reference | Release",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceParentDir}/build/main/pathsim-host",
+      "toolchainFile": "${sourceDir}/cmake/winlibs-host.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "pathsim-host",
+      "configurePreset": "pathsim-host"
+    }
+  ]
+}

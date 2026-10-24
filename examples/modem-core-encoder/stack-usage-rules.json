@@ -1,0 +1,51 @@
+{
+  "indirect_calls": [
+    {
+      "caller": "^void waveform_source::WavGenerator::stop\\(",
+      "targets": "^virtual void waveform_example::M110Encoder::stop\\(\\)",
+      "why": "This image registers only M110Encoder, so WAV cancellation stops that adapter."
+    },
+    {
+      "caller": "^waveform_source::JobState waveform_source::WavGenerator::fail\\(",
+      "targets": "^virtual void waveform_example::M110Encoder::stop\\(\\)",
+      "why": "This image registers only M110Encoder, so a failed WAV job stops that adapter."
+    },
+    {
+      "caller": "^m110::Status waveform_source::WavGenerator::begin\\(",
+      "targets": "^(virtual (waveform_source::Status waveform_example::M110Encoder::configure|uint64_t waveform_example::M110Encoder::total_frames|waveform_source::Status waveform_example::M110Encoder::status|void waveform_example::M110Encoder::stop)\\(|virtual m110::Status waveform_generator::\\{anonymous\\}::FileSink::write\\()",
+      "why": "The selected M110 encoder supplies setup, length and status; the firmware FileSink writes the WAV header."
+    },
+    {
+      "caller": "^waveform_source::JobState waveform_source::WavGenerator::step\\(",
+      "targets": "^(virtual (std::size_t waveform_example::M110Encoder::read_float|waveform_source::Status waveform_example::M110Encoder::status|void waveform_example::M110Encoder::stop)\\(|virtual m110::Status waveform_generator::\\{anonymous\\}::FileSink::write\\()",
+      "why": "The selected M110 encoder supplies PCM float frames and status; the firmware FileSink writes PCM24."
+    },
+    {
+      "caller": "^virtual std::size_t waveform_source::WavGenerator::read\\(",
+      "targets": "^virtual std::size_t waveform_generator::\\{anonymous\\}::FileBytes::read\\(",
+      "why": "The WAV writer reads the fixed firmware FileBytes source."
+    },
+    {
+      "caller": "^m110::Result<unsigned char> waveform_example::M110Encoder::read_payload_bit\\(",
+      "targets": "^virtual std::size_t waveform_source::WavGenerator::read\\(",
+      "why": "The M110 adapter consumes payload bytes through the WAV writer's ByteSource boundary."
+    },
+    {
+      "caller": "^waveform_source::Status waveform_example::M110Encoder::generate_next\\(",
+      "targets": "^virtual std::size_t waveform_source::WavGenerator::read\\(",
+      "why": "GCC inlines payload-bit reading into the block generator; its byte source is the WAV writer."
+    },
+    {
+      "caller": "^constprop\\(\\)$",
+      "caller_title": ":_ZN16waveform_example11M110Encoder13generate_nextEv\\.part\\.0\\.constprop\\.0$",
+      "targets": "^virtual std::size_t waveform_source::WavGenerator::read\\(",
+      "why": "GCC 14 split the block generator after inlining payload-bit reading; it still reads only the selected WAV byte source."
+    },
+    {
+      "caller": "^0\\(\\)$",
+      "caller_title": ":_ZN18waveform_generator12_GLOBAL__N_116start_generationEv\\.part\\.0$",
+      "targets": "^(waveform_source::Encoder\\* waveform_generator::\\{anonymous\\}::construct\\(void\\*, std::size_t\\)|constexpr waveform_example::M110Encoder::~M110Encoder\\(\\))$",
+      "why": "The GCC 14 split generation helper calls the selected descriptor constructor and its concrete destructor."
+    }
+  ]
+}

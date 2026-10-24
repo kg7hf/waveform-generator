@@ -1,0 +1,15 @@
+--- a/source/fsl_sd_disk/fsl_sd_disk.c
++++ b/source/fsl_sd_disk/fsl_sd_disk.c
+@@ -136,6 +136,12 @@
+         return STA_NOINIT;
+     }
+ 
++    if (g_sd.isHostReady && g_sd.blockCount != 0U && g_sd.blockSize != 0U)
++    {
++        isCardInitialized = true;
++        return 0;
++    }
++
+     /* demostrate the normal flow of card re-initialization. If re-initialization is not neccessary, return RES_OK directly will be fine */
+     if(isCardInitialized)
+     {

@@ -1,0 +1,207 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: 2026 Paul R. Decker
+#
+# Host-only CI uses GitHub-hosted Linux runners for every push, PR and manual run.
+# Linux runs the complete host
+# build and policy gates; another checks the standalone PathSim channel
+# simulator; a third Linux job cross-compiles Windows capture.
+#
+# | Claim                                   | Gate                                   | Locally                                        |
+# |-----------------------------------------|----------------------------------------|------------------------------------------------|
+# | Owned code builds warning-free          | the build (cmake/project_options.cmake | cmake --build build/host-release               |
+# |                                         | gives owned targets -Wall -Wextra      |                                                |
+# |                                         | -Wpedantic -Werror; vendored targets   |                                                |
+# |                                         | keep their upstream flags)             |                                                |
+# | The host tests pass                     | ctest, every test                      | ctest --test-dir build/host-release            |
+# | Host inputs and compiled paths in place | scripts/check-project.py --scope       | python scripts/check-project.py --build-dir .. |
+# | Allman braces, LF line endings          | scripts/check-style.py                 | python scripts/check-style.py                  |
+# | Failures are Status/Result values, no   | scripts/check-error-style.py           | python scripts/check-error-style.py            |
+# | error out-parameter (#50)               |                                        |                                                |
+# | No fallible function returns bool: the  | scripts/check-bool-returns.py against  | python scripts/check-bool-returns.py           |
+# | fallible list stays empty (#50)         | scripts/bool-returns-baseline.json     |                                                |
+# | No function newly above CCN 25, none    | scripts/check-complexity.py against    | python scripts/check-complexity.py             |
+# | above it grows, average CCN below 6     | scripts/complexity-baseline.json       |                                                |
+# | No clang-tidy error or gated check      | scripts/clang-tidy.ps1                 | pwsh scripts/clang-tidy.ps1                    |
+# | No C status read as a truth value, in   | scripts/check-c-status-truth.py        | python scripts/check-c-status-truth.py         |
+# | any form (the AST, clang-query, #51)    | (clang-query over the host database)   |                                                |
+#
+# Each job initializes only the submodules it reads: TinyUSB and Catch2 for
+# the host and Windows cross-builds, PathSim for channel-sim. The firmware
+# inputs (mcux-sdk, CMSIS, FreeRTOS-Kernel, sdmmc, fatfs) are not checked out.
+# The project-layout test checks only host-test entries of dependencies.json
+# (WFG_DEPENDENCY_SCOPE). TinyUSB's entry has firmware scope, so the layout
+# check skips it here; without its headers the build fails instead. Firmware
+# CI, with the Arm toolchain and -fstack-usage, remains future work.
+#
+# Supply chain: the token is read-only, checkout is pinned to a full commit
+# SHA, and lizard is pinned to a version because its
+# counts can change between versions (the baseline records the version).
+
+name: host-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: host-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: style and complexity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The bool-return gate compares the predicate and abi lists with an
+          # earlier baseline: a pull request's base (the merge commit's first
+          # parent, depth 2), or for a push the main it replaced, which the full
+          # history holds (the token is gone after checkout, so no later fetch).
+          fetch-depth: ${{ github.event_name == 'push' && '0' || '2' }}
+
+      - name: lizard (pinned)
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/python" -m pip install lizard==1.24.0
+          echo "$RUNNER_TEMP/venv/bin" >> "$GITHUB_PATH"
+
+      - name: Style (Allman braces, LF line endings)
+        run: python scripts/check-style.py
+
+      - name: Error style (Status/Result, no error out-parameters)
+        run: python scripts/check-error-style.py
+
+      - name: Bool-return ratchet (the fallible list stays empty, #50)
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+        # A push of several commits is compared with the main before it, so a
+        # predicate or abi count that any of them raises without a reclassified
+        # entry fails, not only the tip's; a push that creates the branch (no
+        # "before") and a pull request are compared with HEAD's first parent.
+        run: |
+          since='HEAD^1'
+          if [ "$EVENT_NAME" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ]; then
+            since="$BEFORE"
+          fi
+          python scripts/check-bool-returns.py --rev HEAD --since "$since"
+
+      - name: Complexity ratchet (lizard 1.24.0, CCN 25)
+        run: python scripts/check-complexity.py
+
+  host:
+    name: host build, tests, layout and clang-tidy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CC: gcc-14
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Host submodules (TinyUSB, Catch2)
+        run: git submodule update --init --depth 1 third_party/tinyusb third_party/Catch2
+
+      - name: Toolchain (GCC 14, Ninja, clang-format/tidy/query 19)
+        run: bash scripts/ci-install-apt.sh g++-14 ninja-build clang-format-19 clang-tidy-19 clang-tools-19
+
+      - name: Python (test requirements)
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          python_path="$RUNNER_TEMP/venv/bin/python"
+          "$python_path" -m pip install -r host/requirements-test.txt -r host/requirements-control.txt
+          echo WFG_HOST_JOBS=4 >> "$GITHUB_ENV"
+          echo "$(dirname "$python_path")" >> "$GITHUB_PATH"
+          echo "VIRTUAL_ENV=$(dirname "$(dirname "$python_path")")" >> "$GITHUB_ENV"
+          echo "WFG_PYTHON=$python_path" >> "$GITHUB_ENV"
+
+      - name: C++ formatting
+        run: pwsh -NoProfile -File scripts/format-source.ps1 -ClangFormatPath clang-format-19 -Check
+
+      - name: Configure, build and test host
+        run: cmake --workflow --preset host-tests
+
+      - name: Project layout and compiled source paths
+        run: python scripts/check-project.py --scope host-test --build-dir build/host-tests
+
+      - name: clang-tidy
+        run: pwsh -NoProfile -File scripts/clang-tidy.ps1 -BuildDir build/host-tests -ClangTidyPath clang-tidy-19 -Jobs "$WFG_HOST_JOBS"
+
+      - name: Confirm C status truth gate ran in CTest
+        run: |
+          ctest --test-dir build/host-tests -N -R '^wfg-check-c-status-truth$' | grep -q 'Total Tests: 1'
+
+  channel-sim:
+    name: PathSim channel simulator build and tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: PathSim submodule
+        run: git submodule update --init --depth 1 third_party/pathsim
+
+      - name: GCC 14, Ninja and Python test dependency
+        run: bash scripts/ci-install-apt.sh g++-14 ninja-build python3-numpy
+
+      - name: Configure and build channel simulator
+        run: |
+          cmake -S channel-sim -B build/pathsim-host -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++-14
+          cmake --build build/pathsim-host --parallel 4
+
+      - name: Confirm Linux recipe does not claim Windows reference parity
+        run: |
+          python3 -c 'import json; from pathlib import Path; recipe = json.loads(Path("build/pathsim-host/pathsim_ref.recipe.json").read_text()); assert recipe["recipe_matches_reference"] is False'
+
+      - name: Test channel simulator and gate scripts
+        run: |
+          ctest --test-dir build/pathsim-host -N | grep -q 'Total Tests: 4'
+          ctest --test-dir build/pathsim-host --output-on-failure --no-tests=error
+
+  windows-cross:
+    name: Windows capture cross-build (Ubuntu + MinGW)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Host submodules (TinyUSB, Catch2)
+        run: git submodule update --init --depth 1 third_party/tinyusb third_party/Catch2
+
+      - name: Windows cross toolchain
+        run: |
+          bash scripts/ci-install-apt.sh g++-mingw-w64-x86-64-posix binutils-mingw-w64-x86-64 ninja-build
+          x86_64-w64-mingw32-g++-posix --version
+          test -f "$(x86_64-w64-mingw32-g++-posix -print-file-name=CRT_noglob.o)"
+
+      - name: Configure Windows capture build
+        run: |
+          cmake --preset windows-cross -DPython3_EXECUTABLE="$(command -v python3)"
+
+      - name: Cross-compile capture and its device-free test programs
+        run: cmake --build --preset windows-cross
+
+      - name: Verify PE executables exist
+        run: |
+          for binary in \
+            build/windows-cross/host/capture/waveform_capture.exe \
+            build/windows-cross/tests/wfg_capture_core_tests.exe \
+            build/windows-cross/tests/wfg_winmm_audio_tests.exe; do
+            test -s "$binary"
+            x86_64-w64-mingw32-objdump -f "$binary" | grep -q 'file format pei-x86-64'
+          done

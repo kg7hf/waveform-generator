@@ -1,0 +1,20 @@
+{
+  "schema": "signal-lab.scenario/1",
+  "test_id": "cw-900hz",
+  "seed": 42,
+  "source": {
+    "path": "build/demo/clean.wav"
+  },
+  "reference": "auto",
+  "source_gain_db": -6,
+  "clip_policy": "reject",
+  "impairments": [
+    {
+      "type": "cw",
+      "frequency_hz": 900,
+      "ci_db": 6,
+      "phase_degrees": 0,
+      "ramp_seconds": 0.01
+    }
+  ]
+}

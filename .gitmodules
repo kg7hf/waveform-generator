@@ -1,0 +1,24 @@
+[submodule "third_party/mcux-sdk"]
+	path = third_party/mcux-sdk
+	url = https://github.com/NXP-mcuxpresso/mcux-sdk.git
+[submodule "third_party/CMSIS"]
+	path = third_party/CMSIS
+	url = https://github.com/nxp-mcuxpresso/CMSIS_5.git
+[submodule "third_party/FreeRTOS-Kernel"]
+	path = third_party/FreeRTOS-Kernel
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "third_party/tinyusb"]
+	path = third_party/tinyusb
+	url = https://github.com/hathach/tinyusb.git
+[submodule "third_party/sdmmc"]
+	path = third_party/sdmmc
+	url = https://github.com/nxp-mcuxpresso/mcuxsdk-middleware-sdmmc.git
+[submodule "third_party/fatfs"]
+	path = third_party/fatfs
+	url = https://github.com/nxp-mcuxpresso/fatfs.git
+[submodule "third_party/pathsim"]
+	path = third_party/pathsim
+	url = https://github.com/bubnikv/pathsim.git
+[submodule "third_party/Catch2"]
+	path = third_party/Catch2
+	url = https://github.com/catchorg/Catch2.git

@@ -1,0 +1,63 @@
+pathsim-wfg-embedded.patch: waveform-generator's chain-build patch for pathsim
+(GPLv3 section 5a modification notice; the full notice, which also covers the
+force-included RNG shim, is pathsim-wfg-embedded.notice.md beside this file)
+
+Work modified: pathsim, https://github.com/bubnikv/pathsim, commit
+b5fa9aef68a0c2cdd2895f149e9baf5f3bccef51, after the HF lane's rev-6 patch
+(pathsim-b5fa9ae-gcc14-cli-hilbert-onset-seed-paths-truth.patch).
+PathSim by Moe Wheatley AE4JY, reworked by Vojtech Bubnik OK1IAK. GNU GPL v3.
+
+Date: 2026-10-03, waveform-generator (Paul R. Decker).
+
+What: Path.cpp (Rayleigh::sample) and NoiseGen.cpp (add_band_limited_noise)
+draw each pair of uniform numbers into named locals, the first into the
+imaginary part, and then call v.set(real, imaginary).
+
+Why: both sites read v.set(rsample(), rsample()). C++ leaves the order of the
+two calls unspecified. GCC for x86-64, which built the lane's reference
+pathsim.exe (sha256 77461211...), evaluates the second argument first, so the
+first draw becomes the imaginary part; GCC for Arm (the RT1170 firmware)
+evaluates the first argument first. With the same seed and the same random
+stream, the Arm build would swap I and Q of every pair: each Rayleigh tap would
+become j*conj(h) and the AWGN samples would swap in pairs, a different
+realization from the lane's. Sequencing the draws in the x86-64 order keeps
+one seed's realization on every compiler and leaves the x86-64 output
+byte-identical (gate 1, docs/modules/pathsim.md).
+
+Applied by channel-sim/cmake/pathsim_vendor.cmake to the chain's build-tree
+copy only (pathsim_lib); pathsim_ref, the reference CLI, keeps rev-6 alone.
+
+diff --git a/NoiseGen.cpp b/NoiseGen.cpp
+index a93bd174e1b806db5810e34691350774f8fe3c65..e96af873ee7e8737e14ff1f31eaac31fe6a048dc 100644
+--- a/NoiseGen.cpp
++++ b/NoiseGen.cpp
+@@ -35,7 +35,11 @@ void NoiseGen::add_band_limited_noise(int bufsize, double *pInOut, double siggai
+ 			cmplx v;
+ 			do {
+ 	            auto rsample = [](){ return 1. - 2. * double(rand())/double(RAND_MAX); };
+-	            v.set(rsample(), rsample());
++	            // waveform-generator 2026-10-03: the order of the two draws is fixed here, as
++	            // the lane's x86-64 build evaluates them (an unspecified order in C++).
++	            const double i_draw = rsample();
++	            const double r_draw = rsample();
++	            v.set(r_draw, i_draw);
+ 				r2 = v.l2();
+ 			} while (r2 >= 1. || r2 == 0.);
+ 			v *= RMSlevel * sqrt(-2. * log(r2) / r2);
+diff --git a/Path.cpp b/Path.cpp
+index f660a943d1137d5846f882385829f0d0ea9aaf8a..cf1a06dc7881df22342826a3c0d1a61b1577213d 100644
+--- a/Path.cpp
++++ b/Path.cpp
+@@ -59,7 +59,11 @@ cmplx Rayleigh::sample()
+         do {
+             // Generate vector inside a (-1, 1) x (-1, 1) 
+             auto rsample = [](){ return 1. - 2. * double(rand())/double(RAND_MAX); };
+-            v.set(rsample(), rsample());
++            // waveform-generator 2026-10-03: the order of the two draws is fixed here, as
++            // the lane's x86-64 build evaluates them (an unspecified order in C++).
++            const double i_draw = rsample();
++            const double r_draw = rsample();
++            v.set(r_draw, i_draw);
+             r2 = v.l2();
+             // Reject samples outside of the circle.
+         } while (r2 >= 1. || r2 == 0.);

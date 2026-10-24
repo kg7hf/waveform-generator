@@ -1,0 +1,84 @@
+{
+  "indirect_calls": [
+    {
+      "caller": "waveform_generator::wav_detail::validate_pcm_wav\\(",
+      "targets": "waveform_generator::(\\{anonymous\\}::read_wav_bytes(_uncounted)?|Rt1170SecondaryWav::read_wav_callback|PrepareJob::read_source_callback)\\(",
+      "why": "The shared WAV validator calls WavReader::read. The firmware targets are the player's counted/uncounted readers, the secondary provider's bounded reader, and the preparation job's source reader. All supplied pointers are fixed before validation; all four targets are included conservatively."
+    },
+    {
+      "caller": "waveform_generator::artifact::Pcm24ArtifactWriter::",
+      "targets": "^virtual .*waveform_generator::Rt1170PreparedStream::(write_exact|seek)\\(",
+      "why": "The on-board preparation job is the only firmware user of Pcm24ArtifactWriter. It supplies its fixed Rt1170PreparedStream for exact writes and absolute seeks, retaining the stream and its single file until writer finalization or cancellation."
+    },
+    {
+      "caller": "signal_lab::SecondSourceStage::",
+      "targets": "^virtual .*waveform_generator::Rt1170SecondaryWav::(frames|reference_rms|read)\\(",
+      "why": "The player task supplies its one Rt1170SecondaryWav provider through SecondarySource. Its virtual frames, reference_rms and bounded read methods are the only firmware targets; the source stays alive until the engine is detached before close."
+    },
+    {
+      "caller": "signal_lab::Engine::",
+      "targets": "^virtual .*signal_lab::\\w+::(~\\w+|type|prepare|process|stats)\\(",
+      "why": "the engine calls its stages through Impairment's virtual functions (signal-lab/include/signal_lab/impairment.hpp)"
+    },
+    {
+      "caller": "signal_lab::WattersonPathState::",
+      "targets": null,
+      "why": "TapObserver::on_tap: the firmware gives a Watterson path no observer (only the validation driver does)"
+    },
+    {
+      "caller": "waveform_generator::playlist::parse_line\\(",
+      "targets": "waveform_generator::playlist::parse_\\w+\\(std::string_view, Item&\\)$",
+      "why": "a PLAYLIST option's parser, from option_rules (common/playlist.hpp)"
+    },
+    {
+      "caller": "^(SDMMCHOST_|SD_)\\w+$",
+      "targets": "^WFG_SD_(AlwaysPresent|DAT3PullFunction|PowerControl)$",
+      "why": "the SD driver's card-detect, DAT3 pull and power callbacks, which WFG_SD_Config sets; its card-detect callback, I/O strength and I/O voltage functions are NULL (rt1170/platform/waveform_sd.c)"
+    },
+    {
+      "caller": "^tud_rhport_init$",
+      "targets": "^(cdcd|mscd|audiod)_init$",
+      "why": "USB task: TinyUSB's usbd.c initialises each class driver of its _usbd_driver table through usbd_class_driver_t's init; the player image builds the CDC, MSC and audio drivers (CFG_TUD_CDC, CFG_TUD_MSC and CFG_TUD_AUDIO, rt1170/usb/tusb_config.h) and adds no application driver (usbd_app_driver_get_cb is TinyUSB's weak default)"
+    },
+    {
+      "caller": "^configuration_reset$",
+      "targets": "^(cdcd|mscd|audiod)_reset$",
+      "why": "USB task: usbd.c resets each class driver (usbd_class_driver_t's reset) at a bus reset and a new configuration"
+    },
+    {
+      "caller": "^tud_task_ext$",
+      "targets": "^((cdcd|mscd|audiod)_(open|control_xfer_cb|xfer_cb)|tud_vendor_control_xfer_cb|proc_async_io_done)$",
+      "why": "USB task: TinyUSB's device task, with usbd.c's control request handling inlined, opens each interface's driver (open), hands a driver its class requests and their completion (control_xfer_cb; tud_vendor_control_xfer_cb for a vendor request) and its endpoints' completions (xfer_cb), and runs deferred functions, of which TinyUSB has one, msc_device.c's proc_async_io_done (tud_msc_async_io_done(), which the firmware never calls)"
+    },
+    {
+      "caller": "^dcd_event_handler$",
+      "targets": "^audiod_(xfer_isr|sof_isr)$",
+      "why": "USB task: the MSC driver queues its own completions through usbd.c's event handler, which calls a driver's xfer_isr and sof; of the drivers built only the audio driver sets them"
+    },
+    {
+      "caller": "^wfg_usb_ep0_route_event$",
+      "targets": "^(dcd_event_handler|ep0_completion_pending)$",
+      "why": "USB task: the link wraps dcd_event_handler (--wrap, rt1170/CMakeLists.txt), so the MSC driver's completions reach __wrap_dcd_event_handler, which routes each event through the EP0 order glue (usb/usb_ep0_order_glue.c) with the two functions usb/usb_tinyusb_port.c passes: forward, __real_dcd_event_handler (usbd.c's dcd_event_handler), and its ENDPTCOMPLETE poll, ep0_completion_pending"
+    },
+    {
+      "caller": "^wfg_usb_ep0_release_setups$",
+      "targets": "^dcd_event_handler$",
+      "why": "USB task: the glue passes the held SETUPs on through the same forward, __real_dcd_event_handler (usbd.c's dcd_event_handler)"
+    },
+    {
+      "caller": "^void m110::critical_error\\(",
+      "targets": "^void waveform_generator::record_critical_error\\(",
+      "why": "the critical-error handler every image installs first (install_critical_error_handler(), rt1170/critical_error.cpp), which critical_error() calls through the pointer set_critical_error_handler() keeps (common/status.cpp)"
+    },
+    {
+      "caller": "m110::CdcMuxDeviceSession::",
+      "targets": "waveform_generator::\\{anonymous\\}::(write_wire|receive_data|channel_state|link_state)\\(",
+      "why": "USB task: the DD008 session's wire writer and channel callbacks, which rt1170/tx_usb.cpp passes to CdcMuxDeviceSession::initialize()"
+    },
+    {
+      "caller": "m110::CdcMuxStreamDecoder::",
+      "targets": "m110::CdcMuxDeviceSession::receive_packet\\(",
+      "why": "USB task: the DD008 decoder's packet callback, which CdcMuxDeviceSession::ingest_wire() passes (common/dd008/cdc_mux_session.cpp)"
+    }
+  ]
+}

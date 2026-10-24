@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:waveform-generator:schema:fixture-recipe:1",
+  "title": "Waveform generator fixture recipe v1",
+  "description": "Preparation recipe for mono 48 kHz PCM24 test audio.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "fixture_id",
+    "card_filename",
+    "source_kind",
+    "purpose",
+    "format",
+    "preparation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "fixture-recipe/1"
+    },
+    "status": {
+      "const": "recipe_not_generated"
+    },
+    "fixture_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "card_filename": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_]{1,8}[.]WAV$"
+    },
+    "source_kind": {
+      "const": "tone"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "format": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "container",
+        "encoding",
+        "sample_rate_hz",
+        "channels",
+        "bits_per_sample"
+      ],
+      "properties": {
+        "container": {
+          "const": "RIFF/WAVE"
+        },
+        "encoding": {
+          "const": "pcm_s24le"
+        },
+        "sample_rate_hz": {
+          "const": 48000
+        },
+        "channels": {
+          "const": 1
+        },
+        "bits_per_sample": {
+          "const": 24
+        }
+      }
+    },
+    "preparation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "samples",
+        "frequency_hz",
+        "pcm24_period",
+        "period_repetitions"
+      ],
+      "properties": {
+        "kind": {
+          "const": "local_integer_period"
+        },
+        "samples": {
+          "const": 480000
+        },
+        "frequency_hz": {
+          "const": 1000
+        },
+        "period_repetitions": {
+          "const": 10000
+        },
+        "pcm24_period": {
+          "type": "array",
+          "minItems": 48,
+          "maxItems": 48,
+          "items": {
+            "type": "integer",
+            "minimum": -8388608,
+            "maximum": 8388607
+          }
+        }
+      }
+    }
+  }
+}

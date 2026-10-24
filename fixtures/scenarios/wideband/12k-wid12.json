@@ -1,0 +1,16 @@
+{
+  "schema": "signal-lab.scenario/1",
+  "test_id": "D.6.2-Table-D-LXV-12kHz-WID12",
+  "seed": 7,
+  "noise_bandwidth_hz": 12000,
+  "reference_rms": 0.25,
+  "source_gain_db": -12,
+  "clip_policy": "reject",
+  "impairments": [
+    {"type": "watterson", "paths": [
+      {"fading": "fixed", "delay_ms": 0, "power_db": 0},
+      {"fading": "fixed", "delay_ms": 1.5, "power_db": 0}
+    ]},
+    {"type": "awgn", "snr_db": 50}
+  ]
+}

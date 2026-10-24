@@ -1,0 +1,492 @@
+diff --git a/Delay.cpp b/Delay.cpp
+index fa0b4ea..8f60624 100644
+--- a/Delay.cpp
++++ b/Delay.cpp
+@@ -3,6 +3,8 @@
+ 
+ #include "Delay.h"
+ #include "FilterTables.h"
++
++#include <cstring>
+ 
+ namespace PathSim {
+ 
+@@ -23,8 +25,17 @@ void Hilbert::filter_block(const double* pIn, cmplx* pOut)
+ 		const double* IKptr = IHilbertBPFirCoef+HILBPFIR_LENGTH-m_hilbert_ptr;
+ 		const double* QKptr = QHilbertBPFirCoef+HILBPFIR_LENGTH-m_hilbert_ptr;
+ 		cmplx acc{0., 0.};
+-		for (int j = 0; j < HILBPFIR_LENGTH; ++ j, ++ Firptr)
+-			acc += (*Firptr) * (*IKptr++);
++		// Build a TRUE analytic signal: the in-phase part from the I taps and
++		// the quadrature (Hilbert) part from the Q taps.  The original loop
++		// applied IKptr to both components (QKptr was initialised but never
++		// used), so I == Q and the "analytic" signal was not analytic — the
++		// resulting Rayleigh fade was non-circular (envelope mean/rms ~0.78 vs
++		// the correct 0.886, roughly double the deep-fade probability).
++		// Bug reported by Steve Pinkham (N4FPV); cf. bubnikv/pathsim#3.
++		for (int j = 0; j < HILBPFIR_LENGTH; ++ j, ++ Firptr) {
++			acc.r += Firptr->r * (*IKptr++);
++			acc.i += Firptr->r * (*QKptr++);
++		}
+ 		pOut[i] = acc;
+ 		if (-- m_hilbert_ptr < 0)
+ 			m_hilbert_ptr = HILBPFIR_LENGTH - 1;
+diff --git a/NoiseGen.cpp b/NoiseGen.cpp
+index a01a1a4..a93bd17 100644
+--- a/NoiseGen.cpp
++++ b/NoiseGen.cpp
+@@ -23,7 +23,7 @@ void NoiseGen::init(bool band_limited)
+ 
+ // Adds bufsize gaussian random doubles with 0 mean and
+ // RMSlevel = RMS = std to the specified buffer, pInOut
+-void NoiseGen::add_band_limited_noise(int bufsize, double *pInOut, double siggain, double RMSlevel)
++void NoiseGen::add_band_limited_noise(int bufsize, double *pInOut, double siggain, double RMSlevel, double *noise_out)
+ {
+ 	RMSlevel *= K_ENBW;	// ENBW gain compensation(measured experimentally)
+ 	for (int i = 0; i < bufsize; ) {
+@@ -56,8 +56,12 @@ void NoiseGen::add_band_limited_noise(int bufsize, double *pInOut, double siggai
+ 					m_queue_pos = HILBPFIR_LENGTH - 1;
+ 			} else
+ 				acc = noise[j];
+-			//  Add BP filtered noise to signal
+-			pInOut[i] = siggain * pInOut[i ++] + acc;
++			//  Add BP filtered noise to signal (capture w[n]=acc first for the
++			//  M110 channel-truth export; the write to pInOut is unchanged).
++			if (noise_out)
++				noise_out[i] = acc;
++			pInOut[i] = siggain * pInOut[i] + acc;
++			++i;
+ 		}
+ 	}
+ }
+diff --git a/NoiseGen.h b/NoiseGen.h
+index 5ff8bfe..e854e8b 100644
+--- a/NoiseGen.h
++++ b/NoiseGen.h
+@@ -9,7 +9,10 @@ class NoiseGen
+ {
+ public:
+ 	void init(bool band_limited);
+-	void add_band_limited_noise(int bufsize, double* pInOut, double siggain, double RMSlevel);
++	// noise_out (optional): when non-null, the per-sample additive noise w[n]
++	// is written there BEFORE it is folded into pInOut. Diagnostic only (M110
++	// channel-truth export); does not alter the samples written to pInOut.
++	void add_band_limited_noise(int bufsize, double* pInOut, double siggain, double RMSlevel, double* noise_out = nullptr);
+ 
+ private:
+ 	double 	m_queue[HILBPFIR_LENGTH];
+diff --git a/Path.cpp b/Path.cpp
+index 7c5244a..f660a94 100644
+--- a/Path.cpp
++++ b/Path.cpp
+@@ -1,6 +1,7 @@
+ #include "Path.h"
+ 
+ #include <assert.h>
++#include <cstring>
+ 
+ #define _USE_MATH_DEFINES
+ #include <math.h>
+@@ -141,6 +142,11 @@ void Path::calc_path(const cmplx *pIn, cmplx *pOut)
+         }
+         cmplx fading = m_upsamplers[0].upsample();
+ //CalcCpxSweepRMS( fading, 8000);
++        // M110 channel-truth: capture the complex path gain h[n] = e^{jφ}·fading
++        // using the same Doppler phase used for pOut below. Separate expression,
++        // so pOut's floating-point ordering is byte-for-byte unchanged.
++        if (m_tap_out)
++            m_tap_out[i] = cmplx{cos(m_phase_acc), sin(m_phase_acc)} * fading;
+         pOut[i] =
+             // Doppler
+             cmplx{cos(m_phase_acc), sin(m_phase_acc)} *
+diff --git a/Path.h b/Path.h
+index 3c9d8ce..1931cd1 100644
+--- a/Path.h
++++ b/Path.h
+@@ -41,6 +41,12 @@ public:
+ 	void init_path(double spread, double offset, int blocksize, int numpaths);
+ 	void calc_path(const cmplx* pIn, cmplx* pOut);
+ 
++	// M110 channel-truth export: when set to a non-null buffer of at least
++	// m_block_size entries before a calc_path call, the per-sample complex path
++	// gain h[n] = e^{jφ[n]}·fading[n] is written there. Diagnostic only; pOut is
++	// computed exactly as before (identical floating-point ordering).
++	void set_tap_capture(cmplx* tap_out) { m_tap_out = tap_out; }
++
+ private:
+ 	// Polyphase upsampling low pass FIR filter.
+ 	class Upsampler
+@@ -68,6 +74,9 @@ private:
+ 
+ 	Rayleigh 	m_rayleigh;
+ 	Upsampler 	m_upsamplers[4];
++
++	// Optional per-sample complex path-gain capture (M110 channel-truth export).
++	cmplx*		m_tap_out { nullptr };
+ };
+ 
+ } // namespace PathSim
+diff --git a/PathSimProcessor.cpp b/PathSimProcessor.cpp
+index 3204e09..249eb22 100644
+--- a/PathSimProcessor.cpp
++++ b/PathSimProcessor.cpp
+@@ -1,5 +1,7 @@
+ #include "PathSimProcessor.h"
+ 
++#include <cstdint>
++
+ namespace PathSim {
+ 
+ // RMS amplitude out of 32768
+@@ -11,6 +13,10 @@ static constexpr double RMSAVE = 20.;
+ 
+ PathSimProcessor::~PathSimProcessor()
+ {
++    if (m_truth_file) {
++        std::fclose(m_truth_file);
++        m_truth_file = nullptr;
++    }
+ #ifdef PATHSIM_TESTMODE
+     EndTest();
+ #endif
+@@ -41,6 +47,88 @@ void PathSimProcessor::init(const PathSimParams& params)
+     m_SigRMS = RMS_MAXAMPLITUDE;
+ }
+ 
++void PathSimProcessor::seed_signal_rms(double rms)
++{
++    if (rms > 0.)
++        m_SigRMS = rms;
++}
++
++void PathSimProcessor::warm_up_fading(double seconds)
++{
++    if (m_direct_path || seconds <= 0.)
++        return;
++    const int blocks = (int(seconds * 8000.) + BUF_SIZE - 1) / BUF_SIZE;
++    std::vector<cmplx> scratch(BUF_SIZE, cmplx{});
++    std::vector<cmplx> discard(BUF_SIZE, cmplx{});
++    for (int block = 0; block < blocks; ++ block)
++        for (PathWithBuffer& path : m_paths)
++            path.path.calc_path(scratch.data(), discard.data());
++}
++
++// M110 channel-truth export. Binary, little-endian, doubles for reals.
++//
++//   Header:
++//     char[8]  magic  = "M110PTr1"
++//     int32    version = 1
++//     int32    fs      = 8000
++//     int32    buf_size = BUF_SIZE (2048)
++//     uint32   seed
++//     double   snr_db
++//     int32    has_awgn (1/0)
++//     double   rms_maxamplitude
++//     int32    n_paths
++//     repeat n_paths: { double delay_ms; int32 delay_samples; double spread; double offset; }
++//   Then one record per processed 2048-sample block:
++//     int32    block_index
++//     int32    n_samples (= BUF_SIZE)
++//     double   signal_gain
++//     n_samples * [ per path: x_p.r, x_p.i ; per path: h_p*x_p.r, .i ;
++//                   per path: h_p.r, h_p.i ; w ; y ]   (all doubles, path order 0..n-1)
++//
++// Self-test (Stage-1a gate): y[n] == signal_gain * Sum_p (h_p*x_p).r + w[n],
++// bit-exact, because the products summed are the simulator's own.
++void PathSimProcessor::enable_truth_capture(const std::string& path, unsigned int seed)
++{
++    m_truth_file = std::fopen(path.c_str(), "wb");
++    if (! m_truth_file)
++        return;
++
++    const int numpaths = int(m_paths.size());
++    m_truth_xp.assign(numpaths, std::vector<cmplx>(BUF_SIZE, cmplx{}));
++    m_truth_hx.assign(numpaths, std::vector<cmplx>(BUF_SIZE, cmplx{}));
++    m_truth_tap.assign(numpaths, std::vector<cmplx>(BUF_SIZE, cmplx{}));
++    m_truth_noise.assign(BUF_SIZE, 0.);
++
++    const char     magic[8] = { 'M','1','1','0','P','T','r','1' };
++    const int32_t  version  = 1;
++    const int32_t  fs       = 8000;
++    const int32_t  bufsize  = BUF_SIZE;
++    const uint32_t seed_u   = seed;
++    const double   snr_db   = m_params.noise.snr;
++    const int32_t  has_awgn = m_params.noise.has_awgn ? 1 : 0;
++    const double   rms_max  = RMS_MAXAMPLITUDE;
++    const int32_t  np       = numpaths;
++    std::fwrite(magic,     1,              8, m_truth_file);
++    std::fwrite(&version,  sizeof version,  1, m_truth_file);
++    std::fwrite(&fs,       sizeof fs,       1, m_truth_file);
++    std::fwrite(&bufsize,  sizeof bufsize,  1, m_truth_file);
++    std::fwrite(&seed_u,   sizeof seed_u,   1, m_truth_file);
++    std::fwrite(&snr_db,   sizeof snr_db,   1, m_truth_file);
++    std::fwrite(&has_awgn, sizeof has_awgn, 1, m_truth_file);
++    std::fwrite(&rms_max,  sizeof rms_max,  1, m_truth_file);
++    std::fwrite(&np,       sizeof np,       1, m_truth_file);
++    for (const PathParams& p : m_params.paths) {
++        const double  delay_ms      = p.delay;
++        const int32_t delay_samples = int32_t(8.0 * p.delay); // matches Delay::add_delay
++        const double  spread        = p.spread;
++        const double  offset        = p.offset;
++        std::fwrite(&delay_ms,      sizeof delay_ms,      1, m_truth_file);
++        std::fwrite(&delay_samples, sizeof delay_samples, 1, m_truth_file);
++        std::fwrite(&spread,        sizeof spread,        1, m_truth_file);
++        std::fwrite(&offset,        sizeof offset,        1, m_truth_file);
++    }
++}
++
+ void PathSimProcessor::process_buffer(double *buffer)
+ {
+     {
+@@ -67,9 +155,24 @@ void PathSimProcessor::process_buffer(double *buffer)
+         for (size_t i = 1; i < m_paths.size(); ++ i)
+             buffers.emplace_back(&m_paths[i].buffer);
+         m_delay.delay_block(m_paths.front().buffer, buffers);
++        // Truth export: snapshot x_p (the analytic, delayed path input) and arm
++        // per-path gain capture before calc_path overwrites the buffers in place.
++        if (m_truth_file)
++            for (size_t p = 0; p < m_paths.size(); ++ p) {
++                for (int i = 0; i < BUF_SIZE; ++ i)
++                    m_truth_xp[p][i] = m_paths[p].buffer[i];
++                m_paths[p].path.set_tap_capture(m_truth_tap[p].data());
++            }
+         // Calculate each path.
+         for (PathWithBuffer& path : m_paths)
+             path.path.calc_path(path.buffer.data(), path.buffer.data());
++        // Truth export: capture h_p*x_p (the in-place calc_path output) and disarm.
++        if (m_truth_file)
++            for (size_t p = 0; p < m_paths.size(); ++ p) {
++                m_paths[p].path.set_tap_capture(nullptr);
++                for (int i = 0; i < BUF_SIZE; ++ i)
++                    m_truth_hx[p][i] = m_paths[p].buffer[i];
++            }
+         // Sum and Copy just the real part back into the real buffer for output
+         for (int i = 0; i < BUF_SIZE; ++ i) {
+             double acc = 0;
+@@ -87,9 +190,34 @@ void PathSimProcessor::process_buffer(double *buffer)
+             m_SignalGain = RMS_MAXAMPLITUDE * m_SNR / m_SigRMS;
+             m_NoiseRMS   = RMS_MAXAMPLITUDE;
+         }
+-        m_noise_gen.add_band_limited_noise(BUF_SIZE, buffer, m_SignalGain, m_NoiseRMS);
++        m_noise_gen.add_band_limited_noise(BUF_SIZE, buffer, m_SignalGain, m_NoiseRMS,
++                                           m_truth_file ? m_truth_noise.data() : nullptr);
++    } else if (m_truth_file) {
++        // No AWGN this run: w[n] = 0 for every sample.
++        for (int i = 0; i < BUF_SIZE; ++ i)
++            m_truth_noise[i] = 0.;
+     }
+     m_state.m_NoiseRMS = m_NoiseRMS;
++
++    if (m_truth_file) {
++        const int np = int(m_paths.size());
++        std::vector<double> rec;
++        rec.reserve(size_t(BUF_SIZE) * (size_t(np) * 6 + 2));
++        for (int i = 0; i < BUF_SIZE; ++ i) {
++            for (int p = 0; p < np; ++ p) { rec.push_back(m_truth_xp[p][i].r);  rec.push_back(m_truth_xp[p][i].i); }
++            for (int p = 0; p < np; ++ p) { rec.push_back(m_truth_hx[p][i].r);  rec.push_back(m_truth_hx[p][i].i); }
++            for (int p = 0; p < np; ++ p) { rec.push_back(m_truth_tap[p][i].r); rec.push_back(m_truth_tap[p][i].i); }
++            rec.push_back(m_truth_noise[i]);
++            rec.push_back(buffer[i]);           // y[n], after any AWGN
++        }
++        const int32_t block_index = m_truth_block ++;
++        const int32_t n_samples   = BUF_SIZE;
++        const double  signal_gain = m_SignalGain;
++        std::fwrite(&block_index, sizeof block_index, 1, m_truth_file);
++        std::fwrite(&n_samples,   sizeof n_samples,   1, m_truth_file);
++        std::fwrite(&signal_gain, sizeof signal_gain, 1, m_truth_file);
++        std::fwrite(rec.data(), sizeof(double), rec.size(), m_truth_file);
++    }
+ }
+ 
+ } // namespace PathSim
+diff --git a/PathSimProcessor.h b/PathSimProcessor.h
+index 2b1ccf7..46d6f25 100644
+--- a/PathSimProcessor.h
++++ b/PathSimProcessor.h
+@@ -8,6 +8,9 @@
+ 
+ #include <math.h>
+ #include <utility>
++#include <cstdio>
++#include <string>
++#include <vector>
+ 
+ namespace PathSim {
+ 
+@@ -18,6 +21,27 @@ public:
+ 
+     void init(const PathSimParams &params);
+ 
++    // Seed the input RMS tracker with a value measured over the whole input
++    // file. The IIR tracker exists for live soundcard streaming; in file
++    // mode a cold start delivers a wrong SNR until it converges (~10 s).
++    void seed_signal_rms(double rms);
++
++    // Advance the Rayleigh fading generators and their interpolation
++    // pipeline by the given time before processing real samples. The
++    // interpolator queues start zeroed, so without a warm-up every path
++    // fades in from zero over the slowest generator's queue fill time.
++    void warm_up_fading(double seconds);
++
++    // Enable the M110 channel-truth export. Writes a self-describing binary
++    // stream (see PathSimProcessor.cpp for the exact layout) of per-block
++    // SignalGain plus, per 8 kHz sample and per path, the analytic path input
++    // x_p, the complex path gain h_p, their product h_p*x_p, the additive noise
++    // w[n], and the final output y[n] — enough to independently reconstruct
++    // y[n] = SignalGain * Sum_p Re{h_p*x_p} + w[n] (Stage-1a self-test). The
++    // signal/WAV path is unaffected; capture is passive. Call after init().
++    // seed is recorded for provenance only.
++    void enable_truth_capture(const std::string& path, unsigned int seed);
++
+ 	// Size of data chunks to process one at a time.
+ 	static constexpr int BUF_SIZE = 2048;
+     void process_buffer(double *buffer);
+@@ -48,6 +72,14 @@ private:
+ 
+     // Signal / Noise RMS, for diagnostics.
+     State                   m_state;
++
++    // M110 channel-truth export state (inactive unless enable_truth_capture()).
++    std::FILE*                      m_truth_file  { nullptr };
++    int                             m_truth_block { 0 };
++    std::vector<std::vector<cmplx>> m_truth_xp;    // pre-calc analytic path input x_p
++    std::vector<std::vector<cmplx>> m_truth_hx;    // post-calc product h_p*x_p
++    std::vector<std::vector<cmplx>> m_truth_tap;   // complex path gain h_p
++    std::vector<double>             m_truth_noise; // additive noise w[n]
+ };
+ 
+ } // namespace PathSim
+diff --git a/main.cpp b/main.cpp
+index 9aac205..233955b 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -1,6 +1,8 @@
+ #include "PathSimProcessor.h"
+ #include "PathSimParams.h"
+ 
++#include <cmath>
++#include <cstdlib>
+ #include <iostream>
+ #include "cxxopts.h"
+ #include "AudioFile.h"
+@@ -37,6 +39,7 @@ from a Windows GUI application by Moe Wheatley, AE4JY, 2000\n\
+ 		}
+ 
+ 	    options.add_options("Propagation")
++	        ("seed", "Random-generator seed selecting an independent, reproducible fading/noise realization (default 1)", cxxopts::value<unsigned int>())
+ 	        ("snr", "Signal to Noise Ratio (SNR)", cxxopts::value<double>())
+ 	        ("spread", "Frequency spread of the 1st path [Hz]", cxxopts::value<double>())
+ 	        ("offset", "Frequency offset of the 1st path [Hz]", cxxopts::value<double>())
+@@ -45,7 +48,8 @@ from a Windows GUI application by Moe Wheatley, AE4JY, 2000\n\
+ 	        ("offset2", "Frequency offset of the 2nd path [Hz]", cxxopts::value<double>())
+ 	        ("delay3", "Delay of the 2nd path [Hz]", cxxopts::value<double>())
+ 	        ("spread3", "Frequency spread of the 3rd path [Hz]", cxxopts::value<double>())
+-	        ("offset3", "Frequency offset of the 3rd path [Hz]", cxxopts::value<double>());
++	        ("offset3", "Frequency offset of the 3rd path [Hz]", cxxopts::value<double>())
++	        ("truth-out", "Write the M110 channel-truth export (binary path gains/delays/noise/output) to this file for genie experiments", cxxopts::value<std::string>());
+ 
+         options.parse_positional({"input_file", "output_file", "positional"});
+ 
+@@ -56,15 +60,13 @@ from a Windows GUI application by Moe Wheatley, AE4JY, 2000\n\
+ 			exit(0);
+ 		}
+ 
+-        if (argc > 1 || 
+-            ((result.count("input_file") != 1 || result.count("output_file") != 1) &&
+-             result.arguments().size() != 2))  {
++        if (result.count("input_file") != 1 || result.count("output_file") != 1) {
+             std::cerr << "pathsim: input / output not specified" << std::endl;
+             exit(-1);
+         }
+ 
+-        std::string input_file  = result.count("input_file")  > 0 ? result["input_file"] .as<std::string>() : result.arguments().front().value();
+-        std::string output_file = result.count("output_file") > 0 ? result["output_file"].as<std::string>() : result.arguments()[1].value();
++        std::string input_file  = result["input_file"].as<std::string>();
++        std::string output_file = result["output_file"].as<std::string>();
+ 
+         PathSimParams params;
+         // Parse the propagation condition parameter sets.
+@@ -82,29 +84,29 @@ from a Windows GUI application by Moe Wheatley, AE4JY, 2000\n\
+         if (result.count("snr"))
+             params.noise = { true, result["snr"].as<double>() };
+ 
+-        for (int i = 0; i < 3; ++ i) {
+-            auto init_path = [i, &params](){
+-                if (int(params.paths.size()) <= i)
+-                    params.paths.push_back({});
+-            };
++        // The registered per-path flags are: 1st path "spread"/"offset" (delay fixed 0),
++        // 2nd path "delay2"/"spread2"/"offset2", 3rd path "delay3"/"spread3"/"offset3" -
++        // so CLI suffix "" maps to slot 0 and suffixes "2"/"3" map to slots 1/2. Values
++        // must be assigned to the addressed slot, never paths.back(): the original loop
++        // pushed a new path per flag at the same index, so "--spread S --delay2 D
++        // --spread2 S" silently built three paths with a spread-0 (static) tap at D ms.
++        for (int slot = 0; slot < 3; ++ slot) {
+             std::string sidx;
+-            if (i > 0)
+-                sidx = std::to_string(i);
+-            std::string delay = std::string("delay") + sidx;
+-            if (result.count(delay)) {
+-                init_path();
+-                params.paths.back().delay = result[delay].as<double>();
+-            }
++            if (slot > 0)
++                sidx = std::to_string(slot + 1);
++            std::string delay  = std::string("delay") + sidx;
+             std::string spread = std::string("spread") + sidx;
+-            if (result.count(spread)) {
+-                init_path();
+-                params.paths.back().spread = result[spread].as<double>();
+-            }
+             std::string offset = std::string("offset") + sidx;
+-            if (result.count(offset)) {
+-                init_path();
+-                params.paths.back().offset = result[offset].as<double>();
+-            }
++            if (result.count(delay) == 0 && result.count(spread) == 0 && result.count(offset) == 0)
++                continue;
++            while (int(params.paths.size()) <= slot)
++                params.paths.push_back({});
++            if (result.count(delay))
++                params.paths[slot].delay = result[delay].as<double>();
++            if (result.count(spread))
++                params.paths[slot].spread = result[spread].as<double>();
++            if (result.count(offset))
++                params.paths[slot].offset = result[offset].as<double>();
+         }
+ 
+         AudioFile<double> audio_file;
+@@ -116,8 +118,33 @@ from a Windows GUI application by Moe Wheatley, AE4JY, 2000\n\
+         int  len     = audio_file.getNumSamplesPerChannel();
+         int  nblocks = (len + PathSimProcessor::BUF_SIZE - 1) / PathSimProcessor::BUF_SIZE;
+ 
++        // Every random draw (Rayleigh generators and band-limited noise) comes
++        // from the single C-library generator, so one srand selects a complete
++        // independent realization reproducibly. Without --seed the historical
++        // default stream (seed 1) is kept.
++        const unsigned int seed = result.count("seed") ? result["seed"].as<unsigned int>() : 1U;
++        srand(seed);
++
+         PathSimProcessor processor;
+         processor.init(params);
++        if (result.count("truth-out"))
++            processor.enable_truth_capture(result["truth-out"].as<std::string>(), seed);
++        {
++            // File mode: seed the RMS tracker from the measured active-sample
++            // RMS and pre-roll the fading generators, so the requested SNR
++            // and steady-state Rayleigh statistics hold from the first sample
++            // instead of after a multi-second streaming-style onset ramp.
++            double acc = 0.;
++            long   active = 0;
++            for (double v : audio_file.samples.front())
++                if (fabs(v) > 1e-4) {
++                    acc += v * v;
++                    ++ active;
++                }
++            if (active > 0)
++                processor.seed_signal_rms(sqrt(acc / double(active)));
++        }
++        processor.warm_up_fading(4.0);
+         audio_file.samples.front().resize(PathSimProcessor::BUF_SIZE * nblocks, 0.);
+         for (int i = 0; i < nblocks; ++ i)
+             processor.process_buffer(audio_file.samples.front().data() + i * PathSimProcessor::BUF_SIZE);
